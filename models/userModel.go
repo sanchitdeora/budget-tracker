@@ -6,5 +6,10 @@ type User struct {
 	Email 		string	`json:"email"`
 	Password 	string	`json:"password"`
 	DateOfBirth string	`json:"dateOfBirth"`
-	PhoneNumber int64 	`json:"phoneNumber"`
+	PhoneNumber string 	`json:"phoneNumber"`
+}
+
+type Login struct {
+	Email 		string `json:"email"`
+	Password 	string `json:"password"`
 }

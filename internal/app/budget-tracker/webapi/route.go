@@ -27,7 +27,7 @@ func route(router *gin.Engine) *gin.Engine {
 
 	router.POST("/quickstart", quickstart.OpeningSurvey)
 	router.GET("/ping", abc)
-	router.GET("/login", registration.Login)
+	router.POST("/login", registration.Login)
 	router.POST("/signup", registration.Signup)
 	router.GET("/home", home.GetStarted)
 
