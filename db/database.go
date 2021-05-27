@@ -1,10 +1,10 @@
-package repository
+package db
 
 import (
 	"context"
 	"encoding/json"
 	"log"
-	"github.com/sanchitdeora/budget-tracker/models"
+	"github.com/sanchitdeora/budget-tracker/src/models"
 )
 
 func AddSignup(ctx context.Context, user models.User) error {

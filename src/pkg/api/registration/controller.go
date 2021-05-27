@@ -2,7 +2,7 @@ package registration
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/sanchitdeora/budget-tracker/models"
+	"github.com/sanchitdeora/budget-tracker/src/models"
 )
 
 func Signup(c *gin.Context) {

@@ -5,12 +5,12 @@ import (
 	"errors"
 	"log"
 
-	"github.com/sanchitdeora/budget-tracker/models"
-	"github.com/sanchitdeora/budget-tracker/repository"
+	"github.com/sanchitdeora/budget-tracker/src/models"
+	"github.com/sanchitdeora/budget-tracker/db"
 )
 
 func SignupService(ctx context.Context, user models.User) error {
-	err := repository.AddSignup(ctx, user)
+	err := db.AddSignup(ctx, user)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -20,7 +20,7 @@ func SignupService(ctx context.Context, user models.User) error {
 func LoginService(ctx context.Context, login models.Login) error {
 	// improve validation logic
 	
-	loginFromDB, err := repository.GetLoginInfo(ctx, login)
+	loginFromDB, err := db.GetLoginInfo(ctx, login)
 	if err != nil {
 		log.Fatal(err)
 	}

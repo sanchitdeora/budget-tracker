@@ -4,13 +4,13 @@ import (
 	"context"
 	"log"
 
-	"github.com/sanchitdeora/budget-tracker/models"
-	"github.com/sanchitdeora/budget-tracker/repository"
+	"github.com/sanchitdeora/budget-tracker/db"
+	"github.com/sanchitdeora/budget-tracker/src/models"
 )
 
 
 func SurveyService(ctx context.Context, survey models.Survey) error {
-	err := repository.AddSurvey(ctx, survey)
+	err := db.AddSurvey(ctx, survey)
 	if err != nil {
 		log.Fatal(err)
 	}
