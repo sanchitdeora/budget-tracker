@@ -9,16 +9,18 @@ import (
 	"github.com/sanchitdeora/budget-tracker/repository"
 )
 
-func SignupService(c context.Context, user models.User) error {
-	err := repository.CreateUserRecord(c, user)
+func SignupService(ctx context.Context, user models.User) error {
+	err := repository.AddSignup(ctx, user)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return nil
+	return err
 }
 
-func LoginService(c context.Context, login models.Login) error {
-	loginFromDB, err := repository.GetLoginInfo(c, login)
+func LoginService(ctx context.Context, login models.Login) error {
+	// improve validation logic
+	
+	loginFromDB, err := repository.GetLoginInfo(ctx, login)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -27,5 +29,5 @@ func LoginService(c context.Context, login models.Login) error {
 		return errors.New("invaid login")
 	}
 
-	return nil
+	return err
 }

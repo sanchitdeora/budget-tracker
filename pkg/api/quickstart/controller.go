@@ -1,24 +1,24 @@
 package quickstart
 
-import "github.com/gin-gonic/gin"
+import (
+	"log"
 
-type Survey struct {
-	MonthlyIncome int64  `json:"monthlyIncome"`
-	SavingsType   string `json:"savingsType"`
-	MonthlyLimit  int64  `json:"monthlyLimit"`
-}
+	"github.com/gin-gonic/gin"
+	"github.com/sanchitdeora/budget-tracker/models"
+)
 
 func OpeningSurvey(c *gin.Context) {
 
-	reqBody := new(Survey)
-	err := c.BindJSON(reqBody)
+	reqBody := new(models.Survey)
+	err := c.BindJSON(&reqBody)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"message": "failure",
-			"error": err,
+			"error":   err,
 		})
-		panic(err)
+		log.Fatal(err)
 	}
+	SurveyService(c, *reqBody)
 
 	c.JSON(200, gin.H{
 		"message": "Success",

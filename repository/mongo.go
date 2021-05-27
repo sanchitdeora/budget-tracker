@@ -14,8 +14,9 @@ import (
 
 var budgetDatabase *mongo.Database
 var userCollection *mongo.Collection
+var surveyCollection *mongo.Collection
 
-func Init() (*mongo.Client, context.Context, error){
+func Init() (*mongo.Client, context.Context, error) {
 
 	uri := "mongodb://localhost"
 
@@ -31,37 +32,50 @@ func Init() (*mongo.Client, context.Context, error){
 
 	// fmt.Println("Start creating database")
 	budgetDatabase = client.Database("budget-tracker")
-	userCollection = budgetDatabase.Collection("account_table")
+
+	userCollection = budgetDatabase.Collection("user_table")
+	surveyCollection = budgetDatabase.Collection("survey_table")
 
 	return client, ctx, err
 }
 
-func CreateRecord(ctx context.Context, record []byte) error {
-	var bdoc interface{}
-	// fmt.Println("Unmarshal json to bson")
-	err := bson.UnmarshalExtJSON(record, true, &bdoc)
-	if err != nil {
-		log.Fatal(err)
-	}
-	
-	accountResult, err := userCollection.InsertOne(ctx, bdoc)
-	if err != nil {
-		log.Fatal("Error trying to insert bdoc in mongo", err)
-	}
-	fmt.Println(accountResult.InsertedID)
-	
-	return nil
+func GetUserRecord(ctx context.Context, key string) ([]byte, error) {
+	return getRecordFromCollection(ctx, key, userCollection)
 }
 
-func GetRecord(ctx context.Context, key string) ([]byte, error) {
+func AddUserRecord(ctx context.Context, record []byte) error {
+	return addRecordToCollection(ctx, record, userCollection)
+}
+
+func AddSurveyRecord(ctx context.Context, record []byte) error {
+	return addRecordToCollection(ctx, record, surveyCollection)
+}
+
+func getRecordFromCollection(ctx context.Context, key string, collection *mongo.Collection) ([]byte, error) {
 	var user bson.M
-	if err := userCollection.FindOne(ctx, bson.M{"email": key}).Decode(&user); err != nil {
+	if err := collection.FindOne(ctx, bson.M{"email": key}).Decode(&user); err != nil {
 		log.Fatal("Error trying to get user from db", err)
 	}
-	
+
 	userJSON, err := bson.MarshalExtJSON(&user, true, true)
 	if err != nil {
 		log.Fatal(err)
 	}
 	return userJSON, nil
+}
+
+func addRecordToCollection(ctx context.Context, record []byte, collection *mongo.Collection) error {
+	var bdoc interface{}
+	err := bson.UnmarshalExtJSON(record, true, &bdoc)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	result, err := collection.InsertOne(ctx, bdoc)
+	if err != nil {
+		log.Fatal("Error trying to insert bdoc in mongo", err)
+	}
+	fmt.Println(result.InsertedID)
+
+	return nil
 }

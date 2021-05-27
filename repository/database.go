@@ -7,14 +7,28 @@ import (
 	"github.com/sanchitdeora/budget-tracker/models"
 )
 
-func CreateUserRecord(ctx context.Context, user models.User) error {
+func AddSignup(ctx context.Context, user models.User) error {
 	record, err := json.Marshal(user)
 	if err != nil {
 		log.Fatal(err)
 	}		
 	
 	// fmt.Println("Inside db create account record", string(record))
-	err = CreateRecord(ctx, record)
+	err = AddUserRecord(ctx, record)
+	if err != nil {
+		log.Fatal(err)
+	}		
+	return err
+}
+
+func AddSurvey(ctx context.Context, survey models.Survey) error {
+	record, err := json.Marshal(survey)
+	if err != nil {
+		log.Fatal(err)
+	}		
+	
+	// fmt.Println("Inside db create account record", string(record))
+	err = AddSurveyRecord(ctx, record)
 	if err != nil {
 		log.Fatal(err)
 	}		
@@ -22,7 +36,7 @@ func CreateUserRecord(ctx context.Context, user models.User) error {
 }
 
 func GetLoginInfo(ctx context.Context, login models.Login) (models.Login, error) {
-	userJSON, err := GetRecord(ctx, login.Email)
+	userJSON, err := GetUserRecord(ctx, login.Email)
 	if err != nil {
 		log.Fatal(err)
 	}
