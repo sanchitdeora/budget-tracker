@@ -2,8 +2,8 @@ package webapi
 
 import (
 	"github.com/gin-gonic/contrib/static"
-	"github.com/gin-gonic/gin")
-
+	"github.com/gin-gonic/gin"
+)
 
 func StartRouter() {
 
@@ -11,7 +11,7 @@ func StartRouter() {
 	router := gin.Default()
 
 	// Serve frontend static files
-	router.Use(static.Serve("/", static.LocalFile("./views", true)))
+	router.Use(static.Serve("/", static.LocalFile("./client/build", true)))
 
 	// Routing
 	route(router)

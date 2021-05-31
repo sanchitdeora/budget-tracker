@@ -5,7 +5,7 @@ import (
 	"github.com/sanchitdeora/budget-tracker/src/models"
 )
 
-func Signup(c *gin.Context) {
+func Register(c *gin.Context) {
 
 	userBody := new(models.User)
 	err := c.BindJSON(&userBody)
@@ -18,7 +18,7 @@ func Signup(c *gin.Context) {
 	}
 
 	// Store in DB
-	err = SignupService(c, *userBody)
+	err = RegisterService(c, *userBody)
 
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -28,7 +28,7 @@ func Signup(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"message": "Signup",
+		"message": "Register",
 		"body":    userBody,
 	})
 }

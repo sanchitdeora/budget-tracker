@@ -54,12 +54,14 @@ func AddSurveyRecord(ctx context.Context, record []byte) error {
 func getRecordFromCollection(ctx context.Context, key string, collection *mongo.Collection) ([]byte, error) {
 	var user bson.M
 	if err := collection.FindOne(ctx, bson.M{"email": key}).Decode(&user); err != nil {
-		log.Fatal("Error trying to get user from db", err)
+		log.Print("Error trying to get user from db", err)
+		return nil, err
 	}
 
 	userJSON, err := bson.MarshalExtJSON(&user, true, true)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return nil, err
 	}
 	return userJSON, nil
 }
@@ -68,12 +70,14 @@ func addRecordToCollection(ctx context.Context, record []byte, collection *mongo
 	var bdoc interface{}
 	err := bson.UnmarshalExtJSON(record, true, &bdoc)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
+		return err
 	}
 
 	result, err := collection.InsertOne(ctx, bdoc)
 	if err != nil {
-		log.Fatal("Error trying to insert bdoc in mongo", err)
+		log.Println("Error trying to insert bdoc in mongo", err)
+		return err
 	}
 	fmt.Println(result.InsertedID)
 
