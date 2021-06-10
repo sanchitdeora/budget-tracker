@@ -40,7 +40,7 @@ class Authenticate extends React.Component {
        				</div>
 				</div>
 				<div className="box-container">
-					{this.state.isLoginOpen && <Login setLoginState={this.props.setLoginState} />}
+					{this.state.isLoginOpen && <Login setLoginState={this.props.setLoginState}  setToken={this.props.setToken} />}
 					{this.state.isRegisterOpen && <Register />}
 				</div>
 			</div>

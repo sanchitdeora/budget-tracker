@@ -1,5 +1,5 @@
 import './App.scss';
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import Home from "./components/Home"
 import Ping from "./components/Ping"
@@ -12,20 +12,24 @@ class App extends React.Component<any, any> {
 		super(props);
 		this.state = {
 			isLoggedIn: false,
+			token: "",
 		};
-		localStorage.clear()
 	};
 
-	setLoginState = (childData) => {
-		this.setState({isLoggedIn: childData})
+	setLoginState = (loginState) => {
+		this.setState({isLoggedIn: loginState})
+		console.log(this.state)	
+	}
+
+	setToken = (tokenVal) => {
+		this.setState({token: tokenVal})
 		console.log(this.state)	
 	}
 
 	render() {
-
 		return (
 			<div className="root-container">
-				<NavBar />
+				<NavBar isLoggedIn={this.state.isLoggedIn} />
 				<div className="app-container">
 					<Router>
 						<Switch>
@@ -33,7 +37,7 @@ class App extends React.Component<any, any> {
 								<Ping />
 							</Route>
 							<Route exact path='/authenticate'>
-								<Authenticate setLoginState={this.setLoginState} />
+								<Authenticate setLoginState={this.setLoginState} setToken={this.setToken} />
 							</Route>
 							<Route exact path='/logout'>
 								<Logout />
@@ -43,7 +47,7 @@ class App extends React.Component<any, any> {
 							</Route>
 							<Route exact path="/">
   								{
-								  localStorage.getItem("isLoggedIn") ?  <Redirect to="/home" /> : <Redirect to="/authenticate" />
+								  this.state.isLoggedIn ? <Redirect to="/home" /> : <Redirect to="/authenticate" />
 								} 
 							</Route>
 						</Switch>

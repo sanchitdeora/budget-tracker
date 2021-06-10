@@ -7,22 +7,14 @@ class Logout extends React.Component {
 		super(props);
 		this.state = {
 		};
-		localStorage.setItem("isLoggedIn", false)
-		console.log(localStorage.getItem("isLoggedIn"))
+		localStorage.clear()
+		console.log(localStorage)
 	};
 
 	render() {
-		if (localStorage.getItem("isLoggedIn")){
-			return(
-				<Redirect to='/' />
-			)
-		} else {
-		return (
-				<div className="inner-container">
-					ERROR
-				</div>
-			);
-		}
+		return(
+			<Redirect to='/' />
+		)
 	}
 }
 

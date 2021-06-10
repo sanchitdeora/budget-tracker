@@ -31,9 +31,8 @@ class Login extends React.Component {
 				isLoggedIn: true,
 				token: res.data.token
 			});
+			this.props.setToken(res.data.token)
 		}
-		sessionStorage.setItem("token", res.data.token)
-		console.log(this.state);
 	}
 
 	submitLogin(event) {
@@ -41,16 +40,10 @@ class Login extends React.Component {
 		this.postLoginRequest()
 
 		this.props.setLoginState(true)
-		localStorage.setItem("isLoggedIn", true)
-
-		console.log("checking....", localStorage.getItem("token"), localStorage.getItem("isLoggedIn"))
-		if (this.state.isLoggedIn) {
-			console.log("state:", this.state)
-		}
 	}
 
 	render() {
-		if (localStorage.getItem("isLoggedIn")){
+		if (this.state.isLoggedIn){
 			return(
 				<Redirect to='/home' />
 			)
