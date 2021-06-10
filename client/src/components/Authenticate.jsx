@@ -1,7 +1,7 @@
 import React from 'react';
 import Login from './Login.jsx';
 import Register from './Register';
-import './Authenticate.css';
+import './Authenticate.scss';
 
 class Authenticate extends React.Component {
 	constructor(props) {
@@ -40,7 +40,7 @@ class Authenticate extends React.Component {
        				</div>
 				</div>
 				<div className="box-container">
-					{this.state.isLoginOpen && <Login />}
+					{this.state.isLoginOpen && <Login setLoginState={this.props.setLoginState} />}
 					{this.state.isRegisterOpen && <Register />}
 				</div>
 			</div>

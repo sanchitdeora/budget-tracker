@@ -6,11 +6,12 @@ class Home extends React.Component {
 		this.state = {
 		};
 	};
+
 	render() {
 		return (
 			<div>
 				<div>
-					<h3>Served by Golang server from a single binary file</h3>
+
 				</div>
 			</div>
 		);

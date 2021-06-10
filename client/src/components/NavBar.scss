@@ -1,0 +1,35 @@
+.navbar-container {
+  background-color: #00897b;
+  width: auto;
+}
+
+.navbar-list {
+  margin: 0.5em 0 3em 0;
+  padding: 0;
+  list-style: none;
+  background-color: #00897b;
+}
+
+.navbar-list li {
+  float: left;
+}
+
+.navbar-list li a {
+  display: inline-block;
+  padding: 8px 15px;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+  color: white;
+  border-right: 1px solid black;
+}
+
+.navbar-list li div {
+  display: inline-block;
+  padding: 8px 15px;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: "Open Sans", sans-serif;
+  color: white;
+  border-right: 1px solid black;
+}

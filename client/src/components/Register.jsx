@@ -27,7 +27,7 @@ class Register extends React.Component {
 	submitRegister(event) {
 		console.log('The form was submitted with the following data:');
 		console.log("state:", this.state)
-
+		
 		axios.post("/api/register", this.state)
 			.then(res => {
 				console.log(res);
@@ -72,7 +72,7 @@ class Register extends React.Component {
 
 					<div className="input-group">
 						<label htmlFor="email">Email</label>
-						<input type="text" name="email" className="input-box" placeholder="Email"
+						<input type="email" name="email" className="input-box" placeholder="Email"
 							onChange={this.handleChange.bind(this)} />
 					</div>
 
@@ -90,7 +90,7 @@ class Register extends React.Component {
 					<div className="input-group">
 						<label htmlFor="dateOfBirth">Date of Birth</label>
 						<input
-							type="text"
+							type="date"
 							name="dateOfBirth"
 							className="input-box"
 							placeholder="Date of Birth"
@@ -108,7 +108,6 @@ class Register extends React.Component {
 							onChange={this.handleChange.bind(this)}
 						/>
 					</div>
-
 
 					<button
 						type="button"

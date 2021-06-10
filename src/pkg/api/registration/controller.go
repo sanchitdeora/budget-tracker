@@ -1,6 +1,8 @@
 package registration
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sanchitdeora/budget-tracker/src/models"
 )
@@ -11,6 +13,7 @@ func Register(c *gin.Context) {
 	err := c.BindJSON(&userBody)
 
 	if err != nil {
+		log.Println(err)
 		c.JSON(500, gin.H{
 			"message": "failure",
 			"error":   err,
@@ -21,6 +24,7 @@ func Register(c *gin.Context) {
 	err = RegisterService(c, *userBody)
 
 	if err != nil {
+		log.Println(err)
 		c.JSON(500, gin.H{
 			"message": "failure",
 			"error":   err,
@@ -39,6 +43,7 @@ func Login(c *gin.Context) {
 	err := c.BindJSON(&loginBody)
 
 	if err != nil {
+		log.Println(err)
 		c.JSON(500, gin.H{
 			"message": "failure",
 			"error":   err,
@@ -49,6 +54,7 @@ func Login(c *gin.Context) {
 	err = LoginService(c, *loginBody)
 
 	if err != nil {
+		log.Println(err)
 		c.JSON(400, gin.H{
 			"message": "validation error",
 			"error":   err,
@@ -57,5 +63,6 @@ func Login(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"message": "Login",
+		"token": "token123",
 	})
 }

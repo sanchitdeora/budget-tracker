@@ -5,10 +5,16 @@ import (
 	"encoding/json"
 	"log"
 
+	"github.com/google/uuid"
 	"github.com/sanchitdeora/budget-tracker/src/models"
 )
 
+const userPrefix string = "U-"
+const surveyPrefix string = "S-"
+
 func AddUser(ctx context.Context, user models.User) error {
+	user.UserID = userPrefix + uuid.NewString()
+
 	record, err := json.Marshal(user)
 	if err != nil {
 		log.Println(err)
@@ -25,6 +31,8 @@ func AddUser(ctx context.Context, user models.User) error {
 }
 
 func AddSurvey(ctx context.Context, survey models.Survey) error {
+	survey.SurveyID = surveyPrefix + uuid.NewString()
+	
 	record, err := json.Marshal(survey)
 	if err != nil {
 		log.Fatal(err)

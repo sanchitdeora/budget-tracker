@@ -20,9 +20,10 @@
 	cursor: pointer;
 }
 .selected-controller {
-	border-bottom: 2px solid #70a1ff;
+	border-bottom: 2px solid #00897b;
 }
 .box-container {
+	background-color: white;
 	display: flex;
 	flex-direction: column;
 	max-width: 24em;
@@ -45,7 +46,7 @@
 	margin-bottom: 17px;
 	font-family: Ozxgen, sans-serif;
 	font-size: 22px;
-	border-bottom: 2px solid #70a1ff;
+	border-bottom: 2px solid #00897b;
 }
 .box {
 	display: flex;
@@ -61,7 +62,7 @@
 }
 .input-box {
 	border-radius: 3px;
-	border: 1px solid #70a1ff;
+	border: 1px solid #00897b;
 	transition: border 0.4s ease-out;
 	padding: 13px;
 	margin: 2px 0px 5px 0px;
@@ -70,15 +71,15 @@
 	background: rgba(15, 15, 15, 0.01);
 }
 .input-box:hover {
-	border: 2px solid #70a1ff;
+	border: 2px solid #00897b;
 }
 .input-box:focus {
-	border: 2px solid #70a1ff;
-	/* box-shadow: 0px 0px 10px rgba(15, 15, 15, 0.2); */
+	border: 2px solid #00897b;
+	box-shadow: 0px 0px 10px rgba(15, 15, 15, 0.2);
 }
 .input-box:active {
-	border: 2px solid #70a1ff;
-	/* box-shadow: 0px 0px 10px rgba(15, 15, 15, 0.2); */
+	border: 2px solid #00897b;
+	box-shadow: 0px 0px 10px rgba(15, 15, 15, 0.2);
 }
 .input-box::placeholder {
 	font-family: Oxygen, sans-serif;
@@ -91,12 +92,12 @@
 	border-radius: 3px;
 	background-color: rgba(15, 15, 15, 0.03);
 	margin-top: 20px;
-	border: 2px solid #417cef;
+	border: 2px solid #00897b;
 	transition: background-color 0.3s ease-out;
 	cursor: pointer;
 }
 .submit-btn:hover, .submit-btn:focus {
-	background-color: #417cef;
+	background-color: #00897b;
 	color: white;
 }
 .danger-error {
