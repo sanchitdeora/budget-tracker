@@ -13,6 +13,7 @@ type User struct {
 }
 
 type Login struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    		string `json:"email"`
+	Password 		string `json:"password"`
+	SurveyComplete 	bool   `json:"surveyComplete"`
 }

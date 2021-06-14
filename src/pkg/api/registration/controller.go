@@ -62,7 +62,8 @@ func Login(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"message": "Login",
-		"token": "token123",
+		"message": 		"Login",
+		"token": 		"token123",
+		"surveyStatus": loginBody.SurveyComplete,
 	})
 }

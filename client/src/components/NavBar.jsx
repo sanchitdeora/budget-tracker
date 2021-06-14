@@ -1,5 +1,7 @@
 import React from 'react';
 import './NavBar.scss';
+import PropTypes from 'prop-types';
+import { Router, Link } from 'react-router-dom'
 
 class NavBar extends React.Component {
 	constructor(props) {
@@ -7,24 +9,23 @@ class NavBar extends React.Component {
 		this.state = {}
 	}
 
-
-
 	render() {
 		return (
 			<div className="navbar-container">
-				<ul className="navbar-list">
-					<li><a href='/'>Home</a></li>
-					<li><a href='/ping'>Ping</a></li>
-					
-					<li>
-						{this.props.isLoggedIn ? 
-						<a href='/logout' className="accountControl">Log out</a> :
-						<a href='/authenticate' className="accountControl">Log in</a>}
-					</li>
-				</ul>
+					<ul className="navbar-list">
+						<li><Link to='/home'>Home</Link></li>
+						<li><Link to='/ping'>Ping</Link></li>
+						
+						<li>
+							{this.props.isLoggedIn ? 
+							<Link to='/logout' className="accountControl">Log out</Link> :
+							<Link to='/authenticate' className="accountControl">Log in</Link>}
+						</li>
+					</ul>
 			</div>
 		);
 	}
 };
+
 
 export default NavBar

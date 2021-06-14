@@ -1,5 +1,5 @@
 import './App.scss';
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import Home from "./components/Home"
 import Ping from "./components/Ping"
@@ -10,28 +10,38 @@ import Authenticate from './components/Authenticate.jsx';
 class App extends React.Component<any, any> {
 	constructor(props) {
 		super(props);
+		const token = sessionStorage.getItem("token")
 		this.state = {
-			isLoggedIn: false,
-			token: "",
+			isLoggedIn: token !== null,
+			token: sessionStorage.getItem("token"),
 		};
 	};
 
 	setLoginState = (loginState) => {
 		this.setState({isLoggedIn: loginState})
-		console.log(this.state)	
+		// console.log(this.state)	
+	}
+
+	getLoginState = () => {
+		return this.state.isLoggedIn
 	}
 
 	setToken = (tokenVal) => {
+		sessionStorage.setItem("token", tokenVal)
 		this.setState({token: tokenVal})
-		console.log(this.state)	
+		// console.log(this.state)	
+	}
+
+	getToken = () => {
+		return this.state.token
 	}
 
 	render() {
 		return (
 			<div className="root-container">
-				<NavBar isLoggedIn={this.state.isLoggedIn} />
-				<div className="app-container">
 					<Router>
+						<NavBar isLoggedIn={this.state.isLoggedIn} />
+						<div className="app-container">
 						<Switch>
 							<Route exact path='/ping'>
 								<Ping />
@@ -40,22 +50,36 @@ class App extends React.Component<any, any> {
 								<Authenticate setLoginState={this.setLoginState} setToken={this.setToken} />
 							</Route>
 							<Route exact path='/logout'>
-								<Logout />
+								<Logout setLoginState={this.setLoginState} setToken={this.setToken} />
 							</Route>
-							<Route exact path='/home'>
-								<Home />
-							</Route>
+							<PrivateRoute component={Home} function={this.getLoginState} path="/home" exact />
+
 							<Route exact path="/">
   								{
 								  this.state.isLoggedIn ? <Redirect to="/home" /> : <Redirect to="/authenticate" />
 								} 
 							</Route>
-						</Switch>
+						</Switch></div>
 					</Router>
-				</div>
+				
 			</div>
 		);
 	}
 }
+
+const PrivateRoute = ({component: Component, function: getLoginState, ...rest}) => {
+    return (
+
+        // Show the component only when the user is logged in
+        // Otherwise, redirect the user to /signin page
+        <Route {...rest} render={props => (
+            getLoginState() ?
+                <Component {...props} />
+            : <Redirect to="/authenticate" />
+        )} />
+    );
+};
+
+
 
 export default App;

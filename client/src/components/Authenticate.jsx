@@ -12,11 +12,11 @@ class Authenticate extends React.Component {
 		};
 	};
 
-	showRegister() {
+	showRegister = () => {
 		this.setState({ isRegisterOpen: true, isLoginOpen: false });
 	}
 
-	showLogin() {
+	showLogin = () => {
 		this.setState({ isRegisterOpen: false, isLoginOpen: true });
 	}
 
@@ -40,8 +40,8 @@ class Authenticate extends React.Component {
        				</div>
 				</div>
 				<div className="box-container">
-					{this.state.isLoginOpen && <Login setLoginState={this.props.setLoginState}  setToken={this.props.setToken} />}
-					{this.state.isRegisterOpen && <Register />}
+					{this.state.isLoginOpen && <Login setLoginState={this.props.setLoginState}  setToken={this.props.setToken} showRegister={this.showRegister} />}
+					{this.state.isRegisterOpen && <Register showLogin={this.showLogin} />}
 				</div>
 			</div>
 		);

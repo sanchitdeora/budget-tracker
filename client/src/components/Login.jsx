@@ -31,19 +31,24 @@ class Login extends React.Component {
 				isLoggedIn: true,
 				token: res.data.token
 			});
+			this.props.setLoginState(true)
 			this.props.setToken(res.data.token)
 		}
+		// console.log("props", this.props);
+		// console.log("state", this.state);
 	}
 
-	submitLogin(event) {
+	submitLogin() {
 		console.log('The form was submitted with the following data:');
 		this.postLoginRequest()
+	}
 
-		this.props.setLoginState(true)
+	handleShowRegister = () => {
+		this.props.showRegister()
 	}
 
 	render() {
-		if (this.state.isLoggedIn){
+		if (sessionStorage.getItem("token") != null){
 			return(
 				<Redirect to='/home' />
 			)
@@ -77,9 +82,12 @@ class Login extends React.Component {
 						</div>
 
 						<button
-							type="button"
+							type="submit"
 							className="submit-btn"
 							onClick={this.submitLogin.bind(this)}>Login
+						</button>
+
+						<button id="showRegister" onClick={this.handleShowRegister}> Don't have an account yet? Join now!
 						</button>
 					</div>
 				</div>

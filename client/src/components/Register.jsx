@@ -36,7 +36,7 @@ class Register extends React.Component {
 			.catch(error => {
 				console.log(error.response)
 			});
-
+		this.props.showLogin()
 	}
 
 	render() {
