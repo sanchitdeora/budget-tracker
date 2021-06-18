@@ -3,7 +3,6 @@ package registration
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 
 	"github.com/sanchitdeora/budget-tracker/db"
@@ -19,7 +18,7 @@ func RegisterService(ctx context.Context, user models.User) error {
 	return nil
 }
 
-func LoginService(ctx context.Context, login models.Login) error {
+func LoginService(ctx context.Context, login *models.Login) error {
 	// improve validation logic
 
 	loginFromDB, err := db.GetLoginInfo(ctx, login)
@@ -28,12 +27,11 @@ func LoginService(ctx context.Context, login models.Login) error {
 		return err
 	}
 
-	fmt.Println(loginFromDB)
-	fmt.Println(*loginFromDB)
-
 	if loginFromDB.Password != login.Password {
 		return errors.New("invaid login")
 	}
+	login.SurveyComplete = loginFromDB.SurveyComplete
+	log.Println("LoginBody inside: ", login)
 
 	return err
 }

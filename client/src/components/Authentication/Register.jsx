@@ -26,7 +26,6 @@ class Register extends React.Component {
 
 	submitRegister(event) {
 		console.log('The form was submitted with the following data:');
-		console.log("state:", this.state)
 		
 		axios.post("/api/register", this.state)
 			.then(res => {

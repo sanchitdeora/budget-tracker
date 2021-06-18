@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { Redirect } from "react-router-dom";
-
+import { TOKEN, EMAIL, IS_SURVEY_COMPLETE } from '../../utils/GlobalConstants'
 
 class Login extends React.Component {
 	constructor(props) {
@@ -20,13 +20,14 @@ class Login extends React.Component {
 		this.setState({
 			[name]: value
 		});
-
 	}
 
 	async postLoginRequest() {
 		let res = await axios.post("/api/login", this.state);
 		console.log(res);
 		if (res.status === 200) {
+			sessionStorage.setItem(IS_SURVEY_COMPLETE, res.data.isSurveyComplete)
+			sessionStorage.setItem(EMAIL, this.state.email)
 			this.setState({
 				isLoggedIn: true,
 				token: res.data.token
@@ -34,8 +35,6 @@ class Login extends React.Component {
 			this.props.setLoginState(true)
 			this.props.setToken(res.data.token)
 		}
-		// console.log("props", this.props);
-		// console.log("state", this.state);
 	}
 
 	submitLogin() {
@@ -48,12 +47,19 @@ class Login extends React.Component {
 	}
 
 	render() {
-		if (sessionStorage.getItem("token") != null){
-			return(
-				<Redirect to='/home' />
-			)
+		if (sessionStorage.getItem(TOKEN) != null) {
+			if (sessionStorage.getItem(IS_SURVEY_COMPLETE) === "true") {
+				return(
+					<Redirect to='/home' />
+				)
+			} else {
+				return(
+					<Redirect to='/survey' />
+				)
+			}
+			
 		} else {
-		return (
+			return (
 				<div className="inner-container">
 					<div className="header">
 						Login
