@@ -1,15 +1,47 @@
-import './App.scss';
 import React from 'react';
-import { TOKEN } from './utils/GlobalConstants'
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
-import Home from "./components/Home.jsx"
-import Ping from "./components/Ping"
-import NavBar from './components/NavBar.jsx';
-import Logout from './components/Authentication/Logout.jsx';
-import Authenticate from './components/Authentication/Authenticate.jsx';
-import Survey from './components/Survey.jsx';
+import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
+import './App.scss';
 
-// const TOKEN = "token"
+// to use fontRoboto
+import "@fontsource/roboto";
+// importing paper and container from core
+import { Paper, Container } from "@material-ui/core";
+
+// these are for customizing the theme
+import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+/* material shell also provide the colors we can import them like these */
+import { teal, orange } from "@material-ui/core/colors";
+import Authenticate from './components/Authentication/Authenticate.jsx';
+import Logout from './components/Authentication/Logout.jsx';
+import Home from "./components/Home.jsx";
+import NavBar from './components/NavBar.jsx';
+import Ping from "./components/Ping";
+import Survey from './components/Survey.jsx';
+import { isLogin } from './utils';
+import { TOKEN } from './utils/GlobalConstants';
+
+const theme = createMuiTheme({
+  typography: {
+    h1: {
+     /* this will change the font size for h1, we can also do 
+        it for others, */
+      fontSize: "3rem",
+    },
+  },
+  palette: {
+    /* this is used to turn the background dark, but we have 
+        to use Paper for this inOrder to use it. */
+    type: "light",
+    primary: {
+     // main: colorName[hue],
+     // we have to import the color first to use it
+      main: teal[600],
+    },
+    secondary: {
+      main: orange[400],
+    },
+  },
+});
 
 class App extends React.Component<any, any> {
 	constructor(props) {
@@ -34,7 +66,9 @@ class App extends React.Component<any, any> {
 
 	render() {
 		return (
-			<div className="root-container">
+		<ThemeProvider theme={theme}>
+			<Paper style={{ height: "200vh" }}>
+				<Container className="root-container">
 					<Router>
 						<NavBar isLoggedIn={this.state.isLoggedIn} />
 						<div className="app-container">
@@ -59,16 +93,17 @@ class App extends React.Component<any, any> {
 							</Route>
 
 							<Route exact path="/">
-  								{
-								  this.state.isLoggedIn ? 
-								  <Redirect to="/home" /> : 
-								  <Redirect to="/authenticate" />
+								{
+								this.state.isLoggedIn ? 
+								<Redirect to="/home" /> : 
+								<Redirect to="/authenticate" />
 								} 
 							</Route>
 						</Switch></div>
 					</Router>
-				
-			</div>
+				</Container>
+			</Paper>
+		</ThemeProvider>
 		);
 	}
 }
@@ -79,7 +114,7 @@ const PrivateRoute = ({component: Component, ...rest}) => {
         // Show the component only when the user is logged in
         // Otherwise, redirect the user to /authenticate page
         <Route {...rest} render={props => (
-            (sessionStorage.getItem(TOKEN) !== null) ?
+            isLogin() ?
                 <Component {...props} />
             : <Redirect to="/authenticate" />
         )} />

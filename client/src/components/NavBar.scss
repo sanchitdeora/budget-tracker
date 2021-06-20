@@ -1,33 +1,28 @@
 .navbar-container {
-  background-color: #00897b;
   width: auto;
 }
 
-.navbar-list {
-  margin: 0.5em 0 3em 0;
-  padding: 0;
-  list-style: none;
-  background-color: #00897b;
+.navbar-item:hover {
+  color: inherit;
 }
 
-.navbar-list a {
-  float: left;
-  overflow: hidden;
-  padding: 8px 15px;
-  text-decoration: none;
-  font-weight: bold;
-  font-family: "Open Sans", sans-serif;
-  color: white;
-  border-right: 1px solid black;
+.account-container {
+  float: right;
 }
 
-.navbar-list a:hover {
-  opacity: 0.7;
+.account-button {
+  padding: 7px !important;
 }
 
-.accountControl {
-  float: right !important;
-  right: 15px;
-  border-left: 1px solid black;
-  border-right: 0 !important;
+.account-menu {
+  width: 100%;
+  display: inherit;
+  align-items: inherit;
+  justify-content: inherit;
+  font-size: 0.875rem !important;
+  letter-spacing: 0.02857em !important;
+}
+
+.account-menu:hover {
+  color: inherit;
 }
