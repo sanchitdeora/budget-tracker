@@ -7,7 +7,7 @@ class Ping extends React.Component {
 		return (
 			<div>
 				<div>
-					<h1>Yo!</h1>
+					<h1>Yo Ping!</h1>
 				</div>
 			</div>
 		);

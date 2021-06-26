@@ -14,6 +14,7 @@ import { teal, orange } from "@material-ui/core/colors";
 import Authenticate from './components/Authentication/Authenticate.jsx';
 import Logout from './components/Authentication/Logout.jsx';
 import Home from "./components/Home.jsx";
+import Account from "./components/Account.jsx";
 import NavBar from './components/NavBar.jsx';
 import Ping from "./components/Ping";
 import Survey from './components/Survey.jsx';
@@ -48,8 +49,12 @@ class App extends React.Component<any, any> {
 		super(props);
 		const token = sessionStorage.getItem(TOKEN)
 		this.state = {
-			isLoggedIn: token !== null,
-			token: sessionStorage.getItem(TOKEN),
+			isLoggedIn: token,
+			userInfo: {
+				email: "",
+				name: "",
+				surveyComplete: false,
+			}
 		};
 	};
 
@@ -64,6 +69,15 @@ class App extends React.Component<any, any> {
 		// console.log(this.state)	
 	}
 
+	setUser = (userBody) => {
+		const user = {
+			name: userBody.name,
+			email: userBody.email,
+			surveyComplete: userBody.surveyComplete,
+		}
+		this.setState({userInfo: user})
+	}
+
 	render() {
 		return (
 		<ThemeProvider theme={theme}>
@@ -72,34 +86,40 @@ class App extends React.Component<any, any> {
 					<Router>
 						<NavBar isLoggedIn={this.state.isLoggedIn} />
 						<div className="app-container">
-						<Switch>
-							
-							<Route exact path='/ping'>
-								<Ping />
-							</Route>
-							
-							<Route exact path='/authenticate'>
-								<Authenticate setLoginState={this.setLoginState} setToken={this.setToken} />
-							</Route>
-							
-							<Route exact path='/logout'>
-								<Logout setLoginState={this.setLoginState} setToken={this.setToken} />
-							</Route>
+							<Switch>
+								
+								<Route exact path='/ping'>
+									<Ping />
+								</Route>
+								
+								<Route exact path='/auth'>
+									<Authenticate setLoginState={this.setLoginState} setToken={this.setToken} setUser={this.setUser} />
+								</Route>
+								
+								<Route exact path='/logout'>
+									<Logout setLoginState={this.setLoginState} setToken={this.setToken} />
+								</Route>
 
-							<PrivateRoute component={Home} path="/home" exact />
+								<PrivateRoute component={Home} props={this.state} path="/home" exact />
+								<PrivateRoute component={Account} props={this.state.userInfo} path="/myaccount" exact />
 
-							<Route exact path='/survey'>
-								<Survey />
-							</Route>
-
-							<Route exact path="/">
+								<Route exact path='/survey'>
 								{
-								this.state.isLoggedIn ? 
-								<Redirect to="/home" /> : 
-								<Redirect to="/authenticate" />
-								} 
-							</Route>
-						</Switch></div>
+									(this.state.isLoggedIn && !this.state.userInfo.SurveyComplete) ? 
+									<Survey /> :
+									<Redirect to="/home" />								
+								}
+								</Route>
+
+								<Route exact path="/">
+								{
+									this.state.isLoggedIn ? 
+									<Redirect to="/home" /> : 
+									<Redirect to="/auth" />
+								}
+								</Route>
+							</Switch>
+						</div>
 					</Router>
 				</Container>
 			</Paper>
@@ -108,15 +128,15 @@ class App extends React.Component<any, any> {
 	}
 }
 
-const PrivateRoute = ({component: Component, ...rest}) => {
+const PrivateRoute = ({component: Component, props: Props, ...rest}) => {
     return (
 
         // Show the component only when the user is logged in
-        // Otherwise, redirect the user to /authenticate page
+        // Otherwise, redirect the user to /auth page
         <Route {...rest} render={props => (
             isLogin() ?
-                <Component {...props} />
-            : <Redirect to="/authenticate" />
+                <Component {...Props} />
+            : <Redirect to="/auth" />
         )} />
     );
 };

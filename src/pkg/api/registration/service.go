@@ -2,7 +2,9 @@ package registration
 
 import (
 	"context"
+	"crypto/rand"
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/sanchitdeora/budget-tracker/db"
@@ -18,20 +20,32 @@ func RegisterService(ctx context.Context, user models.User) error {
 	return nil
 }
 
-func LoginService(ctx context.Context, login *models.Login) error {
+func LoginService(ctx context.Context, login *models.Login) (*models.LoginResponse, error) {
 	// improve validation logic
 
-	loginFromDB, err := db.GetLoginInfo(ctx, login)
+	user, err := db.GetUserByEmail(ctx, login.Email)
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
-	if loginFromDB.Password != login.Password {
-		return errors.New("invaid login")
+	if user.Password != login.Password {
+		return nil, errors.New("invaid login")
 	}
-	login.SurveyComplete = loginFromDB.SurveyComplete
-	log.Println("LoginBody inside: ", login)
 
-	return err
+	var resp models.LoginResponse
+
+	resp.Message = "login response"
+	resp.Token = tokenGenerator()
+	resp.Email = login.Email
+	resp.Name = user.Lastname + ", " + user.Firstname
+	resp.SurveyComplete = user.SurveyComplete
+
+	return &resp, err
+}
+
+func tokenGenerator() string {
+	b := make([]byte, 4)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)
 }

@@ -40,13 +40,14 @@ class NavBar extends React.Component {
 									this.props.isLoggedIn ?
 									<div className="account-container">
 										<IconButton 
-											style={{ color: 'white' }}
+											
 											className="account-button"
 											aria-controls="simple-menu" 
 											aria-haspopup="true"
 											onClick={this.handleClick.bind(this)}
 										>
-											<AccountCircleOutlinedIcon className="accountControl"/>
+											<AccountCircleOutlinedIcon style={{ color: 'white', }} className="accountControl"/>
+											<div className="icon-label" style={{ color: 'white' }}>{sessionStorage.getItem("username")}</div>
 										</IconButton>
 										<Menu
 											id="simple-menu"
@@ -59,7 +60,7 @@ class NavBar extends React.Component {
 										>
 											<MenuItem 
 												className="account-menu" 
-												component={Link} to={'/account'}
+												component={Link} to={'/myaccount'}
 												onClick={this.handleClose.bind(this)}>
 														My Account
 											</MenuItem>
@@ -73,7 +74,7 @@ class NavBar extends React.Component {
 									</div>
 									:
 									<div className="account-container">
-										<Button color="inherit" className="account-menu" component={Link} to={'/authenticate'}>Log in</Button>
+										<Button color="inherit" className="account-menu" component={Link} to={'/auth'}>Log in</Button>
 									</div>
 								}
 							</Grid>

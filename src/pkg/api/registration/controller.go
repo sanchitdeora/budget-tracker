@@ -51,7 +51,7 @@ func Login(c *gin.Context) {
 	}
 
 	// Check if login is correct
-	err = LoginService(c, loginBody)
+	resp, err := LoginService(c, loginBody)
 
 	if err != nil {
 		log.Println(err)
@@ -61,11 +61,5 @@ func Login(c *gin.Context) {
 		})
 	}
 
-	log.Println("LoginBody outside: ", loginBody)
-
-	c.JSON(200, gin.H{
-		"message":          "Login",
-		"token":            "token123",
-		"isSurveyComplete": loginBody.SurveyComplete,
-	})
+	c.JSON(200, resp)
 }

@@ -12,6 +12,7 @@
 
 .account-button {
   padding: 7px !important;
+  border-radius: 25px !important;
 }
 
 .account-menu {
@@ -25,4 +26,9 @@
 
 .account-menu:hover {
   color: inherit;
+}
+
+.icon-label {
+  font-size: medium;
+  padding: 0px 5px !important;
 }

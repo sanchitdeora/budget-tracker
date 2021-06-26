@@ -11,9 +11,3 @@ type User struct {
 	SurveyID       string `json:"surveyId,omitempty"`
 	SurveyComplete bool   `json:"surveyComplete"`
 }
-
-type Login struct {
-	Email    		string `json:"email"`
-	Password 		string `json:"password"`
-	SurveyComplete 	bool   `json:"surveyComplete"`
-}

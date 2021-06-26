@@ -85,20 +85,3 @@ func AddSurvey(ctx context.Context, survey *models.Survey) error {
 	}
 	return nil
 }
-
-func GetLoginInfo(ctx context.Context, login *models.Login) (*models.Login, error) {
-	var loginDB models.Login
-	userJSON, err := GetUserRecordByEmail(ctx, login.Email)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
-	err = json.Unmarshal(userJSON, &loginDB)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	// fmt.Println("After unmarshall", loginDB)
-	return &loginDB, nil
-}

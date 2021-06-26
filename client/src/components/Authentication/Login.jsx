@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { Redirect } from "react-router-dom";
-import { TOKEN, EMAIL, IS_SURVEY_COMPLETE } from '../../utils/GlobalConstants'
+import { TOKEN, EMAIL, NAME, IS_SURVEY_COMPLETE } from '../../utils/GlobalConstants'
 
 class Login extends React.Component {
 	constructor(props) {
@@ -26,14 +26,17 @@ class Login extends React.Component {
 		let res = await axios.post("/api/login", this.state);
 		console.log(res);
 		if (res.status === 200) {
-			sessionStorage.setItem(IS_SURVEY_COMPLETE, res.data.isSurveyComplete)
 			sessionStorage.setItem(EMAIL, this.state.email)
+			sessionStorage.setItem(NAME, res.data.name)
+			sessionStorage.setItem(IS_SURVEY_COMPLETE, res.data.surveyComplete)			
+			console.log(sessionStorage)
 			this.setState({
 				isLoggedIn: true,
-				token: res.data.token
+				token: res.data.token,
 			});
 			this.props.setLoginState(true)
 			this.props.setToken(res.data.token)
+			this.props.setUser(res.data)
 		}
 	}
 
