@@ -1,3 +1,4 @@
+export const USER_ID = "userId"
 export const TOKEN = "token"
 export const EMAIL = "email"
 export const NAME = "username"

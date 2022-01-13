@@ -49,8 +49,10 @@ class App extends React.Component<any, any> {
 		super(props);
 		const token = sessionStorage.getItem(TOKEN)
 		this.state = {
-			isLoggedIn: token,
+			isLoggedIn: Boolean(token),
+			token: token,
 			userInfo: {
+				userID: "",
 				email: "",
 				name: "",
 				surveyComplete: false,
@@ -71,6 +73,7 @@ class App extends React.Component<any, any> {
 
 	setUser = (userBody) => {
 		const user = {
+			userID: userBody.userId,
 			name: userBody.name,
 			email: userBody.email,
 			surveyComplete: userBody.surveyComplete,

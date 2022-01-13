@@ -6,6 +6,7 @@ type Login struct {
 }
 
 type LoginResponse struct {
+	UserID		   string `json:"userId"`
 	Message        string `json:"msg"`
 	Token          string `json:"token"`
 	Email          string `json:"email"`

@@ -50,7 +50,7 @@ class Login extends React.Component {
 	}
 
 	render() {
-		if (sessionStorage.getItem(TOKEN) != null) {
+		if (sessionStorage.getItem(TOKEN)) {
 			if (sessionStorage.getItem(IS_SURVEY_COMPLETE) === "true") {
 				return(
 					<Redirect to='/home' />

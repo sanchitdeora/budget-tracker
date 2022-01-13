@@ -20,7 +20,9 @@ var (
 )
 
 const (
-	emailKey = "email"
+	emailKey    = "email"
+	userIdKey   = "userId"
+	surveyIdKey = "surveyId"
 )
 
 func Init() (*mongo.Client, context.Context, error) {
@@ -46,19 +48,49 @@ func Init() (*mongo.Client, context.Context, error) {
 	return client, ctx, err
 }
 
-func GetUserRecordByEmail(ctx context.Context, key string) ([]byte, error) {
-	var user bson.M
-	if err := userCollection.FindOne(ctx, bson.M{emailKey: key}).Decode(&user); err != nil {
+func GetUserRecord(ctx context.Context, key string) ([]byte, error) {
+	var record bson.M
+	if err := userCollection.FindOne(ctx, bson.M{userIdKey: key}).Decode(&record); err != nil {
 		log.Print("Error trying to get user from db", err)
 		return nil, err
 	}
 
-	userJSON, err := bson.MarshalExtJSON(&user, true, true)
+	userJSON, err := bson.MarshalExtJSON(&record, true, true)
 	if err != nil {
 		log.Print(err)
 		return nil, err
 	}
 	return userJSON, nil
+}
+
+func GetUserRecordByEmail(ctx context.Context, key string) ([]byte, error) {
+	var record bson.M
+	if err := userCollection.FindOne(ctx, bson.M{emailKey: key}).Decode(&record); err != nil {
+		log.Print("Error trying to get user from db", err)
+		return nil, err
+	}
+
+	userJSON, err := bson.MarshalExtJSON(&record, true, true)
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+	return userJSON, nil
+}
+
+func GetSurveyRecord(ctx context.Context, key string) ([]byte, error) {
+	var record bson.M
+	if err := surveyCollection.FindOne(ctx, bson.M{surveyIdKey: key}).Decode(&record); err != nil {
+		log.Print("Error trying to get survey from db", err)
+		return nil, err
+	}
+	log.Println(record)
+	surveyJSON, err := bson.MarshalExtJSON(&record, true, true)
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+	return surveyJSON, nil
 }
 
 func UpdateUserRecord(ctx context.Context, value string, update primitive.D) error {
@@ -79,6 +111,7 @@ func AddUserRecord(ctx context.Context, record []byte) error {
 }
 
 func AddSurveyRecord(ctx context.Context, record []byte) error {
+	
 	return addRecordToCollection(ctx, record, surveyCollection)
 }
 

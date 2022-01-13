@@ -35,6 +35,7 @@ func LoginService(ctx context.Context, login *models.Login) (*models.LoginRespon
 
 	var resp models.LoginResponse
 
+	resp.UserID = user.UserID
 	resp.Message = "login response"
 	resp.Token = tokenGenerator()
 	resp.Email = login.Email

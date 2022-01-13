@@ -4,7 +4,13 @@ type Survey struct {
 	SurveyID      string `json:"surveyId"`
 	UserID        string `json:"userId"`
 	Email         string `json:"email"`
-	MonthlyIncome int64  `json:"monthlyIncome"`
+	MonthlyIncome string  `json:"monthlyIncome"`
 	SavingsType   string `json:"savingsType"`
-	MonthlyLimit  int64  `json:"monthlyLimit"`
+	MonthlyLimit  string  `json:"monthlyLimit"`
+}
+
+type SurveyResponse struct {
+	MonthlyIncome string  `json:"monthlyIncome"`
+	SavingsType   string `json:"savingsType"`
+	MonthlyLimit  string  `json:"monthlyLimit"`
 }
