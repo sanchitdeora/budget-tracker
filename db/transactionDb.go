@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 
@@ -45,24 +44,23 @@ func GetAllTransactions(ctx context.Context, transactions *[]models.Transaction)
 }
 
 func GetTransactionRecordById(ctx context.Context, key string, transaction *models.Transaction) error {
-	filter := bson.M{transactionIdKey: key}
-	if err := transactionCollection.FindOne(ctx, filter).Decode(&transaction); err != nil {
-		log.Println(err)
-		return err
-	}
-
 	var result bson.M
-	transactionJson, err := json.Marshal(result)
+
+	filter := bson.M{transactionIdKey: key}
+	err := transactionCollection.FindOne(ctx, filter).Decode(&result)
+	if len(result) == 0 {
+		return nil
+	}
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 
-	err = json.Unmarshal(transactionJson, &transaction)
-	if err != nil {
+	if err := utils.ConvertBsonToStruct(result, transaction); err != nil {
 		log.Println(err)
 		return err
 	}
+
 	return nil
 	
 }

@@ -5,7 +5,7 @@ import (
 )
 
 type Transaction struct {
-	TransactionId string `json:"transactionId"`
+	TransactionId string `json:"transaction_id"`
 	Title         string `json:"title"`
 	Category      string `json:"category"`
 	Amount        int    `json:"amount"`
@@ -30,7 +30,11 @@ var TransactionCategoryMap = []string{
 
 func (transaction *Transaction) SetCategory() {
 	for index, category := range TransactionCategoryMap {
-		if category != strings.ToLower(transaction.Category) && index == len(TransactionCategoryMap)-1 {
+		if category == strings.ToLower(transaction.Category) {
+			transaction.Category = TransactionCategoryMap[index]
+			return
+		}
+		if index == len(TransactionCategoryMap)-1 {
 			transaction.Category = TransactionCategoryMap[index]
 		}
 	}

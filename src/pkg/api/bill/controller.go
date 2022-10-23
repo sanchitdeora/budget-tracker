@@ -1,7 +1,7 @@
 package bill
 
 import (
-	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sanchitdeora/budget-tracker/src/models"
@@ -12,7 +12,8 @@ func GetAllBills(c *gin.Context) {
 	var response []models.Bill
 	err := getBills(c, &response)
 	if err != nil {
-		log.Fatal(err)
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
 	}
 
 	c.JSON(200, gin.H{
@@ -26,11 +27,15 @@ func GetBillById(c *gin.Context) {
 
 	var response models.Bill
 	err := getBillById(c, c.Param("id"), &response)
-	if err != nil {
-		log.Fatal(err)
+	if response.BillId == "" {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
 	}
-
-	c.JSON(200, gin.H{
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
 		"message": "Success",
 		"body":    response,
 	})
@@ -42,14 +47,13 @@ func CreateBill(c *gin.Context) {
 	var bill models.Bill
 	err := c.BindJSON(&bill)
 	if err != nil {
-		c.JSON(500, gin.H{
-			"message": "Error",
-			"body":    err,
-		})
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
 	}
 	billId, err := createBill(c, bill)
 	if err != nil {
-		log.Fatal(err)
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
 	}
 
 	c.JSON(201, gin.H{
@@ -64,15 +68,14 @@ func UpdateBill(c *gin.Context) {
 	var bill models.Bill
 	err := c.BindJSON(&bill)
 	if err != nil {
-		c.JSON(500, gin.H{
-			"message": "Error",
-			"body":    err,
-		})
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
 	}
 	
 	billId, err := updateBillById(c, c.Param("id"), bill)
 	if err != nil {
-		log.Fatal(err)
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
 	}
 	
 	c.JSON(200, gin.H{
@@ -86,7 +89,8 @@ func DeleteBill(c *gin.Context) {
 
 	billId, err := deleteBillById(c, c.Param("id"))
 	if err != nil {
-		log.Fatal(err)
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
 	}
 
 	c.JSON(200, gin.H{

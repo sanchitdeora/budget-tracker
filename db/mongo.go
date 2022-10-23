@@ -29,15 +29,16 @@ const (
 	amountDueKey = "amount_due"
 	dateKey = "date"
 	dueDataKey = "due_date"
+	howOftenKey = "how_often"
 	noteKey = "note"
 	isPaidKey = "is_paid"
 
 	// Transaction constants
-	transactionIdKey = "transactionId"
+	transactionIdKey = "transaction_id"
 	transactionPrefix = "T-"
 	
 	// Bill constants
-	billIdKey = "billId"
+	billIdKey = "bill_id"
 	billPrefix = "B-"
 )
 
@@ -55,7 +56,6 @@ func Init() (*mongo.Client, context.Context, error) {
 		log.Fatal(err)
 	}
 
-	// fmt.Println("Start creating database")
 	budgetDatabase = client.Database("budget-tracker")
 
 	userCollection = budgetDatabase.Collection("user_table")

@@ -44,18 +44,23 @@ func GetAllBillRecords(ctx context.Context, bills *[]models.Bill) error {
 }
 
 func GetBillRecordById(ctx context.Context, id string, bill *models.Bill) error {
-	filter := bson.M{billIdKey: id}
-	if err := billCollection.FindOne(ctx, filter).Decode(&bill); err != nil {
+	var result bson.M
+
+	filter := bson.D{{Key: billIdKey, Value: id}}
+	err := billCollection.FindOne(ctx, filter).Decode(&result)
+	if len(result) == 0 {
+		return nil
+	}
+	if err != nil {
 		log.Println(err)
 		return err
 	}
-
-	var result bson.M
+	
 	if err := utils.ConvertBsonToStruct(result, bill); err != nil {
 		log.Println(err)
 		return err
 	}
-
+	
 	return nil
 	
 }
@@ -68,6 +73,7 @@ func InsertBillRecord(ctx context.Context, bill models.Bill) (string, error) {
 		{Key: categoryKey, Value: bill.Category},
 		{Key: amountDueKey, Value: bill.AmountDue},
 		{Key: dueDataKey, Value: bill.DueDate},
+		{Key: howOftenKey, Value: bill.HowOften},
 		{Key: noteKey, Value: bill.Note},
 		{Key: isPaidKey, Value: bill.IsPaid},
 	}
@@ -87,6 +93,7 @@ func UpdateBillRecordById(ctx context.Context, id string, bill models.Bill) (str
 			{Key: categoryKey, Value: bill.Category},
 			{Key: amountDueKey, Value: bill.AmountDue},
 			{Key: dueDataKey, Value: bill.DueDate},
+			{Key: howOftenKey, Value: bill.HowOften},
 			{Key: noteKey, Value: bill.Note},
 			{Key: isPaidKey, Value: bill.IsPaid},
 		}},

@@ -2,7 +2,7 @@ package webapi
 
 import (
 	"github.com/gin-gonic/gin"
-	bill "github.com/sanchitdeora/budget-tracker/src/pkg/api/bills"
+	"github.com/sanchitdeora/budget-tracker/src/pkg/api/bill"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/home"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/quickstart"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/registration"
