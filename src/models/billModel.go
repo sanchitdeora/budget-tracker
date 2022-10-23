@@ -2,17 +2,18 @@ package models
 
 import (
 	"strings"
+	"time"
 )
 
 type Bill struct {
-	BillId 	  string `json:"bill_id"`
-	Title     string `json:"title"`
-	Category  string `json:"category"`
-	AmountDue int    `json:"amount_due"`
-	DueDate   int    `json:"due_date"`
-	HowOften  string `json:"how_often"`
-	Note   	  string `json:"note,omitempty"`
-	IsPaid 	  bool	 `json:"is_paid"`
+	BillId 	  string 	`json:"bill_id"`
+	Title     string 	`json:"title"`
+	Category  string 	`json:"category"`
+	AmountDue int    	`json:"amount_due"`
+	DueDate   time.Time `json:"due_date"`
+	HowOften  string 	`json:"how_often"`
+	Note   	  string 	`json:"note,omitempty"`
+	IsPaid 	  bool	 	`json:"is_paid"`
 }
 
 var BillCategoryMap = []string{

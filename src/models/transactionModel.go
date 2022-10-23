@@ -2,6 +2,7 @@ package models
 
 import (
 	"strings"
+	"time"
 )
 
 type Transaction struct {
@@ -9,8 +10,8 @@ type Transaction struct {
 	Title         string `json:"title"`
 	Category      string `json:"category"`
 	Amount        int    `json:"amount"`
-	Date          int    `json:"date"`
-	Note   string `json:"Note"`
+	Date          time.Time    `json:"date"`
+	Note   		  string `json:"Note"`
 }
 
 var TransactionCategoryMap = []string{
