@@ -2,33 +2,19 @@ package transaction
 
 import (
 	"context"
-	"log"
 
 	"github.com/sanchitdeora/budget-tracker/db"
 	"github.com/sanchitdeora/budget-tracker/src/models"
 )
 
-func getTransactions(ctx context.Context) ([]models.Transaction, error) {
-	var results []models.Transaction
-	
-	err := db.GetAllTransactions(ctx, &results)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	return results, nil
+func getTransactions(ctx context.Context, transactions *[]models.Transaction) (error) {
+	// TODO: input validation
+	return db.GetAllTransactions(ctx, transactions)
 }
 
-func getTransactionById(ctx context.Context, id string) (models.Transaction, error) {
+func getTransactionById(ctx context.Context, id string, transaction *models.Transaction) (error) {
 	// TODO: input validation
-	var result models.Transaction
-	
-	err := db.GetTransactionRecordById(ctx, id, &result)
-	if err != nil {
-		log.Println(err)
-		return result, err
-	}
-	return result, nil
+	return db.GetTransactionRecordById(ctx, id, transaction)
 }
 
 func createTransaction(ctx context.Context, transaction models.Transaction) (string, error) {
@@ -39,6 +25,7 @@ func createTransaction(ctx context.Context, transaction models.Transaction) (str
 
 func updateTransactionById(ctx context.Context, id string, transaction models.Transaction) (string, error) {
 	// TODO: input validation
+	transaction.SetCategory()
 	return db.UpdateTransactionRecordById(ctx, id, transaction)
 }
 

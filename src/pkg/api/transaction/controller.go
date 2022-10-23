@@ -9,29 +9,30 @@ import (
 
 func GetAllTransactions(c *gin.Context) {
 
-	var result []models.Transaction
-	result, err := getTransactions(c)
+	var response []models.Transaction
+	err := getTransactions(c, &response)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	c.JSON(200, gin.H{
 		"message": "Success",
-		"body":    result,
+		"body":    response,
 	})
 
 }
 
 func GetTransactionById(c *gin.Context) {
 
-	result, err := getTransactionById(c, c.Param("id"))
+	var response models.Transaction
+	err := getTransactionById(c, c.Param("id"), &response)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	c.JSON(200, gin.H{
 		"message": "Success",
-		"body":    result,
+		"body":    response,
 	})
 
 }

@@ -8,12 +8,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sanchitdeora/budget-tracker/src/models"
+	"github.com/sanchitdeora/budget-tracker/src/utils"
 	"go.mongodb.org/mongo-driver/bson"
-)
-
-const (
-	transactionIdKey = "transactionId"
-	transactionPrefix = "T-"
 )
 
 func GetAllTransactions(ctx context.Context, transactions *[]models.Transaction) error {
@@ -38,17 +34,11 @@ func GetAllTransactions(ctx context.Context, transactions *[]models.Transaction)
 	}
 	cur.Close(ctx)
 
-	records, err := json.Marshal(results)
+	err = utils.ConvertBsonToStruct(results, transactions)
 	if err != nil {
-		log.Println(err)
-		return err
+		log.Fatal(err)
 	}
 
-	err = json.Unmarshal(records, &transactions)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
 	fmt.Printf("Get All transaction. Count of elements: %v\n", len(results))
 	return nil
 	
@@ -80,12 +70,12 @@ func GetTransactionRecordById(ctx context.Context, key string, transaction *mode
 func InsertTransactionRecord(ctx context.Context, transaction models.Transaction) (string, error) {
 	transactionId := transactionPrefix + uuid.NewString()
 	data := bson.D{
-		{Key: "transactionId", Value: transactionId},
-		{Key: "title", Value: transaction.Title},
-		{Key: "category", Value: transaction.Category},
-		{Key: "amount", Value: transaction.Amount},
-		{Key: "date", Value: transaction.Date},
-		{Key: "description", Value: transaction.Description},
+		{Key: transactionIdKey, Value: transactionId},
+		{Key: titleKey, Value: transaction.Title},
+		{Key: categoryKey, Value: transaction.Category},
+		{Key: amountKey, Value: transaction.Amount},
+		{Key: dateKey, Value: transaction.Date},
+		{Key: noteKey, Value: transaction.Note},
 	}
 
 	result, err := transactionCollection.InsertOne(ctx, data)
@@ -99,12 +89,11 @@ func InsertTransactionRecord(ctx context.Context, transaction models.Transaction
 func UpdateTransactionRecordById(ctx context.Context, id string, transaction models.Transaction) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
-			{Key: "transactionId", Value: id},
-			{Key: "title", Value: transaction.Title},
-			{Key: "category", Value: transaction.Category},
-			{Key: "amount", Value: transaction.Amount},
-			{Key: "date", Value: transaction.Date},
-			{Key: "description", Value: transaction.Description},
+			{Key: titleKey, Value: transaction.Title},
+			{Key: categoryKey, Value: transaction.Category},
+			{Key: amountKey, Value: transaction.Amount},
+			{Key: dateKey, Value: transaction.Date},
+			{Key: noteKey, Value: transaction.Note},
 		}},
 	}
 	filter := bson.D{{Key: transactionIdKey, Value: id}}

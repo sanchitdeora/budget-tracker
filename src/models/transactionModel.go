@@ -10,7 +10,7 @@ type Transaction struct {
 	Category      string `json:"category"`
 	Amount        int    `json:"amount"`
 	Date          int    `json:"date"`
-	Description   string `json:"description"`
+	Note   string `json:"Note"`
 }
 
 var TransactionCategoryMap = []string{

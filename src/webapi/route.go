@@ -2,6 +2,7 @@ package webapi
 
 import (
 	"github.com/gin-gonic/gin"
+	bill "github.com/sanchitdeora/budget-tracker/src/pkg/api/bills"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/home"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/quickstart"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/registration"
@@ -22,6 +23,12 @@ func route(router *gin.Engine) *gin.Engine {
 	api.POST("/transaction", transaction.CreateTransaction)
 	api.PUT("/transaction/:id", transaction.UpdateTransaction)
 	api.DELETE("/transaction/:id", transaction.DeleteTransaction)
+
+	api.GET("/bills", bill.GetAllBills)
+	api.GET("/bill/:id", bill.GetBillById)
+	api.POST("/bill", bill.CreateBill)
+	api.PUT("/bill/:id", bill.UpdateBill)
+	api.DELETE("/bill/:id", bill.DeleteBill)
 
 	return router
 }

@@ -18,11 +18,27 @@ var (
 	userCollection   	  *mongo.Collection
 	surveyCollection	  *mongo.Collection
 	transactionCollection *mongo.Collection
-
+	billCollection *mongo.Collection
 )
 
 const (
 	emailKey = "email"
+	titleKey = "title"
+	categoryKey = "category"
+	amountKey = "amount"
+	amountDueKey = "amount_due"
+	dateKey = "date"
+	dueDataKey = "due_date"
+	noteKey = "note"
+	isPaidKey = "is_paid"
+
+	// Transaction constants
+	transactionIdKey = "transactionId"
+	transactionPrefix = "T-"
+	
+	// Bill constants
+	billIdKey = "billId"
+	billPrefix = "B-"
 )
 
 func Init() (*mongo.Client, context.Context, error) {
@@ -45,6 +61,7 @@ func Init() (*mongo.Client, context.Context, error) {
 	userCollection = budgetDatabase.Collection("user_table")
 	surveyCollection = budgetDatabase.Collection("survey_table")
 	transactionCollection = budgetDatabase.Collection("trasanction_table")
+	billCollection = budgetDatabase.Collection("bill_table")
 
 	return client, ctx, err
 }
