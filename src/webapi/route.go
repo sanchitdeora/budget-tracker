@@ -5,6 +5,7 @@ import (
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/home"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/quickstart"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/registration"
+	"github.com/sanchitdeora/budget-tracker/src/pkg/api/transaction"
 )
 
 func route(router *gin.Engine) *gin.Engine {
@@ -15,6 +16,12 @@ func route(router *gin.Engine) *gin.Engine {
 	api.POST("/register", registration.Register)
 	api.GET("/home", home.GetStarted)
 	api.GET("/ping", abc)
+
+	api.GET("/transactions", transaction.GetAllTransactions)
+	api.GET("/transaction/:id", transaction.GetTransactionById)
+	api.POST("/transaction", transaction.CreateTransaction)
+	api.PUT("/transaction/:id", transaction.UpdateTransaction)
+	api.DELETE("/transaction/:id", transaction.DeleteTransaction)
 
 	return router
 }

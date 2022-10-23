@@ -55,13 +55,13 @@ func UpdateUser(ctx context.Context, user models.User) error {
 
 func GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
-	userJSON, err := GetUserRecordByEmail(ctx, email)
+	userRecord, err := GetUserRecordByEmail(ctx, email)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
-	err = json.Unmarshal(userJSON, &user)
+	err = json.Unmarshal(userRecord, &user)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -88,13 +88,13 @@ func AddSurvey(ctx context.Context, survey *models.Survey) error {
 
 func GetLoginInfo(ctx context.Context, login *models.Login) (*models.Login, error) {
 	var loginDB models.Login
-	userJSON, err := GetUserRecordByEmail(ctx, login.Email)
+	userRecord, err := GetUserRecordByEmail(ctx, login.Email)
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
-	err = json.Unmarshal(userJSON, &loginDB)
+	err = json.Unmarshal(userRecord, &loginDB)
 	if err != nil {
 		log.Println(err)
 		return nil, err

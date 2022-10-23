@@ -14,9 +14,11 @@ import (
 )
 
 var (
-	budgetDatabase   *mongo.Database
-	userCollection   *mongo.Collection
-	surveyCollection *mongo.Collection
+	budgetDatabase   	  *mongo.Database
+	userCollection   	  *mongo.Collection
+	surveyCollection	  *mongo.Collection
+	transactionCollection *mongo.Collection
+
 )
 
 const (
@@ -42,6 +44,7 @@ func Init() (*mongo.Client, context.Context, error) {
 
 	userCollection = budgetDatabase.Collection("user_table")
 	surveyCollection = budgetDatabase.Collection("survey_table")
+	transactionCollection = budgetDatabase.Collection("trasanction_table")
 
 	return client, ctx, err
 }
