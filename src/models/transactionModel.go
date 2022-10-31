@@ -11,6 +11,8 @@ type Transaction struct {
 	Category      string 	`json:"category"`
 	Amount        float32   `json:"amount"`
 	Date          time.Time `json:"date"`
+	Type		  bool		`json:"type"` // true if Credit, false if Debit
+	Account		  string    `json:"account"`
 	Note   		  string 	`json:"note"`
 }
 

@@ -72,6 +72,28 @@ class ReusableTransactionDialog extends React.Component {
                     </div>
                     <br></br>
                     <div className="transaction-input-group">
+                    <label htmlFor="Debit">
+                        <input
+                            type="radio"
+                            name="type"
+                            value="debit"
+                            placeholder="Debit"
+                            defaultChecked
+                            onChange={this.props.handleChange}
+                        /> Debit
+                    </label>
+                    <label htmlFor="Credit">
+                        <input
+                            type="radio"
+                            name="type"
+                            value="credit"
+                            placeholder="Credit"
+                            onChange={this.props.handleChange}
+                            /> Credit
+                    </label>
+                    </div>
+                    <br></br>
+                    <div className="transaction-input-group">
                         <label htmlFor="date">Date</label><br></br>
                         <input
                             type="date"

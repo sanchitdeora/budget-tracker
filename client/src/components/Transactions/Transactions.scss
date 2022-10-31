@@ -15,7 +15,7 @@
   border-bottom: 2px solid #00897b;
 }
 
-.category-box {
+.transaction-category-box {
   width: 75%;
 }
 
@@ -45,6 +45,12 @@
 
 .transaction-inner-container {
   width: 75%;
+}
+
+input[type="radio"] {
+  transform: scale(1.2);
+  margin-left: 3%;
+  margin-right: 5px;
 }
 
 .transaction-input-group {

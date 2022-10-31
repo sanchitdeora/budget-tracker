@@ -6,9 +6,8 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import "./Bills.scss";
 import { IconButton } from '@mui/material';
 import ReusableTransactionDialog from '../../utils/ReusableBillDialog';
@@ -61,6 +60,10 @@ class Bills extends React.Component {
 		{
 			this.setState({
 				allBills: res.data.body,
+			});
+		} else {
+			this.setState({
+				allBills: [],
 			});
 		}
 	}
@@ -175,26 +178,32 @@ class Bills extends React.Component {
 													variant="body2"
 													color="text.primary"
 													>
-													{"($"}{data.amount}{")"}
+													{"($"}{data.amount_due}{")"}
 												</Typography>
 												{" — "}{data.date}
 												<br></br>
 												{data.note}
 											</React.Fragment>} />
 									</ListItem>
-									<IconButton edge="end" onClick={this.handleEditBillOpen.bind(this, data.bill_id)}>
-											<ModeEditIcon />
-									</IconButton>
-									<ReusableTransactionDialog
-										title={"Edit Bill"}
-										isDialogOpen={this.state.isEditDialogOpen}
-										handleChange={this.handleChange}
-										handleClose={this.handleEditClose}
-										submitMethod={this.submitEditBill}
-									/>
-									<IconButton edge="end"onClick={this.handleDeleteBillOpen.bind(this, data.bill_id)}>
-											<DeleteIcon />
-									</IconButton>
+									<Box
+										display={"flex"}
+										justifyContent={"flex-end"}
+										marginRight="5%"
+									>
+										<IconButton edge="end" onClick={this.handleEditBillOpen.bind(this, data.bill_id)}>
+												<ModeEditIcon />
+										</IconButton>
+										<ReusableTransactionDialog
+											title={"Edit Bill"}
+											isDialogOpen={this.state.isEditDialogOpen}
+											handleChange={this.handleChange}
+											handleClose={this.handleEditClose}
+											submitMethod={this.submitEditBill}
+											/>
+										<IconButton edge="end"onClick={this.handleDeleteBillOpen.bind(this, data.bill_id)}>
+												<DeleteIcon />
+										</IconButton>
+									</Box>
 									<Divider variant="middle" component="li" />
 								</div>
 							))}

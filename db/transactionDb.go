@@ -66,13 +66,15 @@ func GetTransactionRecordById(ctx context.Context, key string, transaction *mode
 }
 
 func InsertTransactionRecord(ctx context.Context, transaction models.Transaction) (string, error) {
-	transactionId := transactionPrefix + uuid.NewString()
+	transactionId := transactionPrefix + uuid.NewString()	
 	data := bson.D{
 		{Key: transactionIdKey, Value: transactionId},
 		{Key: titleKey, Value: transaction.Title},
 		{Key: categoryKey, Value: transaction.Category},
 		{Key: amountKey, Value: transaction.Amount},
 		{Key: dateKey, Value: transaction.Date},
+		{Key: transactionTypekey, Value: transaction.Type},
+		{Key: accountKey, Value: transaction.Account},
 		{Key: noteKey, Value: transaction.Note},
 	}
 
@@ -91,6 +93,8 @@ func UpdateTransactionRecordById(ctx context.Context, id string, transaction mod
 			{Key: categoryKey, Value: transaction.Category},
 			{Key: amountKey, Value: transaction.Amount},
 			{Key: dateKey, Value: transaction.Date},
+			{Key: transactionTypekey, Value: transaction.Type},
+			{Key: accountKey, Value: transaction.Account},
 			{Key: noteKey, Value: transaction.Note},
 		}},
 	}

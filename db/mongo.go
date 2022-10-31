@@ -32,10 +32,12 @@ const (
 	howOftenKey = "how_often"
 	noteKey = "note"
 	isPaidKey = "is_paid"
+	accountKey = "account"
 
 	// Transaction constants
 	transactionIdKey = "transaction_id"
 	transactionPrefix = "T-"
+	transactionTypekey = "type"
 	
 	// Bill constants
 	billIdKey = "bill_id"

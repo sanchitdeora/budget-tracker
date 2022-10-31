@@ -6,10 +6,9 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import "./Transactions.scss";
+import Box from '@mui/material/Box';
+import './Transactions.scss';
 import { IconButton } from '@mui/material';
 import ReusableTransactionDialog from '../../utils/ReusableTransactionDialog';
 import axios from 'axios';
@@ -20,19 +19,30 @@ class Transactions extends React.Component {
 		super(props);
 		this.state = {
 			allTransactions: [],
-			transactionId: "",
-			title: "",
-			category: "",
+			transactionId: '',
+			title: '',
+			category: '',
 			amount: 0,
+			type: false,
+			account: '',
 			date: new Date(),
-			note: "",
+			note: '',
 			isCreateDialogOpen: false,
 			isEditDialogOpen: false,
 		};
 		this.getAllTransactions()
+		console.log(this.state.allTransactions.length)
 	};
 
 	capitalizeFirstLowercaseRest = (str) => {
+		var splitStr = str.toLowerCase().split(' ');
+   		for (var i = 0; i < splitStr.length; i++) {
+			splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
+		}
+		return splitStr.join(' '); 
+	};
+
+	shortenDate = (str) => {
 		var splitStr = str.toLowerCase().split(' ');
    		for (var i = 0; i < splitStr.length; i++) {
 			splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
@@ -43,6 +53,13 @@ class Transactions extends React.Component {
 	handleChange = (event) => {
         let value = event.target.value;
 		let name = event.target.name;
+		if (name === 'type') {
+			value = value === 'credit' ? true : false  
+			console.log('Name: ' + name + ' value: ' + value)
+			this.setState({
+				[name]: value,
+			});
+		}
 		this.setState({
 			[name]: value,
 		});
@@ -51,12 +68,16 @@ class Transactions extends React.Component {
 	// get transaction
 
 	async getAllTransactions() {
-		let res = await axios.get("/api/transactions");
-		console.log("get all transactions: ", res.data.body)
+		let res = await axios.get('/api/transactions');
+		console.log('get all transactions: ', res.data.body)
 		if (res.data.body != null)
 		{
 			this.setState({
-				allBills: res.data.body,
+				allTransactions: res.data.body,
+			});
+		} else {
+			this.setState({
+				allTransactions: [],
 			});
 		}
 	}
@@ -73,11 +94,13 @@ class Transactions extends React.Component {
 	submitCreateTransaction = () => {
 		let date = new Date(this.state.date);
 		let transactionBody = {
-			"title": this.state.title,
-			"category": this.state.category,
-			"amount": parseFloat(this.state.amount),
-			"date": date,
-			"note": this.state.note,
+			'title': this.state.title,
+			'category': this.state.category,
+			'amount': parseFloat(this.state.amount),
+			'date': date,
+			'type': this.state.type,
+			'account': this.state.account,
+			'note': this.state.note,
 		}
 		console.log('The create form was submitted with the following data:', transactionBody,);
 		this.postTransactionRequest(transactionBody)
@@ -85,18 +108,20 @@ class Transactions extends React.Component {
 	}
 
 	async postTransactionRequest(transactionBody) {
-		let res = await axios.post("/api/transaction", transactionBody);
+		let res = await axios.post('/api/transaction', transactionBody);
 		console.log(res);
 		this.getAllTransactions();
 	}
 
 	handleCreateClose = () => {
 		this.setState({
-			title: "",
-			category: "",
+			title: '',
+			category: '',
 			amount: 0,
-			date: "",
-			note: "",
+			date: '',
+			type: false,
+			account: '',
+			note: '',
 			isCreateDialogOpen: false
 		});
 	};
@@ -105,7 +130,7 @@ class Transactions extends React.Component {
 	// edit transaction
 
 	handleEditTransactionOpen = (id) => {
-		console.log("Edit id: ", id)
+		console.log('Edit id: ', id)
 		this.setState({
 			transactionId: id,
 			isEditDialogOpen: true
@@ -115,11 +140,13 @@ class Transactions extends React.Component {
 	submitEditTransaction = () => {
 		let date = new Date(this.state.date);
 		let transactionBody = {
-			"title": this.state.title,
-			"category": this.state.category,
-			"amount": parseFloat(this.state.amount),
-			"date": date,
-			"note": this.state.note,
+			'title': this.state.title,
+			'category': this.state.category,
+			'amount': parseFloat(this.state.amount),
+			'date': date,
+			'type': this.state.type,
+			'account': this.state.account,
+			'note': this.state.note,
 		}
 		console.log('The edit form was submitted with the following data:', transactionBody);
 		this.putTransactionRequest(transactionBody)
@@ -127,18 +154,20 @@ class Transactions extends React.Component {
 	}
 
 	async putTransactionRequest(transactionBody) {
-		let res = await axios.put("/api/transaction/"+this.state.transactionId, transactionBody);
+		let res = await axios.put('/api/transaction/'+this.state.transactionId, transactionBody);
 		console.log(res);
 		this.getAllTransactions();
 	}
 
 	handleEditClose = () => {
 		this.setState({
-			title: "",
-			category: "",
+			title: '',
+			category: '',
 			amount: 0,
-			date: "",
-			note: "",
+			date: '',
+			type: false,
+			account: '',
+			note: '',
 			isEditDialogOpen: false
 		});
 	};
@@ -146,12 +175,12 @@ class Transactions extends React.Component {
 	// delete transaction
 
 	handleDeleteTransactionOpen = (id) => {
-		console.log("Delete id: ", id)
+		console.log('Delete id: ', id)
 		this.deleteTransactionRequest(id)
 	}
 
 	async deleteTransactionRequest(id) {
-		let res = await axios.delete("/api/transaction/"+id);
+		let res = await axios.delete('/api/transaction/'+id);
 		console.log(res);
 		this.getAllTransactions();
 	}
@@ -160,47 +189,58 @@ class Transactions extends React.Component {
 	render() {
 		return (
 			<div className='transactions-inner-container'>
-				<div className="header">
+				<div className='header'>
 					Transactions
 				</div>
 				<div className='transactions-box'>
-					<div className="transaction-category-box">
+					<div className='transaction-category-box'>
 						<List sx={{ width: '100%', bgcolor: 'background.paper' }}>
 							{this.state.allTransactions.length ? <p></p> : <p>Oops! No Transactions entered</p>}
-							{this.state.allTransactions?.map(data => (
+							{this.state.allTransactions.map(data => (
 								<div className='transaction'>
-									<ListItem key={data.transaction_id} id={data.transaction_id} alignItems="flex-start">
+									<ListItem key={data.transaction_id} id={data.transaction_id} alignItems='flex-start'>
 										<ListItemText
+											style={{width: '65%'}}
 											primary={this.capitalizeFirstLowercaseRest(data.title)}
 											secondary={<React.Fragment>
 												<Typography
 													sx={{ display: 'inline' }}
-													component="span"
-													variant="body2"
-													color="text.primary"
-												>
-													{"$"}{data.amount}
+													component='span'
+													variant='body2'
+													color='text.primary'
+													>
+													<i>{data.note}</i>
 												</Typography>
-												{" — "}{data.date}
-												<br></br>
-												<i>{data.note}</i>
+
 											</React.Fragment>}
 										/>
+										<ListItemText
+											primary={(data.type ? '' : '-')+ '$' + data.amount}
+											secondary={data.date.substring(0, 10)}
+										/>
 									</ListItem>
-									<IconButton onClick={this.handleEditTransactionOpen.bind(this, data.transaction_id)}>
+									<Box
+										display={'flex'}
+										justifyContent={'flex-end'}
+										marginRight='5%'
+									>
+										<IconButton 
+											onClick={this.handleEditTransactionOpen.bind(this, data.transaction_id)}>
 											<ModeEditIcon />
-									</IconButton>
-									<ReusableTransactionDialog
-										title={"Edit Transaction"}
-										isDialogOpen={this.state.isEditDialogOpen}
-										handleChange={this.handleChange}
-										handleClose={this.handleEditClose}
-										submitMethod={this.submitEditTransaction}
-									/>
-									<IconButton onClick={this.handleDeleteTransactionOpen.bind(this, data.transaction_id)}>
-											<DeleteIcon />
-									</IconButton>
-									<Divider variant="middle" component="li" />
+										</IconButton>
+										<ReusableTransactionDialog
+											title={'Edit Transaction'}
+											isDialogOpen={this.state.isEditDialogOpen}
+											handleChange={this.handleChange}
+											handleClose={this.handleEditClose}
+											submitMethod={this.submitEditTransaction}
+											/>
+										<IconButton 
+											onClick={this.handleDeleteTransactionOpen.bind(this, data.transaction_id)}>
+												<DeleteIcon />
+										</IconButton>
+									</Box>
+									<Divider variant='middle' component='li' />
 								</div>
 							))}
 						</List>
@@ -213,7 +253,7 @@ class Transactions extends React.Component {
 				</div>
 				
 				<ReusableTransactionDialog
-					title={"Add Transaction"}
+					title={'Add Transaction'}
 					isDialogOpen={this.state.isCreateDialogOpen}
 					handleChange={this.handleChange}
 					handleClose={this.handleCreateClose}
