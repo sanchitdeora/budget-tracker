@@ -2,16 +2,18 @@ import './App.scss';
 import React from 'react';
 import { TOKEN } from './utils/GlobalConstants'
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
-import Home from "./components/Home.jsx"
-import Ping from "./components/Ping"
-import NavBar from './components/NavBar.jsx';
+import Home from "./components/Home/Home.jsx"
+import Ping from "./components/Ping/Ping"
+import NavBar from './components/NavBar/NavBar.jsx';
 import Logout from './components/Authentication/Logout.jsx';
 import Authenticate from './components/Authentication/Authenticate.jsx';
-import Survey from './components/Survey.jsx';
+import Survey from './components/Survey/Survey.jsx';
+import Transactions from './components/Transactions/Transactions';
+import Bills from './components/Bills/Bills';
 
 // const TOKEN = "token"
 
-class App extends React.Component<any, any> {
+class App extends React.Component {
 	constructor(props) {
 		super(props);
 		const token = sessionStorage.getItem(TOKEN)
@@ -21,7 +23,7 @@ class App extends React.Component<any, any> {
 		};
 	};
 
-	setLoginState = (loginState: boolean) => {
+	setLoginState = (loginState) => {
 		this.setState({isLoggedIn: loginState})
 		// console.log(this.state)	
 	}
@@ -40,6 +42,8 @@ class App extends React.Component<any, any> {
 						<div className="app-container">
 						<Switch>
 							
+							<PrivateRoute component={Home} path="/home" exact />
+
 							<Route exact path='/ping'>
 								<Ping />
 							</Route>
@@ -52,10 +56,16 @@ class App extends React.Component<any, any> {
 								<Logout setLoginState={this.setLoginState} setToken={this.setToken} />
 							</Route>
 
-							<PrivateRoute component={Home} path="/home" exact />
-
 							<Route exact path='/survey'>
 								<Survey />
+							</Route>
+
+							<Route exact path='/transactions'>
+								<Transactions />
+							</Route>
+
+							<Route exact path='/bills'>
+								<Bills />
 							</Route>
 
 							<Route exact path="/">

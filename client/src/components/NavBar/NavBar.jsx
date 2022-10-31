@@ -14,6 +14,8 @@ class NavBar extends React.Component {
 					<ul className="navbar-list">
 						<li><Link to='/home'>Home</Link></li>
 						<li><Link to='/ping'>Ping</Link></li>
+						<li><Link to='/transactions'>Transactions</Link></li>
+						<li><Link to='/bills'>Bills</Link></li>
 						
 						{
 							this.props.isLoggedIn ? 

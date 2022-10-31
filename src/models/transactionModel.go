@@ -6,12 +6,12 @@ import (
 )
 
 type Transaction struct {
-	TransactionId string `json:"transaction_id"`
-	Title         string `json:"title"`
-	Category      string `json:"category"`
-	Amount        int    `json:"amount"`
-	Date          time.Time    `json:"date"`
-	Note   		  string `json:"Note"`
+	TransactionId string 	`json:"transaction_id"`
+	Title         string 	`json:"title"`
+	Category      string 	`json:"category"`
+	Amount        float32   `json:"amount"`
+	Date          time.Time `json:"date"`
+	Note   		  string 	`json:"note"`
 }
 
 var TransactionCategoryMap = []string{
@@ -19,10 +19,13 @@ var TransactionCategoryMap = []string{
 	"bills_and_utilities",
 	"education",
 	"entertainment",
-	"food",
-	"health",
+	"food_and_dining",
+	"health_and_fitness",
+	"home",
 	"income",
+	"investments",
 	"personal_care",
+	"pets",
 	"shopping",
 	"taxes",
 	"travel",

@@ -29,10 +29,9 @@ var BillCategoryMap = []string{
 var BillHowOftenMap = []string{
 	"once",
 	"weekly",
-	"bi-weekly",
+	"bi_weekly",
 	"monthly",
-	"bi-monthly",
-	"quaterly",
+	"bi_monthly",
 	"quaterly",
 	"half_yearly",
 	"yearly",

@@ -2,7 +2,7 @@ import React from 'react';
 import "./Survey.scss";
 import axios from 'axios';
 import { Redirect } from "react-router-dom";
-import { EMAIL, IS_SURVEY_COMPLETE } from '../utils/GlobalConstants'
+import { EMAIL, IS_SURVEY_COMPLETE } from '../../utils/GlobalConstants'
 
 
 class Survey extends React.Component {
@@ -17,7 +17,7 @@ class Survey extends React.Component {
 		};
 	};
 
-	handleChange(event) {
+	handleChange = (event) => {
 		let value = event.target.value;
 		let name = event.target.name;
 		this.setState({
@@ -25,7 +25,7 @@ class Survey extends React.Component {
 		});
 	}
 
-	handleSubmit() {
+	handleSubmit = () => {
 		console.log('The form was submitted with the following data:');
 		this.postSurveyRequest()
 	}
@@ -51,7 +51,7 @@ class Survey extends React.Component {
 			return (
 				<div className="inner-container">
 					<div className="header">
-						Quick Start
+						Before we Start...
 					</div>
 					<div className="box">
 						<div className="input-group">
@@ -61,7 +61,7 @@ class Survey extends React.Component {
 								name="monthlyIncome"
 								className="input-box"
 								value={this.state.monthlyIncome}
-								onChange={this.handleChange.bind(this)}
+								onChange={this.handleChange}
 							/>
 						</div>
 
@@ -81,13 +81,13 @@ class Survey extends React.Component {
 								name="monthlyLimit"
 								className="input-box"
 								value={this.state.monthlyLimit}
-								onChange={this.handleChange.bind(this)}
+								onChange={this.handleChange}
 							/>
 						</div>
 						<button
 							type="submit"
 							className="submit-btn"
-							onClick={this.handleSubmit.bind(this)}
+							onClick={this.handleSubmit}
 							>
 								Finish
 						</button>
