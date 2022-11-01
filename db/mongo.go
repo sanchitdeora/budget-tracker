@@ -29,6 +29,7 @@ const (
 	amountDueKey = "amount_due"
 	dateKey = "date"
 	dueDataKey = "due_date"
+	datePaidKey = "date_paid"
 	howOftenKey = "how_often"
 	noteKey = "note"
 	isPaidKey = "is_paid"

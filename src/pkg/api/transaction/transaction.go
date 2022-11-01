@@ -17,7 +17,7 @@ func getTransactionById(ctx context.Context, id string, transaction *models.Tran
 	return db.GetTransactionRecordById(ctx, id, transaction)
 }
 
-func createTransaction(ctx context.Context, transaction models.Transaction) (string, error) {
+func CreateTransactionRecord(ctx context.Context, transaction models.Transaction) (string, error) {
 	// TODO: input validation
 	transaction.SetCategory()
 	return db.InsertTransactionRecord(ctx, transaction)

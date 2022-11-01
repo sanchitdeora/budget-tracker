@@ -8,6 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { capitalizeFirstLowercaseRest } from '../../utils/StringUtils';
 import './Transactions.scss';
 import { IconButton } from '@mui/material';
 import ReusableTransactionDialog from '../../utils/ReusableTransactionDialog';
@@ -34,22 +35,19 @@ class Transactions extends React.Component {
 		console.log(this.state.allTransactions.length)
 	};
 
-	capitalizeFirstLowercaseRest = (str) => {
-		var splitStr = str.toLowerCase().split(' ');
-   		for (var i = 0; i < splitStr.length; i++) {
-			splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
-		}
-		return splitStr.join(' '); 
-	};
+	cleanTransactionState = () => {
+		this.setState({
+			transactionId: '',
+			title: '',
+			category: '',
+			amount: 0,
+			date: new Date(),
+			type: false,
+			account: '',
+			note: '',
+		})
+	}
 
-	shortenDate = (str) => {
-		var splitStr = str.toLowerCase().split(' ');
-   		for (var i = 0; i < splitStr.length; i++) {
-			splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);     
-		}
-		return splitStr.join(' '); 
-	};
-	
 	handleChange = (event) => {
         let value = event.target.value;
 		let name = event.target.name;
@@ -114,14 +112,8 @@ class Transactions extends React.Component {
 	}
 
 	handleCreateClose = () => {
+		this.cleanTransactionState()
 		this.setState({
-			title: '',
-			category: '',
-			amount: 0,
-			date: '',
-			type: false,
-			account: '',
-			note: '',
 			isCreateDialogOpen: false
 		});
 	};
@@ -160,14 +152,8 @@ class Transactions extends React.Component {
 	}
 
 	handleEditClose = () => {
+		this.cleanTransactionState()
 		this.setState({
-			title: '',
-			category: '',
-			amount: 0,
-			date: '',
-			type: false,
-			account: '',
-			note: '',
 			isEditDialogOpen: false
 		});
 	};
@@ -201,7 +187,7 @@ class Transactions extends React.Component {
 									<ListItem key={data.transaction_id} id={data.transaction_id} alignItems='flex-start'>
 										<ListItemText
 											style={{width: '65%'}}
-											primary={this.capitalizeFirstLowercaseRest(data.title)}
+											primary={capitalizeFirstLowercaseRest(data.title)}
 											secondary={<React.Fragment>
 												<Typography
 													sx={{ display: 'inline' }}

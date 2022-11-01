@@ -51,7 +51,7 @@ func CreateTransaction(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	transactionId, err := createTransaction(c, transaction)
+	transactionId, err := CreateTransactionRecord(c, transaction)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

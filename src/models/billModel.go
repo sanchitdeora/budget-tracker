@@ -9,7 +9,8 @@ type Bill struct {
 	BillId 	  string 	`json:"bill_id"`
 	Title     string 	`json:"title"`
 	Category  string 	`json:"category"`
-	AmountDue int    	`json:"amount_due"`
+	AmountDue float32   `json:"amount_due"`
+	DatePaid  time.Time `json:"date_paid"`
 	DueDate   time.Time `json:"due_date"`
 	HowOften  string 	`json:"how_often"`
 	Note   	  string 	`json:"note,omitempty"`

@@ -85,6 +85,36 @@ func UpdateBill(c *gin.Context) {
 
 }
 
+func UpdateBillIsPaid(c *gin.Context) {
+
+	billId, err := updateBillIsPaid(c, c.Param("id"))
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	
+	c.JSON(200, gin.H{
+		"message": "Success",
+		"body":    billId,
+	})
+
+}
+
+func UpdateBillIsUnpaid(c *gin.Context) {
+
+	billId, err := updateBillIsUnpaid(c, c.Param("id"))
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	
+	c.JSON(200, gin.H{
+		"message": "Success",
+		"body":    billId,
+	})
+
+}
+
 func DeleteBill(c *gin.Context) {
 
 	billId, err := deleteBillById(c, c.Param("id"))

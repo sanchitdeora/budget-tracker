@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/sanchitdeora/budget-tracker/src/models"
@@ -105,6 +106,39 @@ func UpdateBillRecordById(ctx context.Context, id string, bill models.Bill) (str
 		log.Fatal(err)
 	}
 	fmt.Printf("Updated bill. ModifiedCount: %v BillId: %v\n", result.ModifiedCount, id)
+	return id, err
+}
+
+func UpdateBillRecordIsPaid(ctx context.Context, id string, datePaid time.Time) (string, error) {
+	data := bson.D{{Key: "$set", 
+		Value: bson.D{
+			{Key: isPaidKey, Value: true},
+			{Key: datePaidKey, Value: datePaid},
+		}},
+	}
+	filter := bson.D{{Key: billIdKey, Value: id}}
+
+	result, err := billCollection.UpdateOne(ctx, filter, data)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("IsPaid set to true for bill. ModifiedCount: %v BillId: %v\n", result.ModifiedCount, id)
+	return id, err
+}
+
+func UpdateBillRecordIsUnpaid(ctx context.Context, id string) (string, error) {
+	data := bson.D{{Key: "$set", 
+		Value: bson.D{
+			{Key: isPaidKey, Value: false},
+		}},
+	}
+	filter := bson.D{{Key: billIdKey, Value: id}}
+
+	result, err := billCollection.UpdateOne(ctx, filter, data)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("IsPaid set to false for bill. ModifiedCount: %v BillId: %v\n", result.ModifiedCount, id)
 	return id, err
 }
 

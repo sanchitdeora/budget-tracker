@@ -28,6 +28,8 @@ func route(router *gin.Engine) *gin.Engine {
 	api.GET("/bill/:id", bill.GetBillById)
 	api.POST("/bill", bill.CreateBill)
 	api.PUT("/bill/:id", bill.UpdateBill)
+	api.PUT("/bill/updateIsPaid/:id", bill.UpdateBillIsPaid)
+	api.PUT("/bill/updateIsUnpaid/:id", bill.UpdateBillIsUnpaid)
 	api.DELETE("/bill/:id", bill.DeleteBill)
 
 	return router
