@@ -22,27 +22,27 @@ var (
 )
 
 const (
-	emailKey = "email"
-	titleKey = "title"
-	categoryKey = "category"
-	amountKey = "amount"
-	amountDueKey = "amount_due"
-	dateKey = "date"
-	dueDataKey = "due_date"
-	datePaidKey = "date_paid"
-	howOftenKey = "how_often"
-	noteKey = "note"
-	isPaidKey = "is_paid"
-	accountKey = "account"
+	EMAIL_KEY = "email"
+	TITLE_KEY = "title"
+	CATEGORY_KEY = "category"
+	AMOUNT_KEY = "amount"
+	AMOUNT_DUE_KEY = "amount_due"
+	DATE_KEY = "date"
+	DUE_DATE_KEY = "due_date"
+	DATE_PAID_KEY = "date_paid"
+	FREQUENCY_KEY = "frequency"
+	NOTE_KEY = "note"
+	IS_PAID_KEY = "is_paid"
+	ACCOUNT_KEY = "account"
 
 	// Transaction constants
-	transactionIdKey = "transaction_id"
-	transactionPrefix = "T-"
-	transactionTypekey = "type"
+	TRANSACTION_ID_KEY = "transaction_id"
+	TRANSACTION_PREFIX = "T-"
+	TRANSACTION_TYPE_KEY = "type"
 	
 	// Bill constants
-	billIdKey = "bill_id"
-	billPrefix = "B-"
+	BILL_ID_KEY = "bill_id"
+	BILL_PREFIX = "B-"
 )
 
 func Init() (*mongo.Client, context.Context, error) {
@@ -71,7 +71,7 @@ func Init() (*mongo.Client, context.Context, error) {
 
 func GetUserRecordByEmail(ctx context.Context, key string) ([]byte, error) {
 	var user bson.M
-	if err := userCollection.FindOne(ctx, bson.M{emailKey: key}).Decode(&user); err != nil {
+	if err := userCollection.FindOne(ctx, bson.M{EMAIL_KEY: key}).Decode(&user); err != nil {
 		log.Print("Error trying to get user from db", err)
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func GetUserRecordByEmail(ctx context.Context, key string) ([]byte, error) {
 
 func UpdateUserRecord(ctx context.Context, value string, update primitive.D) error {
 
-	filter := bson.D{primitive.E{Key: emailKey, Value: value}}
+	filter := bson.D{primitive.E{Key: EMAIL_KEY, Value: value}}
 
 	_, err := userCollection.UpdateOne(ctx, filter, update)
 	if err != nil {

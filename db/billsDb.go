@@ -47,7 +47,7 @@ func GetAllBillRecords(ctx context.Context, bills *[]models.Bill) error {
 func GetBillRecordById(ctx context.Context, id string, bill *models.Bill) error {
 	var result bson.M
 
-	filter := bson.D{{Key: billIdKey, Value: id}}
+	filter := bson.D{{Key: BILL_ID_KEY, Value: id}}
 	err := billCollection.FindOne(ctx, filter).Decode(&result)
 	if len(result) == 0 {
 		return nil
@@ -67,16 +67,16 @@ func GetBillRecordById(ctx context.Context, id string, bill *models.Bill) error 
 }
 
 func InsertBillRecord(ctx context.Context, bill models.Bill) (string, error) {
-	billId := billPrefix + uuid.NewString()
+	billId := BILL_PREFIX + uuid.NewString()
 	data := bson.D{
-		{Key: billIdKey, Value: billId},
-		{Key: titleKey, Value: bill.Title},
-		{Key: categoryKey, Value: bill.Category},
-		{Key: amountDueKey, Value: bill.AmountDue},
-		{Key: dueDataKey, Value: bill.DueDate},
-		{Key: howOftenKey, Value: bill.HowOften},
-		{Key: noteKey, Value: bill.Note},
-		{Key: isPaidKey, Value: bill.IsPaid},
+		{Key: BILL_ID_KEY, Value: billId},
+		{Key: TITLE_KEY, Value: bill.Title},
+		{Key: CATEGORY_KEY, Value: bill.Category},
+		{Key: AMOUNT_DUE_KEY, Value: bill.AmountDue},
+		{Key: DUE_DATE_KEY, Value: bill.DueDate},
+		{Key: FREQUENCY_KEY, Value: bill.Frequency},
+		{Key: NOTE_KEY, Value: bill.Note},
+		{Key: IS_PAID_KEY, Value: bill.IsPaid},
 	}
 
 	result, err := billCollection.InsertOne(ctx, data)
@@ -90,16 +90,16 @@ func InsertBillRecord(ctx context.Context, bill models.Bill) (string, error) {
 func UpdateBillRecordById(ctx context.Context, id string, bill models.Bill) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
-			{Key: titleKey, Value: bill.Title},
-			{Key: categoryKey, Value: bill.Category},
-			{Key: amountDueKey, Value: bill.AmountDue},
-			{Key: dueDataKey, Value: bill.DueDate},
-			{Key: howOftenKey, Value: bill.HowOften},
-			{Key: noteKey, Value: bill.Note},
-			{Key: isPaidKey, Value: bill.IsPaid},
+			{Key: TITLE_KEY, Value: bill.Title},
+			{Key: CATEGORY_KEY, Value: bill.Category},
+			{Key: AMOUNT_DUE_KEY, Value: bill.AmountDue},
+			{Key: DUE_DATE_KEY, Value: bill.DueDate},
+			{Key: FREQUENCY_KEY, Value: bill.Frequency},
+			{Key: NOTE_KEY, Value: bill.Note},
+			{Key: IS_PAID_KEY, Value: bill.IsPaid},
 		}},
 	}
-	filter := bson.D{{Key: billIdKey, Value: id}}
+	filter := bson.D{{Key: BILL_ID_KEY, Value: id}}
 
 	result, err := billCollection.UpdateOne(ctx, filter, data)
 	if err != nil {
@@ -112,11 +112,11 @@ func UpdateBillRecordById(ctx context.Context, id string, bill models.Bill) (str
 func UpdateBillRecordIsPaid(ctx context.Context, id string, datePaid time.Time) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
-			{Key: isPaidKey, Value: true},
-			{Key: datePaidKey, Value: datePaid},
+			{Key: IS_PAID_KEY, Value: true},
+			{Key: DATE_PAID_KEY, Value: datePaid},
 		}},
 	}
-	filter := bson.D{{Key: billIdKey, Value: id}}
+	filter := bson.D{{Key: BILL_ID_KEY, Value: id}}
 
 	result, err := billCollection.UpdateOne(ctx, filter, data)
 	if err != nil {
@@ -129,10 +129,10 @@ func UpdateBillRecordIsPaid(ctx context.Context, id string, datePaid time.Time) 
 func UpdateBillRecordIsUnpaid(ctx context.Context, id string) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
-			{Key: isPaidKey, Value: false},
+			{Key: IS_PAID_KEY, Value: false},
 		}},
 	}
-	filter := bson.D{{Key: billIdKey, Value: id}}
+	filter := bson.D{{Key: BILL_ID_KEY, Value: id}}
 
 	result, err := billCollection.UpdateOne(ctx, filter, data)
 	if err != nil {
@@ -143,7 +143,7 @@ func UpdateBillRecordIsUnpaid(ctx context.Context, id string) (string, error) {
 }
 
 func DeleteBillRecordById(ctx context.Context, id string) (string, error) {
-	filter := bson.D{{Key: billIdKey, Value: id}}
+	filter := bson.D{{Key: BILL_ID_KEY, Value: id}}
 
 	result, err := billCollection.DeleteOne(ctx, filter)
 	if err != nil {

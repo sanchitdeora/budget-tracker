@@ -17,21 +17,21 @@ type Transaction struct {
 }
 
 var TransactionCategoryMap = []string{
-	"auto_and_transport",
-	"bills_and_utilities",
-	"education",
-	"entertainment",
-	"food_and_dining",
-	"health_and_fitness",
-	"home",
-	"income",
-	"investments",
-	"personal_care",
-	"pets",
-	"shopping",
-	"taxes",
-	"travel",
-	"uncategorized",
+	AUTO_AND_TRANSPORT_CATEGORY,
+	BILLS_AND_UTILITIES_CATEGORY,
+	EDUCATION_CATEGORY,
+	ENTERTAINMENT_CATEGORY,
+	FOOD_AND_DINING_CATEGORY,
+	HEALTH_AND_FITNESS_CATEGORY,
+	HOME_CATEGORY,
+	INCOME_CATEGORY,
+	INVESTMENTS_CATEGORY,
+	PERSONAL_CARE_CATEGORY,
+	PETS_CATEGORY,
+	SHOPPING_CATEGORY,
+	TAXES_CATEGORY,
+	TRAVEL_CATEGORY,
+	UNCATEGORIZED_CATEGORY,
 }
 
 func (transaction *Transaction) SetCategory() {
@@ -48,7 +48,7 @@ func (transaction *Transaction) SetCategory() {
 
 func (transaction *Transaction) FromBill(bill Bill, datePaid time.Time) {
 	transaction.Title = bill.Title
-	transaction.Category = "bills_and_utilities"
+	transaction.Category = BILLS_AND_UTILITIES_CATEGORY
 	transaction.Amount = bill.AmountDue
 	transaction.Date = datePaid
 	transaction.Type = false

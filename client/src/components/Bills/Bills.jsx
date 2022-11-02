@@ -9,7 +9,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { capitalizeFirstLowercaseRest } from '../../utils/StringUtils';
+import { capitalizeFirstLowercaseRest, changeDateFormatToMmDdYyyy } from '../../utils/StringUtils';
 import './Bills.scss';
 import { IconButton } from '@mui/material';
 import ReusableTransactionDialog from '../../utils/ReusableBillDialog';
@@ -27,7 +27,7 @@ class Bills extends React.Component {
 			category: '',
 			amount_due: 0,
 			due_date: new Date(),
-			how_often: '',
+			frequency: '',
 			is_paid: false,
 			note: '',
 			isCreateDialogOpen: false,
@@ -44,7 +44,7 @@ class Bills extends React.Component {
 			category: '',
 			amount_due: 0,
 			due_date: new Date(),
-			how_often: '',
+			frequency: '',
 			is_paid: false,
 			note: '',
 		})
@@ -53,6 +53,10 @@ class Bills extends React.Component {
 	handleChange = (event) => {
         let value = event.target.value;
 		let name = event.target.name;
+		if (name === 'due_date') {
+			value = changeDateFormatToMmDdYyyy(value);
+			console.log("Onchange | name: "+name+" value: ", value);
+		}
 		this.setState({
 			[name]: value,
 		});
@@ -85,14 +89,14 @@ class Bills extends React.Component {
 	}
 
 	submitCreateBill = () => {
-		let date = new Date(this.state.due_date);
-		console.log("Due date with empty string: ", date)
+		let due_date = new Date(this.state.due_date);
+		console.log("Due date in state: ", this.state.due_date, " date now: ", due_date, "date in UTC: ")
 		let billBody = {
 			'title': this.state.title,
 			'category': this.state.category,
 			'amount_due': parseFloat(this.state.amount_due),
-			'due_date': date,
-			'how_often': this.state.how_often,
+			'due_date': due_date,
+			'frequency': this.state.frequency,
 			'is_paid': this.state.is_paid,
 			'note': this.state.note,
 		}
@@ -126,12 +130,15 @@ class Bills extends React.Component {
 	}
 
 	submitEditBill = () => {
-		let date = new Date(this.state.due_date);
+		let due_date = new Date(this.state.due_date);
+		console.log("Due date in state: ", this.state.due_date, " date now: ", due_date)
 		let billBody = {
 			'title': this.state.title,
 			'category': this.state.category,
 			'amount_due': parseFloat(this.state.amount_due),
-			'due_date': date,
+			'due_date': due_date,
+			'frequency': this.state.frequency,
+			'is_paid': this.state.is_paid,
 			'note': this.state.note,
 		}
 		console.log('The edit form was submitted with the following data:', billBody);

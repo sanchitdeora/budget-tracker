@@ -11,11 +11,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-const userPrefix string = "U-"
-const surveyPrefix string = "S-"
+const USER_PREFIX string = "U-"
+const SURVEY_PREFIX string = "S-"
 
 func AddUser(ctx context.Context, user models.User) error {
-	user.UserID = userPrefix + uuid.NewString()
+	user.UserID = USER_PREFIX + uuid.NewString()
 
 	record, err := json.Marshal(user)
 	if err != nil {
@@ -71,7 +71,7 @@ func GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 
 func AddSurvey(ctx context.Context, survey *models.Survey) error {
 
-	survey.SurveyID = surveyPrefix + uuid.NewString()
+	survey.SurveyID = SURVEY_PREFIX + uuid.NewString()
 	record, err := json.Marshal(survey)
 	if err != nil {
 		log.Println(err)

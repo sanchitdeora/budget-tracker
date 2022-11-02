@@ -43,8 +43,8 @@ class ReusableBillDialog extends React.Component {
                         >
                             <option value='DEFAULT' disabled>None</option>
                             <option value='bills_and_utilities'>Bills & Utilities</option>
-                            <option value='day_care'>Day Care</option>
                             <option value='education'>Education</option>
+                            <option value='entertainment'>Entertainment</option>
                             <option value='loans'>Loans</option>
                             <option value='Medical'>Medical</option>
                             <option value='Rent'>Rent</option>
@@ -67,16 +67,16 @@ class ReusableBillDialog extends React.Component {
                         <label htmlFor='date'>Date Due</label><br></br>
                         <input
                             type='date'
-                            name='date_due'
+                            name='due_date'
                             className='bill-input-box'
                             onChange={this.props.handleChange}
                         />
                     </div>
                     <br></br>
                     <div className='bill-input-group'>
-                        <label htmlFor='how_often'>How Often</label><br></br>
+                        <label htmlFor='frequency'>Frequency</label><br></br>
                         <select 
-                            name='how_often'
+                            name='frequency'
                             className='bill-input-box'
                             defaultValue={'once'}
                             onChange={this.props.handleChange}

@@ -46,7 +46,7 @@ func GetAllTransactions(ctx context.Context, transactions *[]models.Transaction)
 func GetTransactionRecordById(ctx context.Context, key string, transaction *models.Transaction) error {
 	var result bson.M
 
-	filter := bson.M{transactionIdKey: key}
+	filter := bson.M{TRANSACTION_ID_KEY: key}
 	err := transactionCollection.FindOne(ctx, filter).Decode(&result)
 	if len(result) == 0 {
 		return nil
@@ -66,16 +66,16 @@ func GetTransactionRecordById(ctx context.Context, key string, transaction *mode
 }
 
 func InsertTransactionRecord(ctx context.Context, transaction models.Transaction) (string, error) {
-	transactionId := transactionPrefix + uuid.NewString()	
+	transactionId := TRANSACTION_PREFIX + uuid.NewString()	
 	data := bson.D{
-		{Key: transactionIdKey, Value: transactionId},
-		{Key: titleKey, Value: transaction.Title},
-		{Key: categoryKey, Value: transaction.Category},
-		{Key: amountKey, Value: transaction.Amount},
-		{Key: dateKey, Value: transaction.Date},
-		{Key: transactionTypekey, Value: transaction.Type},
-		{Key: accountKey, Value: transaction.Account},
-		{Key: noteKey, Value: transaction.Note},
+		{Key: TRANSACTION_ID_KEY, Value: transactionId},
+		{Key: TITLE_KEY, Value: transaction.Title},
+		{Key: CATEGORY_KEY, Value: transaction.Category},
+		{Key: AMOUNT_KEY, Value: transaction.Amount},
+		{Key: DATE_KEY, Value: transaction.Date},
+		{Key: TRANSACTION_TYPE_KEY, Value: transaction.Type},
+		{Key: ACCOUNT_KEY, Value: transaction.Account},
+		{Key: NOTE_KEY, Value: transaction.Note},
 	}
 
 	result, err := transactionCollection.InsertOne(ctx, data)
@@ -89,16 +89,16 @@ func InsertTransactionRecord(ctx context.Context, transaction models.Transaction
 func UpdateTransactionRecordById(ctx context.Context, id string, transaction models.Transaction) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
-			{Key: titleKey, Value: transaction.Title},
-			{Key: categoryKey, Value: transaction.Category},
-			{Key: amountKey, Value: transaction.Amount},
-			{Key: dateKey, Value: transaction.Date},
-			{Key: transactionTypekey, Value: transaction.Type},
-			{Key: accountKey, Value: transaction.Account},
-			{Key: noteKey, Value: transaction.Note},
+			{Key: TITLE_KEY, Value: transaction.Title},
+			{Key: CATEGORY_KEY, Value: transaction.Category},
+			{Key: AMOUNT_KEY, Value: transaction.Amount},
+			{Key: DATE_KEY, Value: transaction.Date},
+			{Key: TRANSACTION_TYPE_KEY, Value: transaction.Type},
+			{Key: ACCOUNT_KEY, Value: transaction.Account},
+			{Key: NOTE_KEY, Value: transaction.Note},
 		}},
 	}
-	filter := bson.D{{Key: transactionIdKey, Value: id}}
+	filter := bson.D{{Key: TRANSACTION_ID_KEY, Value: id}}
 
 	result, err := transactionCollection.UpdateOne(ctx, filter, data)
 	if err != nil {
@@ -109,7 +109,7 @@ func UpdateTransactionRecordById(ctx context.Context, id string, transaction mod
 }
 
 func DeleteTransactionRecordById(ctx context.Context, id string) (string, error) {
-	filter := bson.D{{Key: transactionIdKey, Value: id}}
+	filter := bson.D{{Key: TRANSACTION_ID_KEY, Value: id}}
 
 	result, err := transactionCollection.DeleteOne(ctx, filter)
 	if err != nil {
