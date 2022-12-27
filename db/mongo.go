@@ -18,22 +18,26 @@ var (
 	userCollection   	  *mongo.Collection
 	surveyCollection	  *mongo.Collection
 	transactionCollection *mongo.Collection
-	billCollection *mongo.Collection
+	billCollection 		  *mongo.Collection
+	budgetCollection 	  *mongo.Collection
 )
 
 const (
-	EMAIL_KEY = "email"
-	TITLE_KEY = "title"
-	CATEGORY_KEY = "category"
+	ACCOUNT_KEY = "account"
 	AMOUNT_KEY = "amount"
 	AMOUNT_DUE_KEY = "amount_due"
+	CATEGORY_KEY = "category"
 	DATE_KEY = "date"
-	DUE_DATE_KEY = "due_date"
 	DATE_PAID_KEY = "date_paid"
+	DUE_DATE_KEY = "due_date"
+	EMAIL_KEY = "email"
 	FREQUENCY_KEY = "frequency"
-	NOTE_KEY = "note"
+	INCOME_KEY = "income"
 	IS_PAID_KEY = "is_paid"
-	ACCOUNT_KEY = "account"
+	NAME_KEY = "name"
+	NOTE_KEY = "note"
+	SAVINGS_KEY = "savings"
+	TITLE_KEY = "title"
 
 	// Transaction constants
 	TRANSACTION_ID_KEY = "transaction_id"
@@ -43,6 +47,14 @@ const (
 	// Bill constants
 	BILL_ID_KEY = "bill_id"
 	BILL_PREFIX = "B-"
+
+	// Budget constants
+	BUDGET_ID_KEY = "budget_id"
+	BUDGET_PREFIX = "BG-"
+	BUDGET_INCOME_MAP_KEY = "income_map"
+	BUDGET_SPENDING_LIMIT_MAP_KEY = "spending_limit_map"
+	BUDGET_GOALS_AMOUNT_MAP_KEY = "goal_amount_map"
+	
 )
 
 func Init() (*mongo.Client, context.Context, error) {
@@ -65,6 +77,7 @@ func Init() (*mongo.Client, context.Context, error) {
 	surveyCollection = budgetDatabase.Collection("survey_table")
 	transactionCollection = budgetDatabase.Collection("trasanction_table")
 	billCollection = budgetDatabase.Collection("bill_table")
+	budgetCollection = budgetDatabase.Collection("budget_table")
 
 	return client, ctx, err
 }

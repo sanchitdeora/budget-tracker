@@ -1,0 +1,150 @@
+.budgets-inner-container {
+  width: 60%;
+  transition: visibility 0.2s ease-out;
+}
+.inner-container.show {
+  visibility: visible;
+}
+
+.header {
+  text-align: center;
+  padding: 5px;
+  margin-bottom: 17px;
+  font-family: Ozxgen, sans-serif;
+  font-size: 30px;
+  border-bottom: 2px solid #00897b;
+}
+
+.budgets-title-box {
+  text-align: center;
+}
+
+.budgets-category-box {
+  width: 75%;
+}
+
+.budgets-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.budget {
+  width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 50px;
+  font-family: Ozxgen, sans-serif;
+  margin-bottom: 25px;
+  background-color: #e0f2f1;
+}
+
+.budgets-category-box {
+  width: 90%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.budgets-list-item-text-container {
+  margin-top: 15px;
+}
+
+.create-budget-button {
+  float: right; 
+  margin-right: 0;
+}
+
+.budget-dialog {
+  width: 100%;
+}
+
+.budget-inner-container {
+  width: 75%;
+}
+
+.budget-map-input-group {
+  border-radius: 3px;
+  padding: 13px;
+  background-color: #e0f2f1;
+}
+
+.currency-wrap{
+  position:relative;
+}
+
+.currency-code{
+  font-size: 21px;
+  color: #3e3e42;
+  padding: 13px;
+  position:absolute;
+  margin: 2px 0px 5px 0px;
+}
+
+.budget-input-group {
+  font-size: 20px;
+}
+
+.budget-input-box {
+  border-radius: 3px;
+  border: 1px solid #00897b;
+  transition: border 0.4s ease-out;
+  padding: 13px;
+  margin: 2px 0px 5px 0px;
+  font-size: 19px;
+  color: #3e3e42;
+  background: rgba(15, 15, 15, 0.01);
+}
+
+.budget-input-box:hover {
+  border: 2px solid #00897b;
+}
+
+.budget-input-box:focus,
+.budget-input-box:active {
+  border: 2px solid #00897b;
+  box-shadow: 0px 0px 10px rgba(15, 15, 15, 0.2);
+}
+.budget-input-box::placeholder {
+  font-family: Oxygen, sans-serif;
+  font-size: 15px;
+  color: rgba(15, 15, 15, 0.4);
+}
+
+.budget-submit-btn {
+  align-self: center;
+  padding: 10px 30px;
+  font-size: 15px;
+  border-radius: 3px;
+  background-color: rgba(15, 15, 15, 0.03);
+  margin-top: 20px;
+  border: 2px solid #00897b;
+  color: #00897b;
+  transition: background-color 0.3s ease-out;
+  cursor: pointer;
+}
+.budget-submit-btn:hover,
+.budget-submit-btn:focus {
+  background-color: #00897b;
+  color: white;
+}
+
+.close-budget-submit-btn {
+  align-self: center;
+  padding: 10px 30px;
+  font-size: 15px;
+  border-radius: 3px;
+  background-color: rgba(15, 15, 15, 0.03);
+  margin-top: 20px;
+  border: 2px solid #d32f2f;
+  color: #d32f2f;
+  transition: background-color 0.3s ease-out;
+  cursor: pointer;
+}
+.close-budget-submit-btn:hover,
+.close-budget-submit-btn:focus {
+  background-color: #d32f2f;
+  color: white;
+}

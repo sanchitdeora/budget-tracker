@@ -66,7 +66,7 @@ class ReusableBillDialog extends React.Component {
                     <div className='bill-input-group'>
                         <label htmlFor='date'>Date Due</label><br></br>
                         <input
-                            type='date'
+                            type='datetime'
                             name='due_date'
                             className='bill-input-box'
                             onChange={this.props.handleChange}

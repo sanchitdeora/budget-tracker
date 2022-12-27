@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import { capitalizeFirstLowercaseRest, changeDateFormatToMmDdYyyy } from '../../utils/StringUtils';
 import './Bills.scss';
 import { IconButton } from '@mui/material';
-import ReusableTransactionDialog from '../../utils/ReusableBillDialog';
+import ReusableBillDialog from '../../utils/ReusableBillDialog';
 import axios from 'axios';
 
 
@@ -33,7 +33,6 @@ class Bills extends React.Component {
 			isCreateDialogOpen: false,
 			isEditDialogOpen: false,
 		};
-		console.log(this.state.allBills.length ? 'true' : 'false')
 		this.getAllBills()
 	};
 
@@ -66,7 +65,6 @@ class Bills extends React.Component {
 
 	async getAllBills() {
 		let res = await axios.get('/api/bills');
-		console.log('get all bills: ', res.data.body)
 		if (res.data.body != null)
 		{
 			this.setState({
@@ -244,7 +242,7 @@ class Bills extends React.Component {
 											<IconButton onClick={this.handleEditBillOpen.bind(this, data.bill_id)}>
 												<ModeEditIcon />
 											</IconButton>
-											<ReusableTransactionDialog
+											<ReusableBillDialog
 												title={'Edit Bill'}
 												isDialogOpen={this.state.isEditDialogOpen}
 												handleChange={this.handleChange}
@@ -268,7 +266,7 @@ class Bills extends React.Component {
 					</IconButton>
 				</div>
 				
-				<ReusableTransactionDialog
+				<ReusableBillDialog
 					title={'Add Bill'}
 					isDialogOpen={this.state.isCreateDialogOpen}
 					handleChange={this.handleChange}

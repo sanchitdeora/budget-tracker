@@ -14,3 +14,12 @@ export function changeDateFormatToMmDdYyyy(str) {
 
     return [month, day, year].join('-')
 }
+
+export function transformSnakeCaseToText(str) {
+    var splitStr = str.split('_')
+    var resultStr = ""
+    splitStr.forEach(element => {
+        resultStr = resultStr + " " + capitalizeFirstLowercaseRest(element)
+    });
+    return resultStr
+}
