@@ -18,59 +18,59 @@ import ReusableBudgetDialog from '../../utils/ReusableBudgetDialog';
 import axios from 'axios';
 
 class Budgets extends React.Component {
-	constructor(props) {
-		super(props);
+    constructor(props) {
+        super(props);
         this.INCOME = "Income";
         this.SPENDING = "Spending"
-		this.state = {
-			budgetTest: [{
-				budget_id: 'BG_1234',
-				name: 'Monthly Expenditure',
-				income_map: {
-					"salary": 3000,
-				},
-				spending_limit_map: {
-					"bills_and_utilities": 1000,
-					"taxes": 500,
-					"food_and_dining": 500,
-					"uncategorized": 500
-				},
-				goal_amount_map: {},
-				frequency: 'monthly',
-				savings: 500
-			}],
+        this.state = {
+            budgetTest: [{
+                budget_id: 'BG_1234',
+                name: 'Monthly Expenditure',
+                income_map: {
+                    "salary": 3000,
+                },
+                spending_limit_map: {
+                    "bills_and_utilities": 1000,
+                    "taxes": 500,
+                    "food_and_dining": 500,
+                    "uncategorized": 500
+                },
+                goal_amount_map: {},
+                frequency: 'monthly',
+                savings: 500
+            }],
 
-			allBudgets: [],
-			budget_id: '',
-			name: '',
-			income_map: {},
-			spending_limit_map: {},
-			goal_amount_map: {},
-			frequency: '',
-			savings: 0,
-			isCreateDialogOpen: false,
-			isEditDialogOpen: false,
-		};
-		console.log(this.state.allBudgets.length ? 'true' : 'false')
-		this.getAllBudgets()
-	};
+            allBudgets: [],
+            budget_id: '',
+            name: '',
+            income_map: {},
+            spending_limit_map: {},
+            goal_amount_map: {},
+            frequency: '',
+            savings: 0,
+            isCreateDialogOpen: false,
+            isEditDialogOpen: false,
+        };
+        console.log(this.state.allBudgets.length ? 'true' : 'false')
+        this.getAllBudgets()
+    };
 
-	cleanBudgetState = () => {
-		this.setState({
-			budget_id: '',
-			name: '',
-			income_map: {},
-			spending_limit_map: {},
-			goal_amount_map: {},
-			frequency: '',
-			savings: 0,
-		})
-	}
+    cleanBudgetState = () => {
+        this.setState({
+            budget_id: '',
+            name: '',
+            income_map: {},
+            spending_limit_map: {},
+            goal_amount_map: {},
+            frequency: '',
+            savings: 0,
+        })
+    }
 
 
-	handleChange = (event) => {
+    handleChange = (event) => {
         let value = event.target.value;
-		let name = event.target.name;
+        let name = event.target.name;
         
         // for handling income map
         if (name.startsWith(this.INCOME)) {
@@ -99,10 +99,10 @@ class Budgets extends React.Component {
             value = map
         }
 
-		this.setState({
-			[name]: value,
-		});
-	}
+        this.setState({
+            [name]: value,
+        });
+    }
 
     handleRemoveFromMap = (item) => {
         let name;
@@ -130,121 +130,121 @@ class Budgets extends React.Component {
         })
     }
 
-	// get budget
+    // get budget
 
-	async getAllBudgets() {
-		let res = await axios.get('/api/budgets');
-		console.log('get all budgets: ', res.data.body)
-		if (res.data.body != null)
-		{
-			this.setState({
-				allBudgets: res.data.body,
-			});
-		} else {
-			this.setState({
-				allBudgets: [],
-			});
-		}
-	}
+    async getAllBudgets() {
+        let res = await axios.get('/api/budgets');
+        console.log('get all budgets: ', res.data.body)
+        if (res.data.body != null)
+        {
+            this.setState({
+                allBudgets: res.data.body,
+            });
+        } else {
+            this.setState({
+                allBudgets: [],
+            });
+        }
+    }
 
-	// create budget
+    // create budget
 
-	handleCreateBudgetOpen = () => {
-		this.setState({
-			isCreateDialogOpen: true
-		});
-	}
+    handleCreateBudgetOpen = () => {
+        this.setState({
+            isCreateDialogOpen: true
+        });
+    }
 
-	submitCreateBudget = () => {
-		let budgetBody = {
-			'name': this.state.name,
-			'income_map': this.state.income_map,
-			'spending_limit_map': this.state.spending_limit_map,
-			'goal_amount_map': this.state.goal_amount_map,
-			'frequency': this.state.frequency,
-			'savings': parseFloat(this.state.savings),
-		}
-		console.log('The create form was submitted with the following data:', budgetBody);
-		this.postBudgetRequest(budgetBody)
-		this.handleCreateClose()
-	}
+    submitCreateBudget = () => {
+        let budgetBody = {
+            'name': this.state.name,
+            'income_map': this.state.income_map,
+            'spending_limit_map': this.state.spending_limit_map,
+            'goal_amount_map': this.state.goal_amount_map,
+            'frequency': this.state.frequency,
+            'savings': parseFloat(this.state.savings),
+        }
+        console.log('The create form was submitted with the following data:', budgetBody);
+        this.postBudgetRequest(budgetBody)
+        this.handleCreateClose()
+    }
 
-	async postBudgetRequest(budgetBody) {
-		let res = await axios.post('/api/budget', budgetBody);
-		console.log(res);
-		this.getAllBudgets();
-	}
+    async postBudgetRequest(budgetBody) {
+        let res = await axios.post('/api/budget', budgetBody);
+        console.log(res);
+        this.getAllBudgets();
+    }
 
-	handleCreateClose = () => {
-		this.cleanBudgetState()
-		this.setState({
-			isCreateDialogOpen: false
-		});
-	};
+    handleCreateClose = () => {
+        this.cleanBudgetState()
+        this.setState({
+            isCreateDialogOpen: false
+        });
+    };
 
-	// edit budget
+    // edit budget
 
-	handleEditBudgetOpen = (id) => {
-		console.log('Edit id: ', id)
-		this.setState({
-			budget_id: id,
-			isEditDialogOpen: true
-		});
-	}
+    handleEditBudgetOpen = (id) => {
+        console.log('Edit id: ', id)
+        this.setState({
+            budget_id: id,
+            isEditDialogOpen: true
+        });
+    }
 
-	submitEditBudget = () => {
-		let budgetBody = {
-			'name': this.state.name,
-			'income_map': this.state.income_map,
-			'spending_limit_map': this.state.spending_limit_map,
-			'goal_amount_map': this.state.goal_amount_map,
-			'frequency': this.state.frequency,
-			'savings': parseFloat(this.state.savings),
-		}
-		console.log('The edit form was submitted with the following data:', budgetBody);
-		this.putBudgetRequest(budgetBody)
-		this.handleEditClose()
-	}
+    submitEditBudget = () => {
+        let budgetBody = {
+            'name': this.state.name,
+            'income_map': this.state.income_map,
+            'spending_limit_map': this.state.spending_limit_map,
+            'goal_amount_map': this.state.goal_amount_map,
+            'frequency': this.state.frequency,
+            'savings': parseFloat(this.state.savings),
+        }
+        console.log('The edit form was submitted with the following data:', budgetBody);
+        this.putBudgetRequest(budgetBody)
+        this.handleEditClose()
+    }
 
-	async putBudgetRequest(budgetBody) {
-		let res = await axios.put('/api/budget/'+this.state.budget_id, budgetBody);
-		console.log(res);
-		this.getAllBudgets();
-	}
+    async putBudgetRequest(budgetBody) {
+        let res = await axios.put('/api/budget/'+this.state.budget_id, budgetBody);
+        console.log(res);
+        this.getAllBudgets();
+    }
 
-	handleEditClose = () => {
-		this.cleanBudgetState()
-		this.setState({
-			isEditDialogOpen: false
-		});
-	};
+    handleEditClose = () => {
+        this.cleanBudgetState()
+        this.setState({
+            isEditDialogOpen: false
+        });
+    };
 
-	// delete budget
+    // delete budget
 
-	handleDeleteBudget = (id) => {
-		console.log('Delete id: ', id)
-		this.deleteBudgetRequest(id)
-	}
+    handleDeleteBudget = (id) => {
+        console.log('Delete id: ', id)
+        this.deleteBudgetRequest(id)
+    }
 
-	async deleteBudgetRequest(id) {
-		let res = await axios.delete('/api/budget/'+id);
-		console.log(res);
-		this.getAllBudgets();
-	}
+    async deleteBudgetRequest(id) {
+        let res = await axios.delete('/api/budget/'+id);
+        console.log(res);
+        this.getAllBudgets();
+    }
 
-	render() {
-		return (
-			<div className='budgets-inner-container'>
-				<div className='header'>
-					Budgets
-				</div>
+    render() {
+        return (
+            <div className='budgets-inner-container'>
+                <div className='header'>
+                    Budgets
+                </div>
                 <div className='create-budget-button'>
                     <Button size='large' style={{color: '#00897b'}} onClick={this.handleCreateBudgetOpen} startIcon={<AddCircleIcon />} >
                         <strong>Create a new Budget</strong>
                     </Button>
-				</div>
+                </div>
 
-				<div className='budgets-box'>
+                <div className='budgets-box'>
                     <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
                         {this.state.allBudgets.length ? <p></p> : <h1>Create a New Budget</h1>}
                         {this.state.allBudgets?.map(data => (
@@ -381,19 +381,19 @@ class Budgets extends React.Component {
                             </div>
                         ))}
                     </List>
-				</div>
+                </div>
 
-				<ReusableBudgetDialog
-					title={'Add New Budget'}
-					isDialogOpen={this.state.isCreateDialogOpen}
-					handleChange={this.handleChange}
-					handleClose={this.handleCreateClose}
+                <ReusableBudgetDialog
+                    title={'Add New Budget'}
+                    isDialogOpen={this.state.isCreateDialogOpen}
+                    handleChange={this.handleChange}
+                    handleClose={this.handleCreateClose}
                     handleRemoveFromMap={this.handleRemoveFromMap}
-					submitMethod={this.submitCreateBudget}
-				/>
-			</div>
-		);
-	}
+                    submitMethod={this.submitCreateBudget}
+                />
+            </div>
+        );
+    }
 }
 
 export default Budgets;

@@ -5,11 +5,11 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 
 class ReusableBillDialog extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-		};
-	};
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+    };
 
     render() {
         return(

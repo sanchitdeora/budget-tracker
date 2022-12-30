@@ -15,77 +15,77 @@ import Budgets from './components/Budgets/Budgets';
 // const TOKEN = "token"
 
 class App extends React.Component {
-	constructor(props) {
-		super(props);
-		const token = sessionStorage.getItem(TOKEN)
-		this.state = {
-			isLoggedIn: token !== null,
-			token: sessionStorage.getItem(TOKEN),
-		};
-	};
+    constructor(props) {
+        super(props);
+        const token = sessionStorage.getItem(TOKEN)
+        this.state = {
+            isLoggedIn: token !== null,
+            token: sessionStorage.getItem(TOKEN),
+        };
+    };
 
-	setLoginState = (loginState) => {
-		this.setState({isLoggedIn: loginState})
-		// console.log(this.state)	
-	}
+    setLoginState = (loginState) => {
+        this.setState({isLoggedIn: loginState})
+        // console.log(this.state)	
+    }
 
-	setToken = (tokenVal) => {
-		sessionStorage.setItem(TOKEN, tokenVal)
-		this.setState({token: tokenVal})
-		// console.log(this.state)	
-	}
+    setToken = (tokenVal) => {
+        sessionStorage.setItem(TOKEN, tokenVal)
+        this.setState({token: tokenVal})
+        // console.log(this.state)	
+    }
 
-	render() {
-		return (
-			<div className="root-container">
-					<Router>
-						<NavBar isLoggedIn={this.state.isLoggedIn} />
-						<div className="app-container">
-						<Switch>
-							
-							<PrivateRoute component={Home} path="/home" exact />
+    render() {
+        return (
+            <div className="root-container">
+                    <Router>
+                        <NavBar isLoggedIn={this.state.isLoggedIn} />
+                        <div className="app-container">
+                        <Switch>
+                            
+                            <PrivateRoute component={Home} path="/home" exact />
 
-							<Route exact path='/ping'>
-								<Ping />
-							</Route>
-							
-							<Route exact path='/authenticate'>
-								<Authenticate setLoginState={this.setLoginState} setToken={this.setToken} />
-							</Route>
-							
-							<Route exact path='/logout'>
-								<Logout setLoginState={this.setLoginState} setToken={this.setToken} />
-							</Route>
+                            <Route exact path='/ping'>
+                                <Ping />
+                            </Route>
+                            
+                            <Route exact path='/authenticate'>
+                                <Authenticate setLoginState={this.setLoginState} setToken={this.setToken} />
+                            </Route>
+                            
+                            <Route exact path='/logout'>
+                                <Logout setLoginState={this.setLoginState} setToken={this.setToken} />
+                            </Route>
 
-							<Route exact path='/survey'>
-								<Survey />
-							</Route>
+                            <Route exact path='/survey'>
+                                <Survey />
+                            </Route>
 
-							<Route exact path='/transactions'>
-								<Transactions />
-							</Route>
+                            <Route exact path='/transactions'>
+                                <Transactions />
+                            </Route>
 
-							<Route exact path='/bills'>
-								<Bills />
-							</Route>
+                            <Route exact path='/bills'>
+                                <Bills />
+                            </Route>
 
-							<Route exact path='/budgets'>
-								<Budgets />
-							</Route>
+                            <Route exact path='/budgets'>
+                                <Budgets />
+                            </Route>
 
-							<Route exact path="/">
-  								{
-								  this.state.isLoggedIn ? 
-								  <Redirect to="/home" /> : 
-								  <Redirect to="/authenticate" />
-								} 
-							</Route>
-						</Switch></div>
-					</Router>
-				
-			</div>
-		);
-	}
+                            <Route exact path="/">
+                                  {
+                                  this.state.isLoggedIn ? 
+                                  <Redirect to="/home" /> : 
+                                  <Redirect to="/authenticate" />
+                                } 
+                            </Route>
+                        </Switch></div>
+                    </Router>
+                
+            </div>
+        );
+    }
 }
 
 const PrivateRoute = ({component: Component, ...rest}) => {

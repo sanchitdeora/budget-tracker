@@ -69,7 +69,7 @@ class BudgetMapInput extends React.Component {
                                 </Grid>
                                 <Grid item xs={6}>
                                 <div class="currency-wrap">
-	                                <span class="currency-code">$</span>
+                                    <span class="currency-code">$</span>
                                     <input
                                         type='number'
                                         name={item.value}

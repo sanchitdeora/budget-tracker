@@ -3,21 +3,21 @@ import { Redirect } from "react-router-dom";
 
 
 class Logout extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-		};
-		this.props.setLoginState(false)
-		this.props.setToken(null)
-		sessionStorage.clear()
-		console.log(this.props)
-	};
+    constructor(props) {
+        super(props);
+        this.state = {
+        };
+        this.props.setLoginState(false)
+        this.props.setToken(null)
+        sessionStorage.clear()
+        console.log(this.props)
+    };
 
-	render() {
-		return(
-			<Redirect to='/' />
-		)
-	}
+    render() {
+        return(
+            <Redirect to='/' />
+        )
+    }
 }
 
 export default Logout;
