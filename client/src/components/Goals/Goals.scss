@@ -1,0 +1,122 @@
+.goals-inner-container {
+  width: 60%;
+  transition: visibility 0.2s ease-out;
+}
+.inner-container.show {
+  visibility: visible;
+}
+
+.header {
+  text-align: center;
+  padding: 5px;
+  margin-bottom: 17px;
+  font-family: Ozxgen, sans-serif;
+  font-size: 30px;
+  border-bottom: 2px solid #00897b;
+}
+
+.goals-title-box {
+  width: 100%;
+  display: flex;
+}
+
+.goals-category-box {
+  width: 75%;
+}
+
+.goals-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.goal {
+  width: 100%;
+  padding-top: 15px;
+  font-family: Ozxgen, sans-serif;
+  margin-bottom: 25px;
+  background-color: #e0f2f1;
+}
+
+.goals-category-box {
+  width: 90%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.goals-list-item-text-container {
+  margin-top: 15px;
+}
+
+.create-goal-button {
+  float: right; 
+  margin-right: 0;
+}
+
+.goal-dialog {
+  width: 100%;
+}
+
+.goal-inner-container {
+  width: 75%;
+}
+
+.goal-input-group {
+  font-size: 20px;
+  padding-top: 5px;
+}
+
+.goal-input-box {
+  border-radius: 3px;
+  transition: border 0.4s ease-out;
+  padding: 13px;
+  margin: 2px 0px 5px 0px;
+  font-size: 19px;
+  color: #3e3e42;
+  background: rgba(15, 15, 15, 0.01);
+}
+
+.goal-input-box::placeholder {
+  font-family: Oxygen, sans-serif;
+  font-size: 15px;
+  color: rgba(15, 15, 15, 0.4);
+}
+
+.goal-submit-btn {
+  align-self: center;
+  padding: 10px 30px;
+  font-size: 15px;
+  border-radius: 3px;
+  background-color: rgba(15, 15, 15, 0.03);
+  margin-top: 20px;
+  border: 2px solid #00897b;
+  color: #00897b;
+  transition: background-color 0.3s ease-out;
+  cursor: pointer;
+}
+.goal-submit-btn:hover,
+.goal-submit-btn:focus {
+  background-color: #00897b;
+  color: white;
+}
+
+.close-goal-submit-btn {
+  align-self: center;
+  padding: 10px 30px;
+  font-size: 15px;
+  border-radius: 3px;
+  background-color: rgba(15, 15, 15, 0.03);
+  margin-top: 20px;
+  border: 2px solid #d32f2f;
+  color: #d32f2f;
+  transition: background-color 0.3s ease-out;
+  cursor: pointer;
+}
+.close-goal-submit-btn:hover,
+.close-goal-submit-btn:focus {
+  background-color: #d32f2f;
+  color: white;
+}

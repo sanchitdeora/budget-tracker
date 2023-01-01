@@ -29,6 +29,7 @@ var BillCategoryMap = []string{
 
 var BillFrequencyMap = []string{
 	ONCE_FREQUENCY,
+	DAILY_FREQUENCY,
 	WEEKLY_FREQUENCY,
 	BI_WEEKLY_FREQUENCY,
 	MONTHLY_FREQUENCY,

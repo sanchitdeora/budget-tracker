@@ -14,6 +14,48 @@ import (
 const USER_PREFIX string = "U-"
 const SURVEY_PREFIX string = "S-"
 
+const (
+	ACCOUNT_KEY = "account"
+	AMOUNT_KEY = "amount"
+	AMOUNT_DUE_KEY = "amount_due"
+	CATEGORY_KEY = "category"
+	CURRENT_AMOUNT_KEY = "current_amount"
+	DATE_KEY = "date"
+	DATE_PAID_KEY = "date_paid"
+	DUE_DATE_KEY = "due_date"
+	EMAIL_KEY = "email"
+	FREQUENCY_KEY = "frequency"
+	INCOME_KEY = "income"
+	IS_PAID_KEY = "is_paid"
+	NAME_KEY = "name"
+	NOTE_KEY = "note"
+	SAVINGS_KEY = "savings"
+	TARGET_AMOUNT_KEY = "target_amount"
+	TARGET_DATE_KEY = "target_date"
+	TITLE_KEY = "title"
+
+	// Transaction constants
+	TRANSACTION_ID_KEY = "transaction_id"
+	TRANSACTION_PREFIX = "T-"
+	TRANSACTION_TYPE_KEY = "type"
+	
+	// Bill constants
+	BILL_ID_KEY = "bill_id"
+	BILL_PREFIX = "B-"
+
+	// Budget constants
+	BUDGET_ID_KEY = "budget_id"
+	BUDGET_PREFIX = "BG-"
+	BUDGET_INCOME_MAP_KEY = "income_map"
+	BUDGET_SPENDING_LIMIT_MAP_KEY = "spending_limit_map"
+	BUDGET_GOALS_AMOUNT_MAP_KEY = "goal_amount_map"
+	
+	// Goal constants
+	GOAL_ID_KEY = "goal_id"
+	GOAL_PREFIX = "G-"
+	BUDGET_ID_LIST_KEY = "budget_id_list"
+)
+
 func AddUser(ctx context.Context, user models.User) error {
 	user.UserID = USER_PREFIX + uuid.NewString()
 

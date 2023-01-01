@@ -111,9 +111,10 @@ class Register extends React.Component {
                     <button
                         type="button"
                         className="submit-btn"
-                        onClick={this
-                            .submitRegister
-                            .bind(this)}>Register</button>
+                        onClick={this.submitRegister.bind(this)}
+                    >
+                        Register
+                    </button>
                 </div>
             </div>
         );

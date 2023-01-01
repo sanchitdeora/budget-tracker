@@ -43,25 +43,26 @@ func GetAllBudgets(ctx context.Context, budgets *[]models.Budget) error {
 	
 }
 
-func GetBudgetRecordById(ctx context.Context, key string, budget *models.Budget) error {
+func GetBudgetRecordById(ctx context.Context, key string) (*models.Budget, error) {
 	var result bson.M
+	var budget models.Budget
 
 	filter := bson.M{BUDGET_ID_KEY: key}
 	err := budgetCollection.FindOne(ctx, filter).Decode(&result)
 	if len(result) == 0 {
-		return nil
+		return nil, nil
 	}
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
-	if err := utils.ConvertBsonToStruct(result, budget); err != nil {
+	if err := utils.ConvertBsonToStruct(result, &budget); err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &budget, nil
 	
 }
 

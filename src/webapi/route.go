@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/bill"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/budget"
+	"github.com/sanchitdeora/budget-tracker/src/pkg/api/goals"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/home"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/quickstart"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/registration"
@@ -38,6 +39,12 @@ func route(router *gin.Engine) *gin.Engine {
 	api.POST("/budget", budget.CreateBudget)
 	api.PUT("/budget/:id", budget.UpdateBudget)
 	api.DELETE("/budget/:id", budget.DeleteBudget)
+
+	api.GET("/goals", goals.GetAllGoals)
+	api.GET("/goal/:id", goals.GetGoalById)
+	api.POST("/goal", goals.CreateGoal)
+	api.PUT("/goal/:id", goals.UpdateGoal)
+	api.DELETE("/goal/:id", goals.DeleteGoal)
 
 	return router
 }

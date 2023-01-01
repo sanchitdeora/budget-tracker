@@ -14,12 +14,37 @@ type Budget struct {
 	Savings          float32            `json:"savings"`
 }
 
-func (b *Budget) GetSavings() float32 {
-	if b.Savings == 0 {
-		b.Savings = calculateSavings(b.IncomeMap, b.SpendingLimitMap, b.GoalAmountMap)
+var BudgetFrequencyMap = []string{
+	ONCE_FREQUENCY,
+	DAILY_FREQUENCY,
+	WEEKLY_FREQUENCY,
+	BI_WEEKLY_FREQUENCY,
+	MONTHLY_FREQUENCY,
+	BI_MONTHLY_FREQUENCY,
+	QUATERLY_FREQUENCY,
+	HALF_YEARLY_FREQUENCY,
+	YEARLY_FREQUENCY,
+}
+
+func (budget *Budget) GetSavings() float32 {
+	if budget.Savings == 0 {
+		budget.Savings = calculateSavings(budget.IncomeMap, budget.SpendingLimitMap, budget.GoalAmountMap)
 	}
 
-	return b.Savings
+	return budget.Savings
+}
+
+func (budget *Budget) SetFrequency() {
+	for index, frequency := range BudgetFrequencyMap {
+		if frequency == strings.ToLower(budget.Frequency) {
+			budget.Frequency = BudgetFrequencyMap[index]
+			return
+		}
+		// default frequency set as 
+		if index == len(BudgetFrequencyMap) - 1 {
+			budget.Frequency = ONCE_FREQUENCY
+		}
+	}
 }
 
 func (budget *Budget) SetCategory() {

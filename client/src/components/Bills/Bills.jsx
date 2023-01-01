@@ -216,7 +216,7 @@ class Bills extends React.Component {
                                                     {data.note}
                                                 </Typography>
                                             </React.Fragment>} />
-                                    <ListItemText
+                                        <ListItemText
                                             primary={'$' + data.amount_due}
                                             secondary={data.due_date.substring(0, 10)}
                                         />

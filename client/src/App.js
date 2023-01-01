@@ -11,6 +11,7 @@ import Survey from './components/Survey/Survey.jsx';
 import Transactions from './components/Transactions/Transactions';
 import Bills from './components/Bills/Bills';
 import Budgets from './components/Budgets/Budgets';
+import Goals from './components/Goals/Goals';
 
 // const TOKEN = "token"
 
@@ -71,6 +72,10 @@ class App extends React.Component {
 
                             <Route exact path='/budgets'>
                                 <Budgets />
+                            </Route>
+
+                            <Route exact path='/goals'>
+                                <Goals />
                             </Route>
 
                             <Route exact path="/">

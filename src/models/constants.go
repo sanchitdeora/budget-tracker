@@ -26,6 +26,7 @@ const (
 	// frequency constants
 
 	ONCE_FREQUENCY = "once"
+	DAILY_FREQUENCY = "daily"
 	WEEKLY_FREQUENCY = "weekly"
 	BI_WEEKLY_FREQUENCY = "bi_weekly"
 	MONTHLY_FREQUENCY ="monthly"

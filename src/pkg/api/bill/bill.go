@@ -90,8 +90,9 @@ func calculateNewBillDate(currDate time.Time, freq string) (time.Time, error) {
 	if !utils.Contains(models.BillFrequencyMap, freq) || models.ONCE_FREQUENCY == freq {
 		return currDate, err
 	}
-
-	if freq == models.WEEKLY_FREQUENCY {
+	if freq == models.DAILY_FREQUENCY {
+		return currDate.AddDate(0, 0, 1), nil
+	} else if freq == models.WEEKLY_FREQUENCY {
 		return currDate.AddDate(0, 0, 7), nil
 	} else if freq == models.BI_WEEKLY_FREQUENCY {
 		return currDate.AddDate(0, 0, 14), nil

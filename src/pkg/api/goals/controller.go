@@ -1,4 +1,4 @@
-package budget
+package goals
 
 import (
 	"net/http"
@@ -8,10 +8,10 @@ import (
 )
 
 
-func GetAllBudgets(c *gin.Context) {
+func GetAllGoals(c *gin.Context) {
 
-	var response []models.Budget
-	err := GetBudgets(c, &response)
+	var response []models.Goal
+	err := GetGoals(c, &response)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -25,10 +25,10 @@ func GetAllBudgets(c *gin.Context) {
 }
 
 
-func GetBudgetById(c *gin.Context) {
+func GetGoalById(c *gin.Context) {
 	
-	response, err := GetBudget(c, c.Param("id"))
-	if response.BudgetId == "" {
+	response, err := GetGoal(c, c.Param("id"))
+	if response.GoalId == "" {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
@@ -43,15 +43,15 @@ func GetBudgetById(c *gin.Context) {
 
 }
 
-func CreateBudget(c *gin.Context) {
+func CreateGoal(c *gin.Context) {
 	
-	var budget models.Budget
-	err := c.BindJSON(&budget)
+	var goal models.Goal
+	err := c.BindJSON(&goal)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	budgetId, err := createBudget(c, budget)
+	goalId, err := createGoal(c, goal)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -59,21 +59,21 @@ func CreateBudget(c *gin.Context) {
 
 	c.JSON(201, gin.H{
 		"message": "Success",
-		"body":    budgetId,
+		"body":    goalId,
 	})
 
 }
 
-func UpdateBudget(c *gin.Context) {
+func UpdateGoal(c *gin.Context) {
 	
-	var budget models.Budget
-	err := c.BindJSON(&budget)
+	var goal models.Goal
+	err := c.BindJSON(&goal)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	
-	budgetId, err := UpdateBudgetById(c, c.Param("id"), budget)
+	goalId, err := UpdateGoalById(c, c.Param("id"), goal)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -81,13 +81,13 @@ func UpdateBudget(c *gin.Context) {
 	
 	c.JSON(200, gin.H{
 		"message": "Success",
-		"body":    budgetId,
+		"body":    goalId,
 	})
 
 }
 
-func DeleteBudget(c *gin.Context) {
-	budgetId, err := DeleteBudgetById(c, c.Param("id"))
+func DeleteGoal(c *gin.Context) {
+	goalId, err := DeleteGoalById(c, c.Param("id"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -95,7 +95,7 @@ func DeleteBudget(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"message": "Success",
-		"body":    budgetId,
+		"body":    goalId,
 	})
 
 }

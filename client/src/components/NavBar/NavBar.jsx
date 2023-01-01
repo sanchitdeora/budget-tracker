@@ -17,6 +17,7 @@ class NavBar extends React.Component {
                         <li><Link to='/transactions'>Transactions</Link></li>
                         <li><Link to='/bills'>Bills</Link></li>
                         <li><Link to='/budgets'>Budgets</Link></li>
+                        <li><Link to='/goals'>Goals</Link></li>
                         
                         {
                             this.props.isLoggedIn ? 
