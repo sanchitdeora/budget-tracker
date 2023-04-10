@@ -1,6 +1,6 @@
+/* eslint-disable no-sequences */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
-import { useTheme } from '@mui/material/styles';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -9,34 +9,32 @@ import Select from '@mui/material/Select';
 import axios from 'axios';
 
 export default function GoalsBudgetSelect({handleBudgetIds}) {
-  const theme = useTheme();
-
   const [budgets, setBudgets] = useState([]);
   const [allbudgets, setAllBudgets] = useState([]);
   
   useEffect(() => {
     axios.get('/api/budgets').then((res => {
-        console.log('get all budgets23: ', res.data.body)
+        console.log('get all budgets in goalBudgetSelect: ', res.data.body)
         var keys = ['budget_id', 'name'];
         var resu = res.data.body.map(obj => keys.reduce((a, c) => (obj[c] ? a[c] = obj[c] : c, a), {}));
 
-        console.log("Print: ", resu)
+        console.log("budgets response in goalBudgetSelect: ", resu)
         if (res.data.body != null) {
             setAllBudgets(
                 // res.data.body.map(x => {id: x.goal_id, name: x.name})
                 res.data.body.map(obj => keys.reduce((a, c) => (obj[c] ? a[c] = obj[c] : c, a), {}))
             )
         }
-        console.log('get all budgets after set: ', allbudgets)
+        console.log('get all budgets state: ', allbudgets)
     }))
   }, allbudgets);
 
   const handleChange = (event) => {
-    console.log("entered: ", event)
+    // console.log("entered: ", event)
     const {target: { value }} = event;
-    console.log("reached with value: ", value)
+    // console.log("reached with value: ", value)
     setBudgets(value);
-    console.log("reached budgets: ", budgets)
+    // console.log("reached budgets: ", budgets)
     handleBudgetIds(event.target.name, value.map(x => x.budget_id))
   };
 

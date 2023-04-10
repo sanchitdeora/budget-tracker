@@ -50,7 +50,7 @@ func CreateBill(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	billId, err := createBill(c, bill)
+	billId, err := createBillByUser(c, bill)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

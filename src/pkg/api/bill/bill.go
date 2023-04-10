@@ -2,7 +2,6 @@ package bill
 
 import (
 	"context"
-	"errors"
 	"log"
 	"time"
 
@@ -20,6 +19,14 @@ func getBills(ctx context.Context, bill *[]models.Bill) (error) {
 func getBillById(ctx context.Context, id string, bill *models.Bill) (error) {
 	// TODO: input validation
 	return db.GetBillRecordById(ctx, id, bill)
+}
+
+func createBillByUser(ctx context.Context, bill models.Bill) (string, error) {
+	// TODO: input validation
+	bill.SetByUser()
+	bill.SetCategory()
+	bill.SetFrequency()
+	return db.InsertBillRecord(ctx, bill)
 }
 
 func createBill(ctx context.Context, bill models.Bill) (string, error) {
@@ -55,7 +62,7 @@ func updateBillIsPaid(ctx context.Context, id string) (string, error) {
 
 	if bill.Frequency != models.ONCE_FREQUENCY {
 		// create new bill entry for next frequency period
-		newDueDate, err := calculateNewBillDate(bill.DueDate, bill.Frequency)
+		newDueDate, err := utils.CalculateEndDateWithFrequency(bill.DueDate, bill.Frequency)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -64,6 +71,9 @@ func updateBillIsPaid(ctx context.Context, id string) (string, error) {
 		newBill.BillId = ""
 		newBill.DueDate = newDueDate
 		newBill.IsPaid = false
+		newBill.CreationTime = time.Now()
+		newBill.SequenceNumber = bill.SequenceNumber + 1
+		newBill.SequenceStartId = bill.SequenceStartId
 		
 		_, err = createBill(ctx, newBill)
 		if err != nil {
@@ -82,32 +92,4 @@ func updateBillIsUnpaid(ctx context.Context, id string) (string, error) {
 func deleteBillById(ctx context.Context, id string) (string, error) {
 	// TODO: input validation
 	return db.DeleteBillRecordById(ctx, id)
-}
-
-func calculateNewBillDate(currDate time.Time, freq string) (time.Time, error) {
-	err := errors.New("provided Frequency is not found in the frequency map")
-	
-	if !utils.Contains(models.BillFrequencyMap, freq) || models.ONCE_FREQUENCY == freq {
-		return currDate, err
-	}
-	if freq == models.DAILY_FREQUENCY {
-		return currDate.AddDate(0, 0, 1), nil
-	} else if freq == models.WEEKLY_FREQUENCY {
-		return currDate.AddDate(0, 0, 7), nil
-	} else if freq == models.BI_WEEKLY_FREQUENCY {
-		return currDate.AddDate(0, 0, 14), nil
-	} else if freq == models.MONTHLY_FREQUENCY {
-		return currDate.AddDate(0, 1, 0), nil
-	} else if freq == models.BI_MONTHLY_FREQUENCY {
-		return currDate.AddDate(0, 2, 0), nil
-	} else if freq == models.QUATERLY_FREQUENCY {
-		return currDate.AddDate(0, 3, 0), nil
-	} else if freq == models.HALF_YEARLY_FREQUENCY {
-		return currDate.AddDate(0, 6, 0), nil
-	} else if freq == models.YEARLY_FREQUENCY {
-		return currDate.AddDate(1, 0, 0), nil
-	} else {
-		return currDate, err
-	}
-
 }

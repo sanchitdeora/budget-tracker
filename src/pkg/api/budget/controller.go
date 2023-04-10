@@ -1,6 +1,7 @@
 package budget
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -44,15 +45,18 @@ func GetBudgetById(c *gin.Context) {
 }
 
 func CreateBudget(c *gin.Context) {
-	
+	fmt.Println("\n creating budget now")
 	var budget models.Budget
 	err := c.BindJSON(&budget)
 	if err != nil {
+		fmt.Println("\nError binding JSON", err)
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	budgetId, err := createBudget(c, budget)
+	fmt.Println("\nprint budget", budget)
+	budgetId, err := createBudgetByUser(c, budget)
 	if err != nil {
+		fmt.Println("\nError creating budget", err)
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}

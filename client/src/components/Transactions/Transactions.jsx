@@ -32,7 +32,6 @@ class Transactions extends React.Component {
             isEditDialogOpen: false,
         };
         this.getAllTransactions()
-        console.log(this.state.allTransactions.length)
     };
 
     cleanTransactionState = () => {
@@ -53,14 +52,14 @@ class Transactions extends React.Component {
         let name = event.target.name;
         if (name === 'type') {
             value = value === 'credit' ? true : false  
-            console.log('Name: ' + name + ' value: ' + value)
+            // console.log('Name: ' + name + ' value: ' + value)
             this.setState({
                 [name]: value,
             });
         }
         if (name === 'due_date') {
             value = changeDateFormatToMmDdYyyy(value);
-            console.log("Onchange | name: "+name+" value: ", value);
+            // console.log("Onchange | name: "+name+" value: ", value);
         }
         this.setState({
             [name]: value,
@@ -104,14 +103,14 @@ class Transactions extends React.Component {
             'account': this.state.account,
             'note': this.state.note,
         }
-        console.log('The create form was submitted with the following data:', transactionBody,);
+        console.log('The transaction create form was submitted with the following data:', transactionBody,);
         this.postTransactionRequest(transactionBody)
         this.handleCreateClose()
     }
 
     async postTransactionRequest(transactionBody) {
         let res = await axios.post('/api/transaction', transactionBody);
-        console.log(res);
+        console.log("Post transaction response", res);
         this.getAllTransactions();
     }
 
@@ -126,7 +125,7 @@ class Transactions extends React.Component {
     // edit transaction
 
     handleEditTransactionOpen = (id) => {
-        console.log('Edit id: ', id)
+        console.log('Edit transaction id: ', id)
         this.setState({
             transactionId: id,
             isEditDialogOpen: true
@@ -144,14 +143,14 @@ class Transactions extends React.Component {
             'account': this.state.account,
             'note': this.state.note,
         }
-        console.log('The edit form was submitted with the following data:', transactionBody);
+        console.log('The transaction edit form was submitted with the following data:', transactionBody);
         this.putTransactionRequest(transactionBody)
         this.handleEditClose()
     }
 
     async putTransactionRequest(transactionBody) {
         let res = await axios.put('/api/transaction/'+this.state.transactionId, transactionBody);
-        console.log(res);
+        console.log("put transaction response", res);
         this.getAllTransactions();
     }
 
@@ -165,13 +164,13 @@ class Transactions extends React.Component {
     // delete transaction
 
     handleDeleteTransactionOpen = (id) => {
-        console.log('Delete id: ', id)
+        console.log('Delete transaction id: ', id)
         this.deleteTransactionRequest(id)
     }
 
     async deleteTransactionRequest(id) {
         let res = await axios.delete('/api/transaction/'+id);
-        console.log(res);
+        console.log("delete transaction response", res);
         this.getAllTransactions();
     }
 

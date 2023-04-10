@@ -50,7 +50,7 @@ type Goal struct {
 // 	} else if freq == BI_MONTHLY_FREQUENCY {
 // 		return balance / (float32(differenceDays) / (30 * 2))
 
-// 	} else if freq == QUATERLY_FREQUENCY {
+// 	} else if freq == QUARTERLY_FREQUENCY {
 // 		return balance / (float32(differenceDays) / (30 * 3))
 
 // 	} else if freq == HALF_YEARLY_FREQUENCY {

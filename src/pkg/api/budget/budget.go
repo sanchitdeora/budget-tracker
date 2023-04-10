@@ -18,11 +18,21 @@ func GetBudget(ctx context.Context, id string) (*models.Budget, error) {
 	return db.GetBudgetRecordById(ctx, id)
 }
 
+func createBudgetByUser(ctx *gin.Context, budget models.Budget) (string, error) {
+	// TODO: input validation
+	budget.SetCategory()
+	budget.SetFrequency()
+	budget.GetSavings()
+	budget.SetByUser()
+	return db.InsertBudgetRecord(ctx, budget)
+}
+
 func createBudget(ctx *gin.Context, budget models.Budget) (string, error) {
 	// TODO: input validation
 	budget.SetCategory()
 	budget.SetFrequency()
 	budget.GetSavings()
+	budget.AutoSet()
 	return db.InsertBudgetRecord(ctx, budget)
 }
 

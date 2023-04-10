@@ -68,6 +68,11 @@ func GetBillRecordById(ctx context.Context, id string, bill *models.Bill) error 
 
 func InsertBillRecord(ctx context.Context, bill models.Bill) (string, error) {
 	billId := BILL_PREFIX + uuid.NewString()
+
+	if bill.SequenceStartId == "" && bill.SequenceNumber == 0 {
+		bill.SequenceStartId = billId
+	}
+
 	data := bson.D{
 		{Key: BILL_ID_KEY, Value: billId},
 		{Key: TITLE_KEY, Value: bill.Title},
@@ -77,6 +82,9 @@ func InsertBillRecord(ctx context.Context, bill models.Bill) (string, error) {
 		{Key: FREQUENCY_KEY, Value: bill.Frequency},
 		{Key: NOTE_KEY, Value: bill.Note},
 		{Key: IS_PAID_KEY, Value: bill.IsPaid},
+		{Key: CREATION_TIME_KEY, Value: bill.CreationTime},
+		{Key: SEQUENCE_START_ID_KEY, Value: bill.SequenceStartId},
+		{Key: SEQUENCE_NUMBER_KEY, Value: bill.SequenceNumber},
 	}
 
 	result, err := billCollection.InsertOne(ctx, data)
@@ -97,6 +105,9 @@ func UpdateBillRecordById(ctx context.Context, id string, bill models.Bill) (str
 			{Key: FREQUENCY_KEY, Value: bill.Frequency},
 			{Key: NOTE_KEY, Value: bill.Note},
 			{Key: IS_PAID_KEY, Value: bill.IsPaid},
+			{Key: CREATION_TIME_KEY, Value: bill.CreationTime},
+			{Key: SEQUENCE_START_ID_KEY, Value: bill.SequenceStartId},
+			{Key: SEQUENCE_NUMBER_KEY, Value: bill.SequenceNumber},
 		}},
 	}
 	filter := bson.D{{Key: BILL_ID_KEY, Value: id}}

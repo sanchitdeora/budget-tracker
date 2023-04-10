@@ -19,17 +19,21 @@ const (
 	AMOUNT_KEY = "amount"
 	AMOUNT_DUE_KEY = "amount_due"
 	CATEGORY_KEY = "category"
+	CREATION_TIME_KEY = "creation_time"
 	CURRENT_AMOUNT_KEY = "current_amount"
 	DATE_KEY = "date"
 	DATE_PAID_KEY = "date_paid"
 	DUE_DATE_KEY = "due_date"
 	EMAIL_KEY = "email"
+	EXPIRATION_TIME_KEY = "expiration_time"
 	FREQUENCY_KEY = "frequency"
 	INCOME_KEY = "income"
 	IS_PAID_KEY = "is_paid"
 	NAME_KEY = "name"
 	NOTE_KEY = "note"
 	SAVINGS_KEY = "savings"
+	SEQUENCE_NUMBER_KEY = "sequence_no"
+	SEQUENCE_START_ID_KEY = "sequence_start_id"
 	TARGET_AMOUNT_KEY = "target_amount"
 	TARGET_DATE_KEY = "target_date"
 	TITLE_KEY = "title"
@@ -43,12 +47,14 @@ const (
 	BILL_ID_KEY = "bill_id"
 	BILL_PREFIX = "B-"
 
+
 	// Budget constants
 	BUDGET_ID_KEY = "budget_id"
+	BUDGET_NAME_KEY = "budget_name"
 	BUDGET_PREFIX = "BG-"
 	BUDGET_INCOME_MAP_KEY = "income_map"
-	BUDGET_SPENDING_LIMIT_MAP_KEY = "spending_limit_map"
-	BUDGET_GOALS_AMOUNT_MAP_KEY = "goal_amount_map"
+	BUDGET_EXPENSE_MAP_KEY = "expense_map"
+	BUDGET_GOAL_MAP_KEY = "goal_map"
 	
 	// Goal constants
 	GOAL_ID_KEY = "goal_id"

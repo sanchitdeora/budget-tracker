@@ -1,5 +1,4 @@
 .budgets-inner-container {
-  width: 60%;
   transition: visibility 0.2s ease-out;
 }
 .inner-container.show {
@@ -147,4 +146,21 @@
 .close-budget-submit-btn:focus {
   background-color: #d32f2f;
   color: white;
+}
+
+
+.budget-detail-other-box {
+  padding: 8px;
+  background-color: #00897b;
+  color: #ffffff;
+  border-radius: 5px;
+  margin: 1%;
+}
+
+.budget-detail-map-box {
+  padding: 1% 2%;
+  color: #00897b;
+  background-color: #f6fcfb;
+  border-radius: 5px;
+  margin: 1%;
 }

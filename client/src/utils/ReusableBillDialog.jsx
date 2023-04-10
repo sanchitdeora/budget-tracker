@@ -66,7 +66,7 @@ class ReusableBillDialog extends React.Component {
                     <div className='bill-input-group'>
                         <label htmlFor='date'>Date Due</label><br></br>
                         <input
-                            type='datetime'
+                            type='date'
                             name='due_date'
                             className='bill-input-box'
                             onChange={this.props.handleChange}
@@ -86,7 +86,7 @@ class ReusableBillDialog extends React.Component {
                             <option value='bi-weekly'>Every Two Weeks</option>
                             <option value='monthly'>Monthly</option>
                             <option value='bi_monthly'>Every Two Months</option>
-                            <option value='quaterly'>Quaterly</option>
+                            <option value='quarterly'>Quarterly</option>
                             <option value='half_yearly'>Every Six Months</option>
                             <option value='yearly'>Yearly</option>
                         </select>

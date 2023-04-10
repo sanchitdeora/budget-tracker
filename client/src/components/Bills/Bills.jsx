@@ -88,7 +88,6 @@ class Bills extends React.Component {
 
     submitCreateBill = () => {
         let due_date = new Date(this.state.due_date);
-        console.log("Due date in state: ", this.state.due_date, " date now: ", due_date, "date in UTC: ")
         let billBody = {
             'title': this.state.title,
             'category': this.state.category,
@@ -98,14 +97,14 @@ class Bills extends React.Component {
             'is_paid': this.state.is_paid,
             'note': this.state.note,
         }
-        console.log('The create form was submitted with the following data:', billBody,);
+        console.log('The create bill form was submitted with the following data:', billBody,);
         this.postBillRequest(billBody)
         this.handleCreateClose()
     }
 
     async postBillRequest(billBody) {
         let res = await axios.post('/api/bill', billBody);
-        console.log(res);
+        console.log("Post Bill response", res);
         this.getAllBills();
     }
 
@@ -120,7 +119,7 @@ class Bills extends React.Component {
     // edit bill
 
     handleEditBillOpen = (id) => {
-        console.log('Edit id: ', id)
+        console.log('Bill edit id: ', id)
         this.setState({
             billId: id,
             isEditDialogOpen: true
@@ -129,7 +128,6 @@ class Bills extends React.Component {
 
     submitEditBill = () => {
         let due_date = new Date(this.state.due_date);
-        console.log("Due date in state: ", this.state.due_date, " date now: ", due_date)
         let billBody = {
             'title': this.state.title,
             'category': this.state.category,
@@ -139,14 +137,14 @@ class Bills extends React.Component {
             'is_paid': this.state.is_paid,
             'note': this.state.note,
         }
-        console.log('The edit form was submitted with the following data:', billBody);
+        console.log('The edit bill form was submitted with the following data:', billBody);
         this.putBillRequest(billBody)
         this.handleEditClose()
     }
 
     async putBillRequest(billBody) {
         let res = await axios.put('/api/bill/'+this.state.billId, billBody);
-        console.log(res);
+        console.log("Put Bill response", res);
         this.getAllBills();
     }
 
@@ -160,32 +158,32 @@ class Bills extends React.Component {
     // delete bill
 
     handleDeleteBillOpen = (id) => {
-        console.log('Delete id: ', id)
+        console.log('Delete bill id: ', id)
         this.deleteBillRequest(id)
     }
 
     async deleteBillRequest(id) {
         let res = await axios.delete('/api/bill/'+id);
-        console.log(res);
+        console.log("Delete Bill response", res);
         this.getAllBills();
     }
 
     // bill paid
 
     handleBillPaid = (id, isPaid) => {
-        console.log('Print if paid for id: ', id, ' isPaid? ', isPaid)
+        console.log('Print if bill paid for id: ', id, ' isPaid? ', isPaid)
         isPaid ? this.putBillIsPaidRequest(id) : this.putBillIsUnpaidRequest(id)
     }
 
     async putBillIsPaidRequest(id) {
         let res = await axios.put('/api/bill/updateIsPaid/' + id);
-        console.log(res);
+        console.log("Put Bill paid response", res);
         this.getAllBills();
     }
 
     async putBillIsUnpaidRequest(id) {
         let res = await axios.put('/api/bill/updateIsUnpaid/' + id);
-        console.log(res);
+        console.log("Put Bill unpaid response", res);
         this.getAllBills();
     }
 

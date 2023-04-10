@@ -4,35 +4,58 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import BudgetMapInput from './BudgetMapInput';
+import { CATEGORY_MAP, FREQUENCY_MAP } from './GlobalConstants';
+import axios from 'axios';
+import { EXPENSES, GOALS, INCOMES } from '../components/Budgets/BudgetConstants';
 
 class ReusableBudgetDialog extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {allGoals:[]};
+
+        console.log("props for dialog", this.props);
+        console.log("states for dialog", this.state);
+        this.getAllGoals()
     };
 
-    handleIncomeChange = (event) => {
-        if (!event.target.name.startsWith("Income")) {
-            event.target.name = "Income-" + event.target.name;
+    // getGoalIds
+
+    async getAllGoals() {
+        let res = await axios.get('/api/goals');
+
+        if (res.data.body != null)
+        {
+            this.setState({
+                allGoals: res.data.body.map(obj => {
+                    return {
+                        'id': obj.goal_id,
+                        'value': obj.name
+                    }
+                }),
+            });
+        } else {
+            this.setState({
+                allGoals: [],
+            });
         }
-        this.props.handleChange(event);
+
     }
 
-    handleSpendingChange = (event) => {
-        if (!event.target.name.startsWith("Spending")) {
-            event.target.name = "Spending-" + event.target.name;
-        }
-        this.props.handleChange(event);
+    handleIncomeChange = (event, amountMap) => {
+        console.log("show reusable-handleIncomeChange amountMap: ", amountMap)
+        this.props.handleInputChange(event, {type: INCOMES, data: amountMap});
     }
 
-    handleRemoveFromIncomeMap = (item) => {
-        item.value = "Income-" + item.value;
-        this.props.handleRemoveFromMap(item);
+    handleExpenseChange = (event, amountMap) => {
+        console.log("show reusable-handleExpenseChange amountMap: ", amountMap)
+        this.props.handleInputChange(event, {type: EXPENSES, data: amountMap});
+
     }
 
-    handleRemoveFromSpendingMap = (item) => {
-        item.value = "Spending-" + item.value;
-        this.props.handleRemoveFromMap(item);
+    handleGoalChange = (event, amountMap) => {
+        console.log("show reusable-handleGoalChange amountMap: ", amountMap)
+        this.props.handleInputChange(event, {type: GOALS, data: amountMap});
+
     }
 
     render() {
@@ -47,30 +70,43 @@ class ReusableBudgetDialog extends React.Component {
                 <DialogContent>
                     <div className='budget-input-group'>
                         
-                        <label htmlFor='name'>Name</label><br></br>
+                        <label htmlFor='budget_name'>Name</label><br></br>
                         <input
+                            defaultValue={this.props.currentBudget.budget_name}
                             type='text'
-                            name='name'
+                            name='budget_name'
                             className='budget-input-box'
                             placeholder='Name'
-                            onChange={this.props.handleChange}
+                            onChange={this.props.handleInputChange}
                             />
                     </div>
                     <br></br>
                     <div className='budget-input-group'>
                         <BudgetMapInput
-                            name="Income"
+                            name={INCOMES}
+                            optionsList={CATEGORY_MAP}
                             handleChange={this.handleIncomeChange}
-                            handleRemoveFromMap={this.handleRemoveFromIncomeMap}
+                            currentDataMap={this.props.currentBudget.income_map ? this.props.currentBudget.income_map : []}
                         />
                     </div>
 
                     <br></br>
                     <div className='budget-input-group'>
                         <BudgetMapInput 
-                            name="Spendings"
-                            handleChange={this.handleSpendingChange}
-                            handleRemoveFromMap={this.handleRemoveFromSpendingMap}
+                            name={EXPENSES}
+                            optionsList={CATEGORY_MAP}
+                            handleChange={this.handleExpenseChange}
+                            currentDataMap={this.props.currentBudget.expense_map ? this.props.currentBudget.expense_map : []}
+                        />
+                    </div>
+
+                    <br></br>
+                    <div className='budget-input-group'>
+                        <BudgetMapInput 
+                            name={GOALS}
+                            optionsList={this.state.allGoals}
+                            handleChange={this.handleGoalChange}
+                            currentDataMap={this.props.currentBudget.goal_map ? this.props.currentBudget.goal_map : []}
                         />
                     </div>
 
@@ -78,30 +114,26 @@ class ReusableBudgetDialog extends React.Component {
                     <div className='budget-input-group'>
                         <label htmlFor='savings'>Savings</label><br></br>
                         <input
+                            defaultValue={this.props.currentBudget.savings}                            
                             type='number'
                             name='savings'
                             className='budget-input-box'
                             placeholder='Savings'
-                            onChange={this.props.handleChange}
+                            onChange={this.props.handleInputChange}
                         />
                     </div>
                     <br></br>
                     <div className='budget-input-group'>
                         <label htmlFor='frequency'>Frequency</label><br></br>
-                        <select 
+                        <select
                             name='frequency'
                             className='budget-input-box'
-                            defaultValue={'once'}
-                            onChange={this.props.handleChange}
+                            defaultValue={this.props.currentBudget.frequency}
+                            onChange={this.props.handleInputChange}
                         >
-                            <option value='once'>Once</option>
-                            <option value='weekly'>Weekly</option>
-                            <option value='bi-weekly'>Every Two Weeks</option>
-                            <option value='monthly'>Monthly</option>
-                            <option value='bi_monthly'>Every Two Months</option>
-                            <option value='quaterly'>Quaterly</option>
-                            <option value='half_yearly'>Every Six Months</option>
-                            <option value='yearly'>Yearly</option>
+                            {FREQUENCY_MAP.map(freq => (
+                                <option value={freq.id}>{freq.value}</option>
+                            ))} 
                         </select>
                     </div>
                 </DialogContent>

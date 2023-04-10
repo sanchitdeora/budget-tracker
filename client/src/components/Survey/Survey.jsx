@@ -26,13 +26,13 @@ class Survey extends React.Component {
     }
 
     handleSubmit = () => {
-        console.log('The form was submitted with the following data:');
+        console.log('The survey form was submitted with the following data:');
         this.postSurveyRequest()
     }
 
     async postSurveyRequest() {
         let res = await axios.post("/api/quickstart", this.state);
-        console.log(res);
+        console.log("Post survey response", res);
         if (res.status === 200) {
             sessionStorage.setItem(IS_SURVEY_COMPLETE, true)
             this.setState({

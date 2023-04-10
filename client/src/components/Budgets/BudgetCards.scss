@@ -1,0 +1,71 @@
+.budget-cards-inner-container {
+    width: 60%;
+    transition: visibility 0.2s ease-out;
+  }
+
+.budget-cards{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 3rem;
+    padding-bottom: 6rem;
+    // background-color: #19202E;
+    padding: 1rem 1rem;
+}
+
+.create-budget-card-button {
+    display: flex;
+    vertical-align: middle;
+    margin-right: 0;
+    justify-content: flex-end;
+  }
+  
+
+.item-container{
+    overflow: hidden;
+    background-color: #19202E;
+}
+
+.item-container:hover{
+    cursor: pointer;
+    opacity: 80%;
+}
+
+.budget-cards-box{
+    width: 100%;
+    padding: 0.2rem 0.2rem;
+    background-color: #00897b;
+    
+}
+
+
+.buttons{
+    width: 70%;
+    margin: 3rem auto;
+    text-align: center;
+}
+
+.btn{
+    padding: .5rem 2rem;
+    background-color: #00897b;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    color: white;
+    transition: all 0.4s cubic-bezier(1,-0.16,.6,1.35);
+}
+
+.btn:not(:last-child){
+    margin-right: 1rem;
+}
+
+.btn:hover{
+    background-color: #0ed4ba;
+    cursor: pointer;
+}
+
+.btn:active, .btn:focus{
+    outline: none;
+    border: none;
+    background-color: #0ed4ba;
+
+}

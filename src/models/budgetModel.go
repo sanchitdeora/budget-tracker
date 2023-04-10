@@ -1,17 +1,32 @@
 package models
 
 import (
+	"fmt"
 	"strings"
+	"time"
+
+	"github.com/google/uuid"
+	"golang.org/x/exp/slices"
 )
 
 type Budget struct {
-	BudgetId         string             `json:"budget_id"`
-	Name             string             `json:"name"`
-	IncomeMap        map[string]float32 `json:"income_map"`
-	SpendingLimitMap map[string]float32 `json:"spending_limit_map"`
-	GoalAmountMap    map[string]float32 `json:"goal_amount_map"`
-	Frequency        string             `json:"frequency"`
-	Savings          float32            `json:"savings"`
+	BudgetId   		string           `json:"budget_id"`
+	BudgetName		string           `json:"budget_name"`
+	IncomeMap		[]BudgetInputMap `json:"income_map"`
+	ExpenseMap 		[]BudgetInputMap `json:"expense_map"`
+	GoalMap    		[]BudgetInputMap `json:"goal_map"`
+	Frequency   	string           `json:"frequency"`
+	Savings     	float32          `json:"savings"`
+	CreationTime    time.Time 		 `json:"creation_time"`
+	ExpirationTime  time.Time 		 `json:"expiration_time"`
+	SequenceStartId string    		 `json:"sequence_start_id"`
+	SequenceNumber  int       		 `json:"sequence_no"`
+}
+
+type BudgetInputMap struct  {
+	Id 		string  `json:"id"`
+	Name 	string  `json:"name"`
+	Amount 	float32 `json:"amount"`
 }
 
 var BudgetFrequencyMap = []string{
@@ -21,14 +36,16 @@ var BudgetFrequencyMap = []string{
 	BI_WEEKLY_FREQUENCY,
 	MONTHLY_FREQUENCY,
 	BI_MONTHLY_FREQUENCY,
-	QUATERLY_FREQUENCY,
+	QUARTERLY_FREQUENCY,
 	HALF_YEARLY_FREQUENCY,
 	YEARLY_FREQUENCY,
 }
 
+const BUDGET_PREFIX = "BG-"
+
 func (budget *Budget) GetSavings() float32 {
 	if budget.Savings == 0 {
-		budget.Savings = calculateSavings(budget.IncomeMap, budget.SpendingLimitMap, budget.GoalAmountMap)
+		budget.Savings = calculateSavings(budget.IncomeMap, budget.ExpenseMap, budget.GoalMap)
 	}
 
 	return budget.Savings
@@ -40,7 +57,7 @@ func (budget *Budget) SetFrequency() {
 			budget.Frequency = BudgetFrequencyMap[index]
 			return
 		}
-		// default frequency set as 
+		// default frequency set as once
 		if index == len(BudgetFrequencyMap) - 1 {
 			budget.Frequency = ONCE_FREQUENCY
 		}
@@ -48,42 +65,91 @@ func (budget *Budget) SetFrequency() {
 }
 
 func (budget *Budget) SetCategory() {
-	// replace categories with well defined values in map
 	// replace unknown categories with uncategorized
-	for spendCategory, limit := range budget.SpendingLimitMap {
-		for index, categoryFromMap := range TransactionCategoryMap {
-			if categoryFromMap == strings.ToLower(spendCategory) {
-				delete(budget.SpendingLimitMap, spendCategory)
-				budget.SpendingLimitMap[categoryFromMap] = limit
+	budget.IncomeMap = updateCategoryInBudgetMap(budget.IncomeMap)
+	budget.ExpenseMap = updateCategoryInBudgetMap(budget.ExpenseMap)
 
+	fmt.Println("Main Object expense map: ", budget.ExpenseMap)
+}
+
+func (budget *Budget) SetByUser() {
+	budgetId := BUDGET_PREFIX + uuid.NewString()
+	budget.BudgetId = budgetId
+	budget.SequenceStartId = budgetId
+	budget.SequenceNumber = 0
+
+	if budget.CreationTime.IsZero() {
+		budget.CreationTime = time.Now().Local()
+	}
+}
+func (budget *Budget) AutoSet() {
+
+}
+
+func updateCategoryInBudgetMap(budgetMap []BudgetInputMap) []BudgetInputMap{
+	var uncategorized BudgetInputMap
+	uncategorized.Id = UNCATEGORIZED_CATEGORY
+	uncategorized.Name = "Uncategorized"
+	uncategorized.Amount = 0
+
+	var valToBeDeleted []string
+
+	for _, val := range budgetMap {
+		for index, allowedCategory := range TransactionCategoryMap {
+			if allowedCategory == strings.ToLower(val.Id) {
 				break
 			}
-			if index == len(TransactionCategoryMap)-1 {
-				delete(budget.SpendingLimitMap, spendCategory)
-				if budget.SpendingLimitMap[TransactionCategoryMap[index]] > 0 {
-					budget.SpendingLimitMap[TransactionCategoryMap[index]] = budget.SpendingLimitMap[TransactionCategoryMap[index]] + limit	
-				} else {
-					budget.SpendingLimitMap[TransactionCategoryMap[index]] = limit
-				}
+			if index == len(TransactionCategoryMap) - 1 {
+				fmt.Println("allowedCategory here: ", allowedCategory)
+
+				uncategorized.Amount += val.Amount
+				valToBeDeleted = append(valToBeDeleted, val.Id)
 			}
 		}
 	}
+	if len(valToBeDeleted) > 0 {
+		fmt.Println("values to be deleted", valToBeDeleted)
+
+		for _, id := range valToBeDeleted {
+			i := slices.IndexFunc(budgetMap, func(b BudgetInputMap) bool { return b.Id == id })
+
+			budgetMap[i] = budgetMap[len(budgetMap) - 1]
+			budgetMap = append(budgetMap[:i], budgetMap[i+1:]...)
+
+			fmt.Println(budgetMap)
+		}
+
+		fmt.Println("after deleting:", budgetMap)
+	}
+
+	if uncategorized.Amount > 0 {
+		idx := slices.IndexFunc(budgetMap, func(b BudgetInputMap) bool { return b.Id == UNCATEGORIZED_CATEGORY })
+		if idx > -1 {
+			fmt.Println("index for uncategorized found: ", idx, "with value: ", budgetMap[idx])
+			budgetMap[idx].Amount += uncategorized.Amount
+		} else {
+			budgetMap = append(budgetMap, uncategorized)
+		}
+	}
+	fmt.Println("after uncategorized setting:", budgetMap)
+
+	return budgetMap
 }
 
-func calculateSavings(incomeMap map[string]float32, spendingLimitMap map[string]float32, goalAmountMap map[string]float32) float32 {
+func calculateSavings(incomeMap []BudgetInputMap, spendingLimitMap []BudgetInputMap, goalAmountMap []BudgetInputMap) float32 {
 	var totalSavings float32
 	for _, val := range incomeMap {
-		totalSavings += val
+		totalSavings += val.Amount
 	}
 
 	if len(spendingLimitMap) != 0 {
 		for _, val := range spendingLimitMap {
-			totalSavings -= val
+			totalSavings -= val.Amount
 		}
 	}
 	if len(goalAmountMap) != 0 {
 		for _, val := range goalAmountMap {
-			totalSavings -= val
+			totalSavings -= val.Amount
 		}
 	}
 

@@ -10,7 +10,7 @@ class Logout extends React.Component {
         this.props.setLoginState(false)
         this.props.setToken(null)
         sessionStorage.clear()
-        console.log(this.props)
+        console.log("log props", this.props)
     };
 
     render() {

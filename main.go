@@ -20,4 +20,8 @@ func main() {
 	// Start Router
 	webapi.StartRouter()
 
+
+	// Add go routines here
+		// create new bills & budgets here according to the time. check once every day
+
 }

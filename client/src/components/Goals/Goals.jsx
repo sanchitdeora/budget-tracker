@@ -44,7 +44,6 @@ class Goals extends React.Component {
             isCreateDialogOpen: false,
             isEditDialogOpen: false,
         };
-        console.log(this.state.allGoals.length ? 'true' : 'false')
         this.getAllGoals()
     };
 
@@ -64,7 +63,6 @@ class Goals extends React.Component {
         let name = event.target.name;
         if (name === 'target_date') {
             value = changeDateFormatToMmDdYyyy(value);
-            console.log("Onchange | name: " + name + " value: ", value);
         }
         this.setState({
             [name]: value,
@@ -72,7 +70,6 @@ class Goals extends React.Component {
     }
 
     handleBudgetIds = (name, value) => {
-        console.log("control here name: ", name, "value:", value)
         this.setState({
             [name]: value,
         });
@@ -105,7 +102,6 @@ class Goals extends React.Component {
 
     submitCreateGoal = () => {
         let target_date = new Date(this.state.target_date);
-        console.log("Target date in state: ", this.state.target_date, " date now: ", target_date, "date in UTC: ")
         let goalBody = {
             'name': this.state.name,
             'current_amount': parseFloat(this.state.current_amount),
@@ -113,14 +109,14 @@ class Goals extends React.Component {
             'target_date': target_date,
             'budget_id_list': this.state.budget_id_list,
         }
-        console.log('The create form was submitted with the following data:', goalBody);
+        console.log('The create goal form was submitted with the following data:', goalBody);
         this.postGoalRequest(goalBody)
         this.handleCreateClose()
     }
 
     async postGoalRequest(goalBody) {
         let res = await axios.post('/api/goal', goalBody);
-        console.log(res);
+        console.log("post goal response", res);
         this.getAllGoals();
     }
 
@@ -134,7 +130,7 @@ class Goals extends React.Component {
     // edit goal
 
     handleEditGoalOpen = (id) => {
-        console.log('Edit id: ', id)
+        console.log('Edit goal id: ', id)
         this.setState({
             goal_id: id,
             isEditDialogOpen: true
@@ -143,7 +139,7 @@ class Goals extends React.Component {
 
     submitEditGoal = () => {
         let target_date = new Date(this.state.target_date);
-        console.log("Target Date in state: ", this.state.target_date, " date now: ", target_date)
+        console.log("Goal - Target Date in state: ", this.state.target_date, " date now: ", target_date)
         let goalBody = {
             'name': this.state.name,
             'current_amount': parseFloat(this.state.current_amount),
@@ -151,14 +147,14 @@ class Goals extends React.Component {
             'target_date': target_date,
             'budget_id_list': this.state.budget_id_list,
         }
-        console.log('The edit form was submitted with the following data:', goalBody);
+        console.log('The goal edit form was submitted with the following data:', goalBody);
         this.putGoalRequest(goalBody)
         this.handleEditClose()
     }
 
     async putGoalRequest(goalBody) {
         let res = await axios.put('/api/goal/'+this.state.goal_id, goalBody);
-        console.log(res);
+        console.log("put goal response", res);
         this.getAllGoals();
     }
 
@@ -172,13 +168,13 @@ class Goals extends React.Component {
     // delete goal
 
     handleDeleteGoal = (id) => {
-        console.log('Delete id: ', id)
+        console.log('Delete goal id: ', id)
         this.deleteGoalRequest(id)
     }
 
     async deleteGoalRequest(id) {
         let res = await axios.delete('/api/goal/'+id);
-        console.log(res);
+        console.log("delete goal response", res);
         this.getAllGoals();
     }
 

@@ -6,15 +6,18 @@ import (
 )
 
 type Bill struct {
-	BillId 	  string 	`json:"bill_id"`
-	Title     string 	`json:"title"`
-	Category  string 	`json:"category"`
-	AmountDue float32   `json:"amount_due"`
-	DatePaid  time.Time `json:"date_paid"`
-	DueDate   time.Time `json:"due_date"`
-	Frequency  string 	`json:"frequency"`
-	Note   	  string 	`json:"note,omitempty"`
-	IsPaid 	  bool	 	`json:"is_paid"`
+	BillId 	  	    string 	  `json:"bill_id"`
+	Title     	    string 	  `json:"title"`
+	Category  	    string 	  `json:"category"`
+	AmountDue 	    float32   `json:"amount_due"`
+	DatePaid  	    time.Time `json:"date_paid"`
+	DueDate   	    time.Time `json:"due_date"`
+	Frequency  	    string 	  `json:"frequency"`
+	Note   	  	    string 	  `json:"note,omitempty"`
+	IsPaid 	  	    bool	  `json:"is_paid"`
+	CreationTime    time.Time `json:"creation_time"`
+	SequenceStartId string    `json:"sequence_start_id"`
+	SequenceNumber  int       `json:"sequence_no"`
 }
 
 var BillCategoryMap = []string{
@@ -34,9 +37,16 @@ var BillFrequencyMap = []string{
 	BI_WEEKLY_FREQUENCY,
 	MONTHLY_FREQUENCY,
 	BI_MONTHLY_FREQUENCY,
-	QUATERLY_FREQUENCY,
+	QUARTERLY_FREQUENCY,
 	HALF_YEARLY_FREQUENCY,
 	YEARLY_FREQUENCY,
+}
+
+func (bill *Bill) SetByUser() {
+	if bill.CreationTime.IsZero() {
+		bill.CreationTime = time.Now().Local()
+	}
+	bill.SequenceNumber = 0
 }
 
 func (bill *Bill) SetCategory() {

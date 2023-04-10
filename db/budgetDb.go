@@ -67,32 +67,38 @@ func GetBudgetRecordById(ctx context.Context, key string) (*models.Budget, error
 }
 
 func InsertBudgetRecord(ctx context.Context, budget models.Budget) (string, error) {
-	budgetId := BUDGET_PREFIX + uuid.NewString()	
+	if budget.BudgetId == "" {
+		budget.BudgetId = BUDGET_PREFIX + uuid.NewString()
+	}	
 	data := bson.D{
-		{Key: BUDGET_ID_KEY, Value: budgetId},
-		{Key: NAME_KEY, Value: budget.Name},
+		{Key: BUDGET_ID_KEY, Value: budget.BudgetId},
+		{Key: BUDGET_NAME_KEY, Value: budget.BudgetName},
 		{Key: BUDGET_INCOME_MAP_KEY, Value: budget.IncomeMap},
-		{Key: BUDGET_SPENDING_LIMIT_MAP_KEY, Value: budget.SpendingLimitMap},
-		{Key: BUDGET_GOALS_AMOUNT_MAP_KEY, Value: budget.GoalAmountMap},
+		{Key: BUDGET_EXPENSE_MAP_KEY, Value: budget.ExpenseMap},
+		{Key: BUDGET_GOAL_MAP_KEY, Value: budget.GoalMap},
 		{Key: FREQUENCY_KEY, Value: budget.Frequency},
 		{Key: SAVINGS_KEY, Value: budget.Savings},
+		{Key: CREATION_TIME_KEY, Value: budget.CreationTime},
+		{Key: EXPIRATION_TIME_KEY, Value: budget.ExpirationTime},
+		{Key: SEQUENCE_NUMBER_KEY, Value: budget.SequenceNumber},
+		{Key: SEQUENCE_START_ID_KEY, Value: budget.SequenceStartId},
 	}
 
 	result, err := budgetCollection.InsertOne(ctx, data)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Created budget. ResultId: %v BudgetId: %v\n", result.InsertedID, budgetId)
-	return budgetId, err
+	fmt.Printf("Created budget. ResultId: %v BudgetId: %v\n", result.InsertedID, budget.BudgetId)
+	return budget.BudgetId, err
 }
 
 func UpdateBudgetRecordById(ctx context.Context, id string, budget models.Budget) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
-			{Key: NAME_KEY, Value: budget.Name},
+			{Key: BUDGET_NAME_KEY, Value: budget.BudgetName},
 			{Key: BUDGET_INCOME_MAP_KEY, Value: budget.IncomeMap},
-			{Key: BUDGET_SPENDING_LIMIT_MAP_KEY, Value: budget.SpendingLimitMap},
-			{Key: BUDGET_GOALS_AMOUNT_MAP_KEY, Value: budget.GoalAmountMap},
+			{Key: BUDGET_EXPENSE_MAP_KEY, Value: budget.ExpenseMap},
+			{Key: BUDGET_GOAL_MAP_KEY, Value: budget.GoalMap},
 			{Key: FREQUENCY_KEY, Value: budget.Frequency},
 			{Key: SAVINGS_KEY, Value: budget.Savings},
 		}},

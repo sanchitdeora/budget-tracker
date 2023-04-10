@@ -24,7 +24,7 @@ class Login extends React.Component {
 
     async postLoginRequest() {
         let res = await axios.post("/api/login", this.state);
-        console.log(res);
+        // console.log(res);
         if (res.status === 200) {
             sessionStorage.setItem(IS_SURVEY_COMPLETE, res.data.isSurveyComplete)
             sessionStorage.setItem(EMAIL, this.state.email)
@@ -38,7 +38,7 @@ class Login extends React.Component {
     }
 
     submitLogin() {
-        console.log('The form was submitted with the following data:');
+        console.log('The login form was submitted with the following data:');
         this.postLoginRequest()
     }
 
