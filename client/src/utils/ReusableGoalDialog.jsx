@@ -81,6 +81,7 @@ class ReusableGoalDialog extends React.Component {
                         </FormControl>
                         <FormControl className='goal-input-group' sx={{ width: 300 }}>
                             <TextField
+                                name='target_date'
                                 id="date"
                                 label="Target Date"
                                 type="date"

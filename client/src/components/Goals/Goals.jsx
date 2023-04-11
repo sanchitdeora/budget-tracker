@@ -15,7 +15,7 @@ import './Goals.scss';
 import { IconButton } from '@mui/material';
 import ReusableGoalDialog from '../../utils/ReusableGoalDialog';
 import axios from 'axios';
-import { capitalizeFirstLowercaseRest, changeDateFormatToMmDdYyyy } from '../../utils/StringUtils';
+import { capitalizeFirstLowercaseRest, transformDateFormatToMmDdYyyy } from '../../utils/StringUtils';
 
 class Goals extends React.Component {
     constructor(props) {
@@ -59,10 +59,11 @@ class Goals extends React.Component {
     }
 
     handleChange = (event) => {
+        console.log("goal form change event name: " + event.target.name, "event value: " + event.target.value)
         let value = event.target.value;
         let name = event.target.name;
         if (name === 'target_date') {
-            value = changeDateFormatToMmDdYyyy(value);
+            value = transformDateFormatToMmDdYyyy(value);
         }
         this.setState({
             [name]: value,
@@ -191,7 +192,7 @@ class Goals extends React.Component {
                 </div>
 
                 <div className='goals-box'>
-                    <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                    <List sx={{ width: '100%'}}>
                         {this.state.allGoals.length ? <p></p> : <h1>Create a New Goal</h1>}
                         {this.state.allGoals?.map(data => (
                             <div className='goal'>

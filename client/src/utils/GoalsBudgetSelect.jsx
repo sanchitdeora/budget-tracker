@@ -15,19 +15,16 @@ export default function GoalsBudgetSelect({handleBudgetIds}) {
   useEffect(() => {
     axios.get('/api/budgets').then((res => {
         console.log('get all budgets in goalBudgetSelect: ', res.data.body)
-        var keys = ['budget_id', 'name'];
-        var resu = res.data.body.map(obj => keys.reduce((a, c) => (obj[c] ? a[c] = obj[c] : c, a), {}));
+        var keys = ['budget_id', 'budget_name'];
+        var budgetList = res.data.body.map(obj => keys.reduce((acc, currVal) => (obj[currVal] ? acc[currVal] = obj[currVal] : currVal, acc), {}));
 
-        console.log("budgets response in goalBudgetSelect: ", resu)
+        console.log("budgets response in goalBudgetSelect: ", budgetList)
         if (res.data.body != null) {
-            setAllBudgets(
-                // res.data.body.map(x => {id: x.goal_id, name: x.name})
-                res.data.body.map(obj => keys.reduce((a, c) => (obj[c] ? a[c] = obj[c] : c, a), {}))
-            )
+            setAllBudgets(budgetList)
         }
         console.log('get all budgets state: ', allbudgets)
     }))
-  }, allbudgets);
+  }, []);
 
   const handleChange = (event) => {
     // console.log("entered: ", event)
@@ -57,7 +54,7 @@ export default function GoalsBudgetSelect({handleBudgetIds}) {
               id={budget.budget_id}
               value={budget}
             >
-              {budget.name}
+              {budget.budget_name}
             </MenuItem>
           ))}
         </Select>

@@ -7,7 +7,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import './BudgetCards.scss';
 import BudgetDetail from "./BudgetDetail";
 import ReusableBudgetDialog from '../../utils/ReusableBudgetDialog';
-import { getMonthName, getYear } from "../../utils/StringUtils";
+import { getFullMonthName, getYear } from "../../utils/StringUtils";
 import { EXPENSES, GOALS, INCOMES } from "./BudgetConstants";
 
 const INCOME_PREFIX = "Income";
@@ -178,7 +178,7 @@ class BudgetCards extends React.Component {
     }
 
     getFilterDate = (stringDate) => {
-        return getMonthName(stringDate) + " " + getYear(stringDate)
+        return getFullMonthName(stringDate) + " " + getYear(stringDate)
     }
 
     filterBudgets = (filterCategory) =>{
@@ -284,7 +284,7 @@ class BudgetCards extends React.Component {
         return (
             <div>
                 <div className='header'>
-                        Budget Cards
+                        Budget
                 </div>
                 <div className='create-budget-card-button'>
                     <Button size='large' style={{color: '#00897b'}} onClick={this.handleCreateBudgetOpen} startIcon={<AddCircleIcon />} >

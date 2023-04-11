@@ -8,7 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { capitalizeFirstLowercaseRest, changeDateFormatToMmDdYyyy } from '../../utils/StringUtils';
+import { capitalizeFirstLowercaseRest, transformDateFormatToMmDdYyyy } from '../../utils/StringUtils';
 import './Transactions.scss';
 import { IconButton } from '@mui/material';
 import ReusableTransactionDialog from '../../utils/ReusableTransactionDialog';
@@ -58,7 +58,7 @@ class Transactions extends React.Component {
             });
         }
         if (name === 'due_date') {
-            value = changeDateFormatToMmDdYyyy(value);
+            value = transformDateFormatToMmDdYyyy(value);
             // console.log("Onchange | name: "+name+" value: ", value);
         }
         this.setState({

@@ -9,7 +9,7 @@ import Box from '@mui/material/Box';
 import './BudgetDetail.scss';
 import { IconButton } from '@mui/material';
 import ReusableBudgetDialog from '../../utils/ReusableBudgetDialog';
-import { capitalizeFirstLowercaseRest, changeDateFormatToMmDdYyyy } from '../../utils/StringUtils';
+import { capitalizeFirstLowercaseRest, transformDateFormatToMmmDdYyyy } from '../../utils/StringUtils';
 
 class BudgetDetail extends React.Component {
     constructor(props) {
@@ -23,10 +23,12 @@ class BudgetDetail extends React.Component {
         console.log("states for budget detail", this.state);
     };
 
+    // state handlers
+
     cleanBudgetState = () => {
         this.setState({
             budget_id: '',
-            // isEditDialogOpen: false,
+            isEditDialogOpen: false,
         })
     }
 
@@ -37,18 +39,28 @@ class BudgetDetail extends React.Component {
             isEditDialogOpen: true
         });
     }
-
-    submitMethod = () => {
-        this.props.submitMethod()
-        this.handleEditClose()
-    }
-
+    
     handleEditClose = () => {
         this.cleanBudgetState()
         this.setState({
             isEditDialogOpen: false
         });
     };
+    
+    submitMethod = () => {
+        this.props.submitMethod()
+        this.handleEditClose()
+    }
+
+    // utils
+
+    getTimeRange = (creation_time, expiration_time) => {
+        console.log('Get time range creation time: ', creation_time, 'expiration time: ', expiration_time)
+        if (new Date(expiration_time).getTime() < new Date(creation_time).getTime()) {
+            return ("From: " + transformDateFormatToMmmDdYyyy(creation_time))
+        }
+        return (transformDateFormatToMmmDdYyyy(creation_time) + " - " + transformDateFormatToMmmDdYyyy(expiration_time))
+    }
     
     // render functions
 
@@ -93,26 +105,27 @@ class BudgetDetail extends React.Component {
     render() {
         return (
             <div className='budgets-inner-container'>
-                <div className='header'>
-                    Budgets
-                </div>
+                {/* <div className='header'>
+                    {this.props.budget.budget_name}
+                </div> */}
 
                 <div className='budgets-box'>
                     {this.props.budget ? <p></p> : <h3>Add redirect back or error</h3>}
                     <div className='budget'>                            
                         <Box
+                            className='budget-detail-header-box'
                             display={'flex'}
                             justifyContent={'space-between'}
                             marginLeft='auto'
                             alignItems='center'
                             >
-                            <IconButton style={{height: 'auto'}} onClick={this.props.handleBudgetClose}>
+                            <IconButton style={{padding: '2%'}} onClick={this.props.handleBudgetClose}>
                                 <ArrowBackIosNewIcon />
                             </IconButton>
                             
                             <h2>{this.props.budget.budget_name}</h2>
 
-                            <IconButton style={{marginRight: '2%'}} onClick={this.handleEditBudgetOpen.bind(this, this.props.budget.budget_id)}>
+                            <IconButton style={{marginRight: '2%', padding: '2%'}} onClick={this.handleEditBudgetOpen.bind(this, this.props.budget.budget_id)}>
                                 <ModeEditIcon />
                             </IconButton>
                             <ReusableBudgetDialog
@@ -124,13 +137,15 @@ class BudgetDetail extends React.Component {
                                 submitMethod={this.submitMethod}
                             />
                         </Box>
+                        <Divider variant='middle' />
                         <Box
+                            marginTop={'3%'}
                             display={'flex'}
                             justifyContent={'space-between'}
                             marginLeft='auto'
                             alignItems='center'
                         >
-                            <div className='budget-detail-other-box'>{changeDateFormatToMmDdYyyy(this.props.budget.creation_time)} — {changeDateFormatToMmDdYyyy(this.props.budget.expiration_time)}</div>
+                            <div className='budget-detail-other-box'>{this.getTimeRange(this.props.budget.creation_time, this.props.budget.expiration_time)}</div>
                             <div className='budget-detail-other-box'>Frequency: {capitalizeFirstLowercaseRest(this.props.budget.frequency)}</div>
                         </Box>
 
