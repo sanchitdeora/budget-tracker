@@ -1,9 +1,9 @@
-.budget-cards-inner-container {
+.goal-cards-inner-container {
     width: 60%;
     transition: visibility 0.2s ease-out;
   }
 
-.budget-cards{
+.goal-cards{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 3rem;
@@ -12,7 +12,7 @@
     padding: 1rem 1rem;
 }
 
-.create-budget-card-button {
+.create-goal-card-button {
     display: flex;
     vertical-align: middle;
     margin-right: 0;
@@ -30,7 +30,7 @@
     opacity: 80%;
 }
 
-.budget-cards-box{
+.goal-cards-box{
     width: 100%;
     padding: 0.2rem 0.2rem;
     background-color: #00897b;

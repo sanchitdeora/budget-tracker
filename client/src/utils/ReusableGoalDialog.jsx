@@ -1,23 +1,18 @@
 import React from 'react';
 import { FormControl, TextField, DialogActions, DialogContent, DialogTitle, Dialog, InputAdornment, FormGroup } from '@mui/material';
 import GoalsBudgetSelect from './GoalsBudgetSelect'
+import { transformDateFormatToYyyyMmDd } from './StringUtils';
 
 class ReusableGoalDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
+
+        console.log("props for goal dialog", this.props);
+        console.log("states for goal dialog", this.state);
     };
 
-    handleChange = (event) => {
-        const {
-          target: { value },
-        } = event;
-        this.setState(
-          typeof value === 'string' ? value.split(',') : value,
-        );
-      };
-
-    
+    // render functions
 
     render() {
         return(
@@ -33,7 +28,8 @@ class ReusableGoalDialog extends React.Component {
                         <FormControl className='goal-input-group' sx={{ width: 300 }}>
                             <br></br>
                             <TextField 
-                                name='name'
+                                defaultValue={this.props.currentGoal.goal_name}
+                                name='goal_name'
                                 label="Name"
                                 color='primary'
                                 className='goal-input-box'
@@ -47,6 +43,7 @@ class ReusableGoalDialog extends React.Component {
                             ?
                             <FormControl className='goal-input-group' sx={{ width: 300 }}>
                                 <TextField 
+                                defaultValue={this.props.currentGoal.current_amount}
                                 name='current_amount'
                                 InputProps={{
                                     startAdornment: 
@@ -65,6 +62,7 @@ class ReusableGoalDialog extends React.Component {
                         }
                         <FormControl className='goal-input-group' sx={{ width: 300 }}>
                             <TextField 
+                            defaultValue={this.props.currentGoal.target_amount}
                             name='target_amount'
                             type='number'
                             InputProps={{
@@ -81,6 +79,7 @@ class ReusableGoalDialog extends React.Component {
                         </FormControl>
                         <FormControl className='goal-input-group' sx={{ width: 300 }}>
                             <TextField
+                                defaultValue={transformDateFormatToYyyyMmDd(this.props.currentGoal.target_date)}
                                 name='target_date'
                                 id="date"
                                 label="Target Date"
@@ -94,7 +93,7 @@ class ReusableGoalDialog extends React.Component {
                         <br></br>
                         </FormControl>
                         <FormControl className='goal-input-group' sx={{ width: 300 }}>
-                            <GoalsBudgetSelect handleBudgetIds={this.props.handleBudgetIds} />
+                            <GoalsBudgetSelect handleBudgetIds={this.props.handleBudgetIds} currentGoal={this.props.currentGoal} allBudgets={this.props.allBudgets} />
                         </FormControl>
                     </FormGroup>
                 </DialogContent>

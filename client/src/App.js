@@ -10,8 +10,9 @@ import Authenticate from './components/Authentication/Authenticate.jsx';
 import Survey from './components/Survey/Survey.jsx';
 import Transactions from './components/Transactions/Transactions';
 import Bills from './components/Bills/Bills';
-import Goals from './components/Goals/Goals';
 import BudgetCards from './components/Budgets/BudgetCards';
+import GoalCards from './components/Goals/GoalCards';
+import GoalDetail from './components/Goals/GoalDetail';
 
 // const TOKEN = "token"
 
@@ -74,8 +75,12 @@ class App extends React.Component {
                                 <BudgetCards />
                             </Route>
 
+                            <Route exact path='/goals1'>
+                                <GoalDetail />
+                            </Route>
+
                             <Route exact path='/goals'>
-                                <Goals />
+                                <GoalCards />
                             </Route>
 
                             <Route exact path="/">

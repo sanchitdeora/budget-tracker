@@ -27,6 +27,14 @@ function splitDate(str) {
     return [month, day, year]
 }
 
+export function transformDateFormatToYyyyMmDd(str) {
+    if (str === undefined) {
+        return ''
+    }
+    return str.substring(0, 10)
+}
+
+
 export function transformDateFormatToMmDdYyyy(str) {
     return splitDate(str).join('-')
 }

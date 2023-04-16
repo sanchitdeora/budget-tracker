@@ -58,6 +58,7 @@ const (
 	
 	// Goal constants
 	GOAL_ID_KEY = "goal_id"
+	GOAL_NAME_KEY = "goal_name"
 	GOAL_PREFIX = "G-"
 	BUDGET_ID_LIST_KEY = "budget_id_list"
 )

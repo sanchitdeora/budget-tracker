@@ -13,8 +13,8 @@ class ReusableBudgetDialog extends React.Component {
         super(props);
         this.state = {allGoals:[]};
 
-        console.log("props for dialog", this.props);
-        console.log("states for dialog", this.state);
+        console.log("props for budget dialog", this.props);
+        console.log("states for budget dialog", this.state);
         this.getAllGoals()
     };
 
@@ -22,14 +22,14 @@ class ReusableBudgetDialog extends React.Component {
 
     async getAllGoals() {
         let res = await axios.get('/api/goals');
-
+        console.log('get all goals: ', res.data.body)
         if (res.data.body != null)
         {
             this.setState({
                 allGoals: res.data.body.map(obj => {
                     return {
                         'id': obj.goal_id,
-                        'value': obj.name
+                        'value': obj.goal_name
                     }
                 }),
             });

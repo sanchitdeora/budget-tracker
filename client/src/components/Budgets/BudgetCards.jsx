@@ -1,6 +1,6 @@
 import React from "react"; 
 import axios from 'axios';
-import { Box, Button, Card, CardContent, CardActions, Typography, CardHeader, IconButton } from '@mui/material';
+import { Button, Card, CardContent, CardActions, Typography, CardHeader, IconButton } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -9,15 +9,7 @@ import BudgetDetail from "./BudgetDetail";
 import ReusableBudgetDialog from '../../utils/ReusableBudgetDialog';
 import { getFullMonthName, getYear } from "../../utils/StringUtils";
 import { EXPENSES, GOALS, INCOMES } from "./BudgetConstants";
-
-const INCOME_PREFIX = "Income";
-// const INCOMES = "Incomes";
-
-const EXPENSE_PREFIX = "Expense"
-// const EXPENSES = "Expenses"
-
-const GOAL_PREFIX = "Goal"
-// const GOALS = "Goals"
+import FilterButton from "../../utils/FilterButton";
 
 class BudgetCards extends React.Component {
     constructor(props) {
@@ -57,6 +49,10 @@ class BudgetCards extends React.Component {
                 allBudgets: res.data.body,
                 filteredBudgets: res.data.body
             });
+        } else {
+            this.setState({
+                allBudgets: [],
+            });
         }
 
         this.setState({
@@ -78,7 +74,7 @@ class BudgetCards extends React.Component {
         }
         console.log('The create budgets form was submitted with the following data:', budgetBody);
         this.postBudgetRequest(budgetBody)
-        this.handleCreateClose()
+        this.handleCreateBudgetClose()
     }
 
     async postBudgetRequest(budgetBody) {
@@ -87,7 +83,7 @@ class BudgetCards extends React.Component {
         this.getAllBudgets();
     }
 
-    handleCreateClose = () => {
+    handleCreateBudgetClose = () => {
         this.cleanBudgetState()
         this.setState({
             isCreateDialogOpen: false
@@ -247,8 +243,8 @@ class BudgetCards extends React.Component {
     // render functions
 
     renderFilterBoxes() {
-        // console.log('filter categories: ', this.state.filterCategories)
-        // console.log('filter budgets: ', this.state.filteredBudgets)
+        console.log('filter categories: ', this.state.filterCategories)
+        console.log('filter budgets: ', this.state.filteredBudgets)
         return(
             <FilterButton button={this.state.filterCategories} filter={this.filterBudgets} />
         )
@@ -273,8 +269,8 @@ class BudgetCards extends React.Component {
                 title={'Add New Budget'}
                 isDialogOpen={this.state.isCreateDialogOpen}
                 handleInputChange={this.handleInputChange}
-                handleClose={this.handleCreateClose}
-                currentBudget={[]}
+                handleClose={this.handleCreateBudgetClose}
+                currentBudget={{}}
                 submitMethod={this.submitCreateBudget}
             />
         )
@@ -345,33 +341,3 @@ class BudgetCards extends React.Component {
 }
 
 export default BudgetCards;
-
-
-function FilterButton({button, filter}) {
-    return (
-        <div className="buttons">
-            {
-                button.map((cat, i)=>{
-                    return <button type="button" onClick={()=> filter(cat)} className="btn">{cat}</button>
-                })
-            }
-        </div>
-    )
-}
-
-// function Budget() {
-//     const budget = {};
-//     budget.budget_id = ""
-//     budget.budget_name = ""
-//     budget.income_map = []
-//     budget.expense_map = []
-//     budget.goal_map = []
-//     budget.savings = 0.0
-//     budget.frequency = ""
-//     budget.creation_time = 0
-//     budget.expiration_time = 0
-//     budget.sequence_no = 0
-//     budget.sequence_start_id = 0
-
-//     return budget
-// }

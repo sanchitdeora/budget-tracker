@@ -90,7 +90,6 @@ class BudgetMapInput extends React.Component {
                 <div>
                     {this.state.amountMap.map((item) => (
                         <div>
-                            {item.name}--{item.amount}
                             <Grid container spacing={3}>
                                 <Grid item xs={4} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                     <label htmlFor={item.name}>{item.name}</label>

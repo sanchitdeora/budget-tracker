@@ -69,7 +69,7 @@ func InsertGoalRecord(ctx context.Context, goal models.Goal) (string, error) {
 	goalId := GOAL_PREFIX + uuid.NewString()	
 	data := bson.D{
 		{Key: GOAL_ID_KEY, Value: goalId},
-		{Key: NAME_KEY, Value: goal.Name},
+		{Key: GOAL_NAME_KEY, Value: goal.GoalName},
 		{Key: CURRENT_AMOUNT_KEY, Value: goal.CurrentAmount},
 		{Key: TARGET_AMOUNT_KEY, Value: goal.TargetAmount},
 		{Key: TARGET_DATE_KEY, Value: goal.TargetDate},
@@ -87,7 +87,7 @@ func InsertGoalRecord(ctx context.Context, goal models.Goal) (string, error) {
 func UpdateGoalRecordById(ctx context.Context, id string, goal models.Goal) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
-			{Key: NAME_KEY, Value: goal.Name},
+			{Key: GOAL_NAME_KEY, Value: goal.GoalName},
 			{Key: CURRENT_AMOUNT_KEY, Value: goal.CurrentAmount},
 			{Key: TARGET_AMOUNT_KEY, Value: goal.TargetAmount},
 			{Key: TARGET_DATE_KEY, Value: goal.TargetDate},

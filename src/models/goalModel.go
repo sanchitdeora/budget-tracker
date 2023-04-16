@@ -6,7 +6,7 @@ import (
 
 type Goal struct {
 	GoalId			string		`json:"goal_id"`
-	Name			string		`json:"name"`
+	GoalName		string		`json:"goal_name"`
 	CurrentAmount	float32		`json:"current_amount"`
 	TargetAmount	float32		`json:"target_amount"`
 	TargetDate		time.Time	`json:"target_date"`

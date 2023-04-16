@@ -33,7 +33,7 @@ class BudgetDetail extends React.Component {
     }
 
     handleEditBudgetOpen = (id) => {
-        console.log('Edit budgte id for budgetDetail: ', id)
+        console.log('Edit budget id for budgetDetail: ', id)
         this.setState({
             budget_id: id,
             isEditDialogOpen: true
@@ -62,6 +62,7 @@ class BudgetDetail extends React.Component {
         return (transformDateFormatToMmmDdYyyy(creation_time) + " - " + transformDateFormatToMmmDdYyyy(expiration_time))
     }
     
+
     // render functions
 
     renderBudgetMaps = (title, dataMap) =>
@@ -105,9 +106,6 @@ class BudgetDetail extends React.Component {
     render() {
         return (
             <div className='budgets-inner-container'>
-                {/* <div className='header'>
-                    {this.props.budget.budget_name}
-                </div> */}
 
                 <div className='budgets-box'>
                     {this.props.budget ? <p></p> : <h3>Add redirect back or error</h3>}
