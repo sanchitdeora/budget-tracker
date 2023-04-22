@@ -59,7 +59,7 @@ export default function GoalsBudgetSelect({handleBudgetIds, currentGoal, allBudg
   };
 
   function getBudgetsFromIds(budgetIds) {
-    if (allBudgets === undefined || allBudgets.length === 0) {
+    if (budgetIds === undefined || allBudgets === undefined || allBudgets.length === 0) {
       return [];
     }
     var budgetNames = [];

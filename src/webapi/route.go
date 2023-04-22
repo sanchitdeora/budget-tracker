@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/bill"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/budget"
-	"github.com/sanchitdeora/budget-tracker/src/pkg/api/goals"
+	"github.com/sanchitdeora/budget-tracker/src/pkg/api/goal"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/home"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/quickstart"
 	"github.com/sanchitdeora/budget-tracker/src/pkg/api/registration"
@@ -21,7 +21,7 @@ func route(router *gin.Engine) *gin.Engine {
 	api.GET("/ping", abc)
 
 	api.GET("/transactions", transaction.GetAllTransactions)
-	api.GET("/transaction/:id", transaction.GetTransactionById)
+	api.GET("/transaction/:id", transaction.GetSingleTransaction)
 	api.POST("/transaction", transaction.CreateTransaction)
 	api.PUT("/transaction/:id", transaction.UpdateTransaction)
 	api.DELETE("/transaction/:id", transaction.DeleteTransaction)
@@ -40,11 +40,11 @@ func route(router *gin.Engine) *gin.Engine {
 	api.PUT("/budget/:id", budget.UpdateBudget)
 	api.DELETE("/budget/:id", budget.DeleteBudget)
 
-	api.GET("/goals", goals.GetAllGoals)
-	api.GET("/goal/:id", goals.GetGoalById)
-	api.POST("/goal", goals.CreateGoal)
-	api.PUT("/goal/:id", goals.UpdateGoal)
-	api.DELETE("/goal/:id", goals.DeleteGoal)
+	api.GET("/goals", goal.GetAllGoals)
+	api.GET("/goal/:id", goal.GetGoalById)
+	api.POST("/goal", goal.CreateGoal)
+	api.PUT("/goal/:id", goal.UpdateGoal)
+	api.DELETE("/goal/:id", goal.DeleteGoal)
 
 	return router
 }

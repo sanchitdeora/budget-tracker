@@ -10,7 +10,7 @@ import (
 func GetAllTransactions(c *gin.Context) {
 
 	var response []models.Transaction
-	err := getTransactions(c, &response)
+	err := GetTransactions(c, &response)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -23,10 +23,10 @@ func GetAllTransactions(c *gin.Context) {
 
 }
 
-func GetTransactionById(c *gin.Context) {
+func GetSingleTransaction(c *gin.Context) {
 
 	var response models.Transaction
-	err := getTransactionById(c, c.Param("id"), &response)
+	err := GetTransactionById(c, c.Param("id"), &response)
 	if response.TransactionId == "" {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
@@ -73,7 +73,7 @@ func UpdateTransaction(c *gin.Context) {
 		return
 	}
 	
-	transactionId, err := updateTransactionById(c, c.Param("id"), transaction)
+	transactionId, err := UpdateTransactionById(c, c.Param("id"), transaction)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -88,7 +88,7 @@ func UpdateTransaction(c *gin.Context) {
 
 func DeleteTransaction(c *gin.Context) {
 
-	transactionId, err := deleteTransactionById(c, c.Param("id"))
+	transactionId, err := DeleteTransactionById(c, c.Param("id"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

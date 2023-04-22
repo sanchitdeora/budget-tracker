@@ -16,6 +16,19 @@ func Contains(s []string, v string) bool {
 	return false
 }
 
+func SearchIndex[T comparable](s []T, v T) int {
+	for i, val := range s {
+		if val == v {
+			return i
+		}
+	}
+	return -1
+}
+
+func Remove[T comparable](s []T, index int) []T{
+    return append(s[:index], s[index+1:]...)
+}
+
 func CalculateEndDateWithFrequency(currDate time.Time, freq string) (time.Time, error) {
 	err := errors.New("provided Frequency is not found in the frequency map")
 

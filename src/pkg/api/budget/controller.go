@@ -71,18 +71,19 @@ func CreateBudget(c *gin.Context) {
 func UpdateBudget(c *gin.Context) {
 	
 	var budget models.Budget
+	budgetId := c.Param("id")
 	err := c.BindJSON(&budget)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	
-	budgetId, err := UpdateBudgetById(c, c.Param("id"), budget)
+	budgetId, err = UpdateBudgetById(c, budgetId, budget)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	
+
 	c.JSON(200, gin.H{
 		"message": "Success",
 		"body":    budgetId,

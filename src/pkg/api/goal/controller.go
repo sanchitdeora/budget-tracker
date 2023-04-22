@@ -1,4 +1,4 @@
-package goals
+package goal
 
 import (
 	"net/http"
