@@ -4,8 +4,9 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sanchitdeora/budget-tracker/src/models"
+	"github.com/sanchitdeora/budget-tracker/models"
 )
+
 
 func OpeningSurvey(c *gin.Context) {
 

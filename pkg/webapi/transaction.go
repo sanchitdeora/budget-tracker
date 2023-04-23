@@ -1,16 +1,17 @@
-package transaction
+package webapi
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sanchitdeora/budget-tracker/src/models"
+	"github.com/sanchitdeora/budget-tracker/models"
 )
 
-func GetAllTransactions(c *gin.Context) {
+
+func (service *ApiService) GetAllTransactions(c *gin.Context) {
 
 	var response []models.Transaction
-	err := GetTransactions(c, &response)
+	err := service.TransactionService.GetTransactions(c, &response)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -23,10 +24,10 @@ func GetAllTransactions(c *gin.Context) {
 
 }
 
-func GetSingleTransaction(c *gin.Context) {
+func (service *ApiService) GetTransactionById(c *gin.Context) {
 
 	var response models.Transaction
-	err := GetTransactionById(c, c.Param("id"), &response)
+	err := service.TransactionService.GetTransactionById(c, c.Param("id"), &response)
 	if response.TransactionId == "" {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
@@ -43,7 +44,7 @@ func GetSingleTransaction(c *gin.Context) {
 
 }
 
-func CreateTransaction(c *gin.Context) {
+func (service *ApiService) CreateTransaction(c *gin.Context) {
 
 	var transaction models.Transaction
 	err := c.BindJSON(&transaction)
@@ -51,7 +52,7 @@ func CreateTransaction(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	transactionId, err := CreateTransactionRecord(c, transaction)
+	transactionId, err := service.TransactionService.CreateTransaction(c, transaction)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -64,7 +65,7 @@ func CreateTransaction(c *gin.Context) {
 
 }
 
-func UpdateTransaction(c *gin.Context) {
+func (service *ApiService) UpdateTransactionById(c *gin.Context) {
 
 	var transaction models.Transaction
 	err := c.BindJSON(&transaction)
@@ -73,7 +74,7 @@ func UpdateTransaction(c *gin.Context) {
 		return
 	}
 	
-	transactionId, err := UpdateTransactionById(c, c.Param("id"), transaction)
+	transactionId, err := service.TransactionService.UpdateTransactionById(c, c.Param("id"), transaction)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -86,9 +87,9 @@ func UpdateTransaction(c *gin.Context) {
 
 }
 
-func DeleteTransaction(c *gin.Context) {
+func (service *ApiService) DeleteTransactionById(c *gin.Context) {
 
-	transactionId, err := DeleteTransactionById(c, c.Param("id"))
+	transactionId, err := service.TransactionService.DeleteTransactionById(c, c.Param("id"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -100,4 +101,3 @@ func DeleteTransaction(c *gin.Context) {
 	})
 
 }
-

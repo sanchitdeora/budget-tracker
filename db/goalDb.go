@@ -6,8 +6,8 @@ import (
 	"log"
 
 	"github.com/google/uuid"
-	"github.com/sanchitdeora/budget-tracker/src/models"
-	"github.com/sanchitdeora/budget-tracker/src/utils"
+	"github.com/sanchitdeora/budget-tracker/models"
+	"github.com/sanchitdeora/budget-tracker/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
 

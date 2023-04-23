@@ -1,18 +1,17 @@
-package budget
+package webapi
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sanchitdeora/budget-tracker/src/models"
+	"github.com/sanchitdeora/budget-tracker/models"
 )
 
 
-func GetAllBudgets(c *gin.Context) {
+func (service *ApiService) GetAllGoals(c *gin.Context) {
 
-	var response []models.Budget
-	err := GetBudgets(c, &response)
+	var response []models.Goal
+	err := service.GoalService.GetGoals(c, &response)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -25,11 +24,10 @@ func GetAllBudgets(c *gin.Context) {
 
 }
 
-
-func GetBudgetById(c *gin.Context) {
+func (service *ApiService) GetGoalById(c *gin.Context) {
 	
-	response, err := GetBudget(c, c.Param("id"))
-	if response.BudgetId == "" {
+	response, err := service.GoalService.GetGoalById(c, c.Param("id"))
+	if response.GoalId == "" {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
@@ -44,41 +42,51 @@ func GetBudgetById(c *gin.Context) {
 
 }
 
-func CreateBudget(c *gin.Context) {
-	fmt.Println("\n creating budget now")
-	var budget models.Budget
-	err := c.BindJSON(&budget)
+func (service *ApiService) CreateGoal(c *gin.Context) {
+	
+	var goal models.Goal
+	err := c.BindJSON(&goal)
 	if err != nil {
-		fmt.Println("\nError binding JSON", err)
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	fmt.Println("\nprint budget", budget)
-	budgetId, err := createBudgetByUser(c, budget)
+	goalId, err := service.GoalService.CreateGoalById(c, goal)
 	if err != nil {
-		fmt.Println("\nError creating budget", err)
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
 	c.JSON(201, gin.H{
 		"message": "Success",
-		"body":    budgetId,
+		"body":    goalId,
 	})
 
 }
 
-func UpdateBudget(c *gin.Context) {
+func (service *ApiService) UpdateGoalById(c *gin.Context) {
 	
-	var budget models.Budget
-	budgetId := c.Param("id")
-	err := c.BindJSON(&budget)
+	var goal models.Goal
+	err := c.BindJSON(&goal)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	
-	budgetId, err = UpdateBudgetById(c, budgetId, budget)
+	goalId, err := service.GoalService.UpdateGoalById(c, c.Param("id"), goal)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	
+	c.JSON(200, gin.H{
+		"message": "Success",
+		"body":    goalId,
+	})
+
+}
+
+func (service *ApiService) DeleteGoalById(c *gin.Context) {
+	goalId, err := service.GoalService.DeleteGoalById(c, c.Param("id"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -86,21 +94,7 @@ func UpdateBudget(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"message": "Success",
-		"body":    budgetId,
-	})
-
-}
-
-func DeleteBudget(c *gin.Context) {
-	budgetId, err := DeleteBudgetById(c, c.Param("id"))
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-
-	c.JSON(200, gin.H{
-		"message": "Success",
-		"body":    budgetId,
+		"body":    goalId,
 	})
 
 }

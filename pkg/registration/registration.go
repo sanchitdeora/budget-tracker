@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/sanchitdeora/budget-tracker/db"
-	"github.com/sanchitdeora/budget-tracker/src/models"
+	"github.com/sanchitdeora/budget-tracker/models"
 )
 
 func RegisterService(ctx context.Context, user models.User) error {

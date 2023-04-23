@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/sanchitdeora/budget-tracker/src/models"
+	"github.com/sanchitdeora/budget-tracker/models"
 )
 
 func Contains(s []string, v string) bool {

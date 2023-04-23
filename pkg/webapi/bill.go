@@ -1,16 +1,17 @@
-package bill
+package webapi
 
 import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sanchitdeora/budget-tracker/src/models"
+	"github.com/sanchitdeora/budget-tracker/models"
 )
 
-func GetAllBills(c *gin.Context) {
+
+func (service *ApiService) GetAllBills(c *gin.Context) {
 
 	var response []models.Bill
-	err := getBills(c, &response)
+	err := service.BillService.GetBills(c, &response)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -23,10 +24,10 @@ func GetAllBills(c *gin.Context) {
 
 }
 
-func GetBillById(c *gin.Context) {
+func (service *ApiService) GetBillById(c *gin.Context) {
 
 	var response models.Bill
-	err := getBillById(c, c.Param("id"), &response)
+	err := service.BillService.GetBillById(c, c.Param("id"), &response)
 	if response.BillId == "" {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
@@ -42,7 +43,7 @@ func GetBillById(c *gin.Context) {
 
 }
 
-func CreateBill(c *gin.Context) {
+func (service *ApiService) CreateBill(c *gin.Context) {
 
 	var bill models.Bill
 	err := c.BindJSON(&bill)
@@ -50,7 +51,7 @@ func CreateBill(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	billId, err := createBillByUser(c, bill)
+	billId, err := service.BillService.CreateBillByUser(c, bill)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -63,7 +64,7 @@ func CreateBill(c *gin.Context) {
 
 }
 
-func UpdateBill(c *gin.Context) {
+func (service *ApiService) UpdateBillById(c *gin.Context) {
 
 	var bill models.Bill
 	err := c.BindJSON(&bill)
@@ -72,7 +73,7 @@ func UpdateBill(c *gin.Context) {
 		return
 	}
 	
-	billId, err := updateBillById(c, c.Param("id"), bill)
+	billId, err := service.BillService.UpdateBillById(c, c.Param("id"), bill)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -85,9 +86,9 @@ func UpdateBill(c *gin.Context) {
 
 }
 
-func UpdateBillIsPaid(c *gin.Context) {
+func (service *ApiService) UpdateBillIsPaid(c *gin.Context) {
 
-	billId, err := updateBillIsPaid(c, c.Param("id"))
+	billId, err := service.BillService.UpdateBillIsPaid(c, c.Param("id"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -100,9 +101,9 @@ func UpdateBillIsPaid(c *gin.Context) {
 
 }
 
-func UpdateBillIsUnpaid(c *gin.Context) {
+func (service *ApiService) UpdateBillIsUnpaid(c *gin.Context) {
 
-	billId, err := updateBillIsUnpaid(c, c.Param("id"))
+	billId, err := service.BillService.UpdateBillIsUnpaid(c, c.Param("id"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -115,9 +116,9 @@ func UpdateBillIsUnpaid(c *gin.Context) {
 
 }
 
-func DeleteBill(c *gin.Context) {
+func (service *ApiService) DeleteBillById(c *gin.Context) {
 
-	billId, err := deleteBillById(c, c.Param("id"))
+	billId, err := service.BillService.DeleteBillById(c, c.Param("id"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

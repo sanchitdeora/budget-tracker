@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/sanchitdeora/budget-tracker/db"
-	"github.com/sanchitdeora/budget-tracker/src/models"
+	"github.com/sanchitdeora/budget-tracker/models"
 )
 
 func SurveyService(ctx context.Context, survey models.Survey) error {
