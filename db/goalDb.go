@@ -66,9 +66,11 @@ func GetGoalRecordById(ctx context.Context, key string) (*models.Goal, error) {
 }
 
 func InsertGoalRecord(ctx context.Context, goal models.Goal) (string, error) {
-	goalId := GOAL_PREFIX + uuid.NewString()	
+	if goal.GoalId == "" {
+		goal.GoalId = GOAL_PREFIX + uuid.NewString()
+	}	
 	data := bson.D{
-		{Key: GOAL_ID_KEY, Value: goalId},
+		{Key: GOAL_ID_KEY, Value: goal.GoalId},
 		{Key: GOAL_NAME_KEY, Value: goal.GoalName},
 		{Key: CURRENT_AMOUNT_KEY, Value: goal.CurrentAmount},
 		{Key: TARGET_AMOUNT_KEY, Value: goal.TargetAmount},
@@ -80,8 +82,8 @@ func InsertGoalRecord(ctx context.Context, goal models.Goal) (string, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Created goal. ResultId: %v GoalId: %v\n", result.InsertedID, goalId)
-	return goalId, err
+	fmt.Printf("Created goal. ResultId: %v GoalId: %v\n", result.InsertedID, goal.GoalId)
+	return goal.GoalId, err
 }
 
 func UpdateGoalRecordById(ctx context.Context, id string, goal models.Goal) (string, error) {

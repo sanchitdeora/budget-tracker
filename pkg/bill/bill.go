@@ -2,7 +2,6 @@ package bill
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/sanchitdeora/budget-tracker/db"
@@ -80,7 +79,7 @@ func (s *serviceImpl) UpdateBillIsPaid(ctx context.Context, id string) (string, 
 		newTransaction.FromBill(bill, datePaid)
 		_, err := transaction.Service.CreateTransaction(transaction.NewService(&transaction.Opts{}), ctx, newTransaction)
 		if err != nil {
-			log.Fatal(err)
+			return "", nil
 		}
 	}
 
@@ -88,7 +87,7 @@ func (s *serviceImpl) UpdateBillIsPaid(ctx context.Context, id string) (string, 
 		// create new bill entry for next frequency period
 		newDueDate, err := utils.CalculateEndDateWithFrequency(bill.DueDate, bill.Frequency)
 		if err != nil {
-			log.Fatal(err)
+			return "", nil
 		}
 
 		newBill := bill
@@ -101,7 +100,7 @@ func (s *serviceImpl) UpdateBillIsPaid(ctx context.Context, id string) (string, 
 
 		_, err = s.CreateBill(ctx, newBill)
 		if err != nil {
-			log.Fatal(err)
+			return "", nil
 		}
 	}
 

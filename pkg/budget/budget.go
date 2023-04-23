@@ -16,7 +16,7 @@ type Service interface {
 	GetBudgetById(ctx context.Context, id string) (*models.Budget, error)
 	GetGoalMap(ctx context.Context, id string) ([]models.BudgetInputMap, error)
 	CreateBudgetByUser(ctx context.Context, budget models.Budget) (string, error)
-	CreateBudget(ctx context.Context, budget models.Budget) (string, error)
+	// CreateBudget(ctx context.Context, budget models.Budget) (string, error)
 	UpdateBudgetById(ctx context.Context, id string, budget models.Budget) (string, error)
 	DeleteBudgetById(ctx context.Context, id string) (string, error)
 }
@@ -45,6 +45,7 @@ func (s *serviceImpl) GetBudgetById(ctx context.Context, id string) (*models.Bud
 	return db.GetBudgetRecordById(ctx, id)
 }
 
+// no need for this function
 func (s *serviceImpl) GetGoalMap(ctx context.Context, id string) ([]models.BudgetInputMap, error) {
 	budget, err := s.GetBudgetById(ctx, id)
 	return budget.GoalMap, err
@@ -56,32 +57,38 @@ func (s *serviceImpl) CreateBudgetByUser(ctx context.Context, budget models.Budg
 	budget.SetFrequency()
 	budget.GetSavings()
 	budget.SetByUser()
+
+	for _, val := range budget.GoalMap {
+		s.GoalService.UpdateBudgetIdsList(ctx, val.Id, budget.BudgetId)
+	}
+
 	return db.InsertBudgetRecord(ctx, budget)
 }
 
-func (s *serviceImpl) CreateBudget(ctx context.Context, budget models.Budget) (string, error) {
-	// TODO: input validation
-	budget.SetCategory()
-	budget.SetFrequency()
-	budget.GetSavings()
-	budget.AutoSet()
-	return db.InsertBudgetRecord(ctx, budget)
-}
+// func (s *serviceImpl) CreateBudget(ctx context.Context, budget models.Budget) (string, error) {
+// 	// TODO: input validation
+// 	budget.SetCategory()
+// 	budget.SetFrequency()
+// 	budget.GetSavings()
+// 	budget.AutoSet()
+// 	return db.InsertBudgetRecord(ctx, budget)
+// }
 
 func (s *serviceImpl) UpdateBudgetById(ctx context.Context, id string, budget models.Budget) (string, error) {
 	// TODO: input validation
 	budget.SetCategory()
 	budget.SetFrequency()
 	budget.GetSavings()
-	
+
 	currentGoalMap, err := s.GetGoalMap(ctx, id)
 	if err != nil {
 		return "", err
 	}
 
-	newGoalMap := reduceGoalMapToGoalIdList(budget.GoalMap)
+	newGoalList := reduceGoalMapToGoalIdList(budget.GoalMap)
+
 	for _, val := range currentGoalMap {
-		if (!utils.Contains(newGoalMap, val.Id)) {
+		if (!utils.Contains(newGoalList, val.Id)) {
 			s.GoalService.RemoveBudgetIdFromGoal(ctx, val.Id, id)
 		}
 	}
@@ -100,6 +107,15 @@ func (s *serviceImpl) UpdateBudgetById(ctx context.Context, id string, budget mo
 
 func (s *serviceImpl) DeleteBudgetById(ctx context.Context, id string) (string, error) {
 	// TODO: input validation
+	budget, err := s.GetBudgetById(ctx, id)
+	if err != nil {
+		return "", err
+	}
+
+	for _, val := range budget.GoalMap {
+		s.GoalService.RemoveBudgetIdFromGoal(ctx, val.Id, id)
+	}
+
 	return db.DeleteBudgetRecordById(ctx, id)
 }
 
