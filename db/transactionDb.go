@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func GetAllTransactions(ctx context.Context, transactions *[]models.Transaction) error {
+func (db *DatabaseImpl) GetAllTransactions(ctx context.Context, transactions *[]models.Transaction) error {
 	cur, err := transactionCollection.Find(ctx, bson.D{})
 	if err != nil {
 		log.Println(err)
@@ -43,7 +43,7 @@ func GetAllTransactions(ctx context.Context, transactions *[]models.Transaction)
 	
 }
 
-func GetTransactionRecordById(ctx context.Context, key string, transaction *models.Transaction) error {
+func (db *DatabaseImpl) GetTransactionRecordById(ctx context.Context, key string, transaction *models.Transaction) error {
 	var result bson.M
 
 	filter := bson.M{TRANSACTION_ID_KEY: key}
@@ -65,7 +65,7 @@ func GetTransactionRecordById(ctx context.Context, key string, transaction *mode
 	
 }
 
-func InsertTransactionRecord(ctx context.Context, transaction models.Transaction) (string, error) {
+func (db *DatabaseImpl) InsertTransactionRecord(ctx context.Context, transaction models.Transaction) (string, error) {
 	transactionId := TRANSACTION_PREFIX + uuid.NewString()	
 	data := bson.D{
 		{Key: TRANSACTION_ID_KEY, Value: transactionId},
@@ -86,7 +86,7 @@ func InsertTransactionRecord(ctx context.Context, transaction models.Transaction
 	return transactionId, err
 }
 
-func UpdateTransactionRecordById(ctx context.Context, id string, transaction models.Transaction) (string, error) {
+func (db *DatabaseImpl) UpdateTransactionRecordById(ctx context.Context, id string, transaction models.Transaction) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
 			{Key: TITLE_KEY, Value: transaction.Title},
@@ -108,7 +108,7 @@ func UpdateTransactionRecordById(ctx context.Context, id string, transaction mod
 	return id, err
 }
 
-func DeleteTransactionRecordById(ctx context.Context, id string) (string, error) {
+func (db *DatabaseImpl) DeleteTransactionRecordById(ctx context.Context, id string) (string, error) {
 	filter := bson.D{{Key: TRANSACTION_ID_KEY, Value: id}}
 
 	result, err := transactionCollection.DeleteOne(ctx, filter)

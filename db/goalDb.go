@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func GetAllGoals(ctx context.Context, goals *[]models.Goal) error {
+func (db *DatabaseImpl) GetAllGoals(ctx context.Context, goals *[]models.Goal) error {
 	cur, err := goalCollection.Find(ctx, bson.D{})
 	if err != nil {
 		log.Println(err)
@@ -43,7 +43,7 @@ func GetAllGoals(ctx context.Context, goals *[]models.Goal) error {
 	
 }
 
-func GetGoalRecordById(ctx context.Context, key string) (*models.Goal, error) {
+func (db *DatabaseImpl) GetGoalRecordById(ctx context.Context, key string) (*models.Goal, error) {
 	var result bson.M
 	var goal models.Goal
 	filter := bson.M{GOAL_ID_KEY: key}
@@ -65,7 +65,7 @@ func GetGoalRecordById(ctx context.Context, key string) (*models.Goal, error) {
 	
 }
 
-func InsertGoalRecord(ctx context.Context, goal models.Goal) (string, error) {
+func (db *DatabaseImpl) InsertGoalRecord(ctx context.Context, goal models.Goal) (string, error) {
 	if goal.GoalId == "" {
 		goal.GoalId = GOAL_PREFIX + uuid.NewString()
 	}	
@@ -86,7 +86,7 @@ func InsertGoalRecord(ctx context.Context, goal models.Goal) (string, error) {
 	return goal.GoalId, err
 }
 
-func UpdateGoalRecordById(ctx context.Context, id string, goal models.Goal) (string, error) {
+func (db *DatabaseImpl) UpdateGoalRecordById(ctx context.Context, id string, goal models.Goal) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
 			{Key: GOAL_NAME_KEY, Value: goal.GoalName},
@@ -106,7 +106,7 @@ func UpdateGoalRecordById(ctx context.Context, id string, goal models.Goal) (str
 	return id, err
 }
 
-func DeleteGoalRecordById(ctx context.Context, id string) (string, error) {
+func (db *DatabaseImpl) DeleteGoalRecordById(ctx context.Context, id string) (string, error) {
 	filter := bson.D{{Key: GOAL_ID_KEY, Value: id}}
 
 	result, err := goalCollection.DeleteOne(ctx, filter)

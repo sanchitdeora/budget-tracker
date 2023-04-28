@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func GetAllBudgets(ctx context.Context, budgets *[]models.Budget) error {
+func (db *DatabaseImpl) GetAllBudgets(ctx context.Context, budgets *[]models.Budget) error {
 	cur, err := budgetCollection.Find(ctx, bson.D{})
 	if err != nil {
 		log.Println(err)
@@ -43,7 +43,7 @@ func GetAllBudgets(ctx context.Context, budgets *[]models.Budget) error {
 	
 }
 
-func GetBudgetRecordById(ctx context.Context, key string) (*models.Budget, error) {
+func (db *DatabaseImpl) GetBudgetRecordById(ctx context.Context, key string) (*models.Budget, error) {
 	var result bson.M
 	var budget models.Budget
 
@@ -66,7 +66,7 @@ func GetBudgetRecordById(ctx context.Context, key string) (*models.Budget, error
 	
 }
 
-func InsertBudgetRecord(ctx context.Context, budget models.Budget) (string, error) {
+func (db *DatabaseImpl) InsertBudgetRecord(ctx context.Context, budget models.Budget) (string, error) {
 	if budget.BudgetId == "" {
 		budget.BudgetId = BUDGET_PREFIX + uuid.NewString()
 	}	
@@ -92,7 +92,7 @@ func InsertBudgetRecord(ctx context.Context, budget models.Budget) (string, erro
 	return budget.BudgetId, err
 }
 
-func UpdateBudgetRecordById(ctx context.Context, id string, budget models.Budget) (string, error) {
+func (db *DatabaseImpl) UpdateBudgetRecordById(ctx context.Context, id string, budget models.Budget) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
 			{Key: BUDGET_NAME_KEY, Value: budget.BudgetName},
@@ -113,7 +113,7 @@ func UpdateBudgetRecordById(ctx context.Context, id string, budget models.Budget
 	return id, err
 }
 
-func DeleteBudgetRecordById(ctx context.Context, id string) (string, error) {
+func (db *DatabaseImpl) DeleteBudgetRecordById(ctx context.Context, id string) (string, error) {
 	filter := bson.D{{Key: BUDGET_ID_KEY, Value: id}}
 
 	result, err := budgetCollection.DeleteOne(ctx, filter)

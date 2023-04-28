@@ -25,14 +25,17 @@ func main() {
 
 	// database := db.NewDatabase()
 
-	transactionService := transaction.NewService(&transaction.Opts{})
-	billService := bill.NewService(&bill.Opts{TransactionService: transactionService})
-	goalService := goal.NewService(&goal.Opts{})
-	
+	database := db.NewDatabase() 
+
+	transactionService := transaction.NewService(&transaction.Opts{DB: database})
+	billService := bill.NewService(&bill.Opts{TransactionService: transactionService, DB: database})
+	goalService := goal.NewService(&goal.Opts{DB: database})
+
 	budgetService := budget.NewService(&budget.Opts{
 		TransactionService: transactionService,
 		BillService: billService,
 		GoalService: goalService,
+		DB: database,
 	})
 
 	service := &webapi.ApiService{

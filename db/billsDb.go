@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func GetAllBillRecords(ctx context.Context, bills *[]models.Bill) error {
+func (db *DatabaseImpl) GetAllBillRecords(ctx context.Context, bills *[]models.Bill) error {
 	cur, err := billCollection.Find(ctx, bson.D{})
 	if err != nil {
 		log.Println(err)
@@ -44,7 +44,7 @@ func GetAllBillRecords(ctx context.Context, bills *[]models.Bill) error {
 	
 }
 
-func GetBillRecordById(ctx context.Context, id string, bill *models.Bill) error {
+func (db *DatabaseImpl) GetBillRecordById(ctx context.Context, id string, bill *models.Bill) error {
 	var result bson.M
 
 	filter := bson.D{{Key: BILL_ID_KEY, Value: id}}
@@ -66,7 +66,7 @@ func GetBillRecordById(ctx context.Context, id string, bill *models.Bill) error 
 	
 }
 
-func InsertBillRecord(ctx context.Context, bill models.Bill) (string, error) {
+func (db *DatabaseImpl) InsertBillRecord(ctx context.Context, bill models.Bill) (string, error) {
 	billId := BILL_PREFIX + uuid.NewString()
 
 	if bill.SequenceStartId == "" && bill.SequenceNumber == 0 {
@@ -95,7 +95,7 @@ func InsertBillRecord(ctx context.Context, bill models.Bill) (string, error) {
 	return billId, err
 }
 
-func UpdateBillRecordById(ctx context.Context, id string, bill models.Bill) (string, error) {
+func (db *DatabaseImpl) UpdateBillRecordById(ctx context.Context, id string, bill models.Bill) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
 			{Key: TITLE_KEY, Value: bill.Title},
@@ -120,7 +120,7 @@ func UpdateBillRecordById(ctx context.Context, id string, bill models.Bill) (str
 	return id, err
 }
 
-func UpdateBillRecordIsPaid(ctx context.Context, id string, datePaid time.Time) (string, error) {
+func (db *DatabaseImpl) UpdateBillRecordIsPaid(ctx context.Context, id string, datePaid time.Time) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
 			{Key: IS_PAID_KEY, Value: true},
@@ -137,7 +137,7 @@ func UpdateBillRecordIsPaid(ctx context.Context, id string, datePaid time.Time) 
 	return id, err
 }
 
-func UpdateBillRecordIsUnpaid(ctx context.Context, id string) (string, error) {
+func (db *DatabaseImpl) UpdateBillRecordIsUnpaid(ctx context.Context, id string) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
 			{Key: IS_PAID_KEY, Value: false},
@@ -153,7 +153,7 @@ func UpdateBillRecordIsUnpaid(ctx context.Context, id string) (string, error) {
 	return id, err
 }
 
-func DeleteBillRecordById(ctx context.Context, id string) (string, error) {
+func (db *DatabaseImpl) DeleteBillRecordById(ctx context.Context, id string) (string, error) {
 	filter := bson.D{{Key: BILL_ID_KEY, Value: id}}
 
 	result, err := billCollection.DeleteOne(ctx, filter)

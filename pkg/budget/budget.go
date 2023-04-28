@@ -25,6 +25,7 @@ type Opts struct {
 	TransactionService 	transaction.Service
 	BillService 		bill.Service
 	GoalService			goal.Service
+	DB					db.Database
 }
 
 type serviceImpl struct {
@@ -37,12 +38,12 @@ func NewService(opts *Opts) Service {
 
 func (s *serviceImpl) GetBudgets(ctx context.Context, budget *[]models.Budget) (error) {
 	// TODO: input validation
-	return db.GetAllBudgets(ctx, budget)
+	return s.DB.GetAllBudgets(ctx, budget)
 }
 
 func (s *serviceImpl) GetBudgetById(ctx context.Context, id string) (*models.Budget, error) {
 	// TODO: input validation
-	return db.GetBudgetRecordById(ctx, id)
+	return s.DB.GetBudgetRecordById(ctx, id)
 }
 
 // no need for this function
@@ -62,7 +63,7 @@ func (s *serviceImpl) CreateBudgetByUser(ctx context.Context, budget models.Budg
 		s.GoalService.UpdateBudgetIdsList(ctx, val.Id, budget.BudgetId)
 	}
 
-	return db.InsertBudgetRecord(ctx, budget)
+	return s.DB.InsertBudgetRecord(ctx, budget)
 }
 
 // func (s *serviceImpl) CreateBudget(ctx context.Context, budget models.Budget) (string, error) {
@@ -102,7 +103,7 @@ func (s *serviceImpl) UpdateBudgetById(ctx context.Context, id string, budget mo
 		}
 	}
 
-	return db.UpdateBudgetRecordById(ctx, id, budget)
+	return s.DB.UpdateBudgetRecordById(ctx, id, budget)
 }
 
 func (s *serviceImpl) DeleteBudgetById(ctx context.Context, id string) (string, error) {
@@ -116,7 +117,7 @@ func (s *serviceImpl) DeleteBudgetById(ctx context.Context, id string) (string, 
 		s.GoalService.RemoveBudgetIdFromGoal(ctx, val.Id, id)
 	}
 
-	return db.DeleteBudgetRecordById(ctx, id)
+	return s.DB.DeleteBudgetRecordById(ctx, id)
 }
 
 func reduceGoalMapToGoalIdList(goalMap []models.BudgetInputMap) []string {

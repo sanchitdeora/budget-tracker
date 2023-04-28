@@ -7,6 +7,7 @@ import (
 	"github.com/sanchitdeora/budget-tracker/models"
 )
 
+//go:generate mockgen -destination=../mocks/mock_transaction.go -package=mocks github.com/sanchitdeora/budget-tracker/pkg/transaction Service
 type Service interface {
 	GetTransactions(ctx context.Context, transactions *[]models.Transaction) (error)
 	GetTransactionById(ctx context.Context, id string, transaction *models.Transaction) (error)
@@ -15,7 +16,9 @@ type Service interface {
 	DeleteTransactionById(ctx context.Context, id string) (string, error)
 }
 
-type Opts struct {}
+type Opts struct {
+	DB db.Database
+}
 
 type serviceImpl struct {
 	*Opts
@@ -25,30 +28,29 @@ func NewService(opts *Opts) Service {
 	return &serviceImpl{Opts: opts}
 }
 
-
 func (s *serviceImpl) GetTransactions(ctx context.Context, transactions *[]models.Transaction) (error) {
 	// TODO: input validation
-	return db.GetAllTransactions(ctx, transactions)
+	return s.DB.GetAllTransactions(ctx, transactions)
 }
 
 func (s *serviceImpl) GetTransactionById(ctx context.Context, id string, transaction *models.Transaction) (error) {
 	// TODO: input validation
-	return db.GetTransactionRecordById(ctx, id, transaction)
+	return s.DB.GetTransactionRecordById(ctx, id, transaction)
 }
 
 func (s *serviceImpl) CreateTransaction(ctx context.Context, transaction models.Transaction) (string, error) {
 	// TODO: input validation
 	transaction.SetCategory()
-	return db.InsertTransactionRecord(ctx, transaction)
+	return s.DB.InsertTransactionRecord(ctx, transaction)
 }
 
 func (s *serviceImpl) UpdateTransactionById(ctx context.Context, id string, transaction models.Transaction) (string, error) {
 	// TODO: input validation
 	transaction.SetCategory()
-	return db.UpdateTransactionRecordById(ctx, id, transaction)
+	return s.DB.UpdateTransactionRecordById(ctx, id, transaction)
 }
 
 func (s *serviceImpl) DeleteTransactionById(ctx context.Context, id string) (string, error) {
 	// TODO: input validation
-	return db.DeleteTransactionRecordById(ctx, id)
+	return s.DB.DeleteTransactionRecordById(ctx, id)
 }

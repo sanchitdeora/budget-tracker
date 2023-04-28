@@ -9,6 +9,7 @@ import (
 	"github.com/sanchitdeora/budget-tracker/utils"
 )
 
+//go:generate mockgen -destination=../mocks/mock_goal.go -package=mocks github.com/sanchitdeora/budget-tracker/pkg/goal Service
 type Service interface {
 	GetGoals(ctx context.Context, goal *[]models.Goal) (error)
 	GetGoalById(ctx context.Context, id string) (*models.Goal, error)
@@ -19,7 +20,9 @@ type Service interface {
 	DeleteGoalById(ctx context.Context, id string) (string, error)
 }
 
-type Opts struct {}
+type Opts struct {
+	DB db.Database
+}
 
 type serviceImpl struct {
 	*Opts
@@ -31,22 +34,22 @@ func NewService(opts *Opts) Service {
 
 func (s *serviceImpl) GetGoals(ctx context.Context, goal *[]models.Goal) (error) {
 	// TODO: input validation
-	return db.GetAllGoals(ctx, goal)
+	return s.DB.GetAllGoals(ctx, goal)
 }
 
 func (s *serviceImpl) GetGoalById(ctx context.Context, id string) (*models.Goal, error) {
 	// TODO: input validation
-	return db.GetGoalRecordById(ctx, id)
+	return s.DB.GetGoalRecordById(ctx, id)
 }
 
 func (s *serviceImpl) CreateGoalById(ctx context.Context, goal models.Goal) (string, error) {
 	// TODO: input validation
 	goal.GoalId = db.GOAL_PREFIX + uuid.NewString()
 	for _, val := range goal.BudgetIdList {
-		updateGoalMapInBudget(ctx, val, goal)
+		s.updateGoalMapInBudget(ctx, val, goal)
 	}
 
-	return db.InsertGoalRecord(ctx, goal)
+	return s.DB.InsertGoalRecord(ctx, goal)
 }
 
 func (s *serviceImpl) UpdateGoalById(ctx context.Context, id string, goal models.Goal) (string, error) {
@@ -58,22 +61,22 @@ func (s *serviceImpl) UpdateGoalById(ctx context.Context, id string, goal models
 
 	for _, val := range currGoal.BudgetIdList {
 		if (!utils.Contains(goal.BudgetIdList, val)) {
-			 removeGoalMapInBudget(ctx, val, id)
+			s.removeGoalMapInBudget(ctx, val, id)
 		}
 	}
 
 	for _, val := range goal.BudgetIdList {
 		if (!utils.Contains(currGoal.BudgetIdList, val)) {
-			updateGoalMapInBudget(ctx, val, goal)
+			s.updateGoalMapInBudget(ctx, val, goal)
 		}
 	}
 
-	return db.UpdateGoalRecordById(ctx, id, goal)
+	return s.DB.UpdateGoalRecordById(ctx, id, goal)
 }
 
 func (s *serviceImpl) UpdateBudgetIdsList(ctx context.Context, goalId string, budgetId string) (string, error) {
 	// TODO: input validation
-	goal, err := db.GetGoalRecordById(ctx, goalId)
+	goal, err := s.DB.GetGoalRecordById(ctx, goalId)
 	if err != nil {
 		return "", nil
 	}
@@ -81,12 +84,12 @@ func (s *serviceImpl) UpdateBudgetIdsList(ctx context.Context, goalId string, bu
 	if (!utils.Contains(goal.BudgetIdList, budgetId)) {
 		goal.BudgetIdList = append(goal.BudgetIdList, budgetId)	
 	}
-	return db.UpdateGoalRecordById(ctx, goalId, *goal)
+	return s.DB.UpdateGoalRecordById(ctx, goalId, *goal)
 }
 
 func (s *serviceImpl) RemoveBudgetIdFromGoal(ctx context.Context, goalId string, budgetId string) (string, error) {
 	// TODO: input validation
-	goal, err := db.GetGoalRecordById(ctx, goalId)
+	goal, err := s.DB.GetGoalRecordById(ctx, goalId)
 	if err != nil {
 		return "", nil
 	}
@@ -94,7 +97,7 @@ func (s *serviceImpl) RemoveBudgetIdFromGoal(ctx context.Context, goalId string,
 		index := utils.SearchIndex(goal.BudgetIdList, budgetId)
 		goal.BudgetIdList = utils.Remove(goal.BudgetIdList, index)	
 	}
-	return db.UpdateGoalRecordById(ctx, goalId, *goal)
+	return s.DB.UpdateGoalRecordById(ctx, goalId, *goal)
 }
 
 func (s *serviceImpl) DeleteGoalById(ctx context.Context, id string) (string, error) {
@@ -105,18 +108,18 @@ func (s *serviceImpl) DeleteGoalById(ctx context.Context, id string) (string, er
 	}
 
 	for _, val := range goal.BudgetIdList {
-		removeGoalMapInBudget(ctx, val, goal.GoalId)
+		s.removeGoalMapInBudget(ctx, val, goal.GoalId)
 	}
 	
-	return db.DeleteGoalRecordById(ctx, id)
+	return s.DB.DeleteGoalRecordById(ctx, id)
 }
 
 // using db directly to avoid cyclic imports. 
 // TODO: Find better implementation to avoid this.
 
-func removeGoalMapInBudget(ctx context.Context, budgetId string, goalId string) error {
+func (s *serviceImpl) removeGoalMapInBudget(ctx context.Context, budgetId string, goalId string) error {
 	var goalList []string
-	budget, _ := db.GetBudgetRecordById(ctx, budgetId)
+	budget, _ := s.DB.GetBudgetRecordById(ctx, budgetId)
 	
 	for _, val := range budget.GoalMap {
 		goalList = append(goalList, val.Id)
@@ -126,14 +129,14 @@ func removeGoalMapInBudget(ctx context.Context, budgetId string, goalId string) 
 
 	budget.GoalMap = append(budget.GoalMap[:index], budget.GoalMap[index+1:]...)
 
-	db.UpdateBudgetRecordById(ctx, budgetId, *budget)
+	s.DB.UpdateBudgetRecordById(ctx, budgetId, *budget)
 	return nil
 }
 
-func updateGoalMapInBudget(ctx context.Context, budgetId string, goal models.Goal) error {
-	budget, _ := db.GetBudgetRecordById(ctx, budgetId)
+func (s *serviceImpl) updateGoalMapInBudget(ctx context.Context, budgetId string, goal models.Goal) error {
+	budget, _ := s.DB.GetBudgetRecordById(ctx, budgetId)
 	budget.GoalMap = append(budget.GoalMap, models.BudgetInputMap{Id: goal.GoalId, Name: goal.GoalName, Amount: 0})
 	
-	db.UpdateBudgetRecordById(ctx, budgetId, *budget)
+	s.DB.UpdateBudgetRecordById(ctx, budgetId, *budget)
 	return nil
 }

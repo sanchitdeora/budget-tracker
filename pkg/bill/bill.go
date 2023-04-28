@@ -22,7 +22,8 @@ type Service interface {
 }
 
 type Opts struct {
-	TransactionService transaction.Service
+	TransactionService  transaction.Service
+	DB					db.Database	
 }
 
 type serviceImpl struct {
@@ -36,12 +37,12 @@ func NewService(opts *Opts) Service {
 
 func (s *serviceImpl) GetBills(ctx context.Context, bill *[]models.Bill) (error) {
 	// TODO: input validation
-	return db.GetAllBillRecords(ctx, bill)
+	return s.DB.GetAllBillRecords(ctx, bill)
 }
 
 func (s *serviceImpl) GetBillById(ctx context.Context, id string, bill *models.Bill) (error) {
 	// TODO: input validation
-	return db.GetBillRecordById(ctx, id, bill)
+	return s.DB.GetBillRecordById(ctx, id, bill)
 }
 
 func (s *serviceImpl) CreateBillByUser(ctx context.Context, bill models.Bill) (string, error) {
@@ -49,21 +50,21 @@ func (s *serviceImpl) CreateBillByUser(ctx context.Context, bill models.Bill) (s
 	bill.SetByUser()
 	bill.SetCategory()
 	bill.SetFrequency()
-	return db.InsertBillRecord(ctx, bill)
+	return s.DB.InsertBillRecord(ctx, bill)
 }
 
 func (s *serviceImpl) CreateBill(ctx context.Context, bill models.Bill) (string, error) {
 	// TODO: input validation
 	bill.SetCategory()
 	bill.SetFrequency()
-	return db.InsertBillRecord(ctx, bill)
+	return s.DB.InsertBillRecord(ctx, bill)
 }
 
 func (s *serviceImpl) UpdateBillById(ctx context.Context, id string, bill models.Bill) (string, error) {
 	// TODO: input validation
 	bill.SetCategory()
 	bill.SetFrequency()
-	return db.UpdateBillRecordById(ctx, id, bill)
+	return s.DB.UpdateBillRecordById(ctx, id, bill)
 }
 
 func (s *serviceImpl) UpdateBillIsPaid(ctx context.Context, id string) (string, error) {
@@ -71,7 +72,7 @@ func (s *serviceImpl) UpdateBillIsPaid(ctx context.Context, id string) (string, 
 	datePaid := time.Now()
 
 	var bill models.Bill
-	db.GetBillRecordById(ctx, id, &bill)
+	s.DB.GetBillRecordById(ctx, id, &bill)
 	
 	if !bill.IsPaid {
 
@@ -104,15 +105,15 @@ func (s *serviceImpl) UpdateBillIsPaid(ctx context.Context, id string) (string, 
 		}
 	}
 
-	return db.UpdateBillRecordIsPaid(ctx, id, datePaid)
+	return s.DB.UpdateBillRecordIsPaid(ctx, id, datePaid)
 }
 
 func (s *serviceImpl) UpdateBillIsUnpaid(ctx context.Context, id string) (string, error) {
 	// TODO: input validation
-	return db.UpdateBillRecordIsUnpaid(ctx, id)
+	return s.DB.UpdateBillRecordIsUnpaid(ctx, id)
 }
 
 func (s *serviceImpl) DeleteBillById(ctx context.Context, id string) (string, error) {
 	// TODO: input validation
-	return db.DeleteBillRecordById(ctx, id)
+	return s.DB.DeleteBillRecordById(ctx, id)
 }
