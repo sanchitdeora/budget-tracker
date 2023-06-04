@@ -30,7 +30,7 @@ func NewService(opts *Opts) Service {
 
 func (s *serviceImpl) GetTransactions(ctx context.Context, transactions *[]models.Transaction) (error) {
 	// TODO: input validation
-	return s.DB.GetAllTransactions(ctx, transactions)
+	return s.DB.GetAllTransactionRecords(ctx, transactions)
 }
 
 func (s *serviceImpl) GetTransactionById(ctx context.Context, id string, transaction *models.Transaction) (error) {

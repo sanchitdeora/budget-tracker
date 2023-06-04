@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (db *DatabaseImpl) GetAllGoals(ctx context.Context, goals *[]models.Goal) error {
+func (db *DatabaseImpl) GetAllGoalRecords(ctx context.Context, goals *[]models.Goal) error {
 	cur, err := goalCollection.Find(ctx, bson.D{})
 	if err != nil {
 		log.Println(err)

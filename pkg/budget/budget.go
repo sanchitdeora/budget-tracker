@@ -38,7 +38,7 @@ func NewService(opts *Opts) Service {
 
 func (s *serviceImpl) GetBudgets(ctx context.Context, budget *[]models.Budget) (error) {
 	// TODO: input validation
-	return s.DB.GetAllBudgets(ctx, budget)
+	return s.DB.GetAllBudgetRecords(ctx, budget)
 }
 
 func (s *serviceImpl) GetBudgetById(ctx context.Context, id string) (*models.Budget, error) {

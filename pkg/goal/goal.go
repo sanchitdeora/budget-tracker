@@ -34,7 +34,7 @@ func NewService(opts *Opts) Service {
 
 func (s *serviceImpl) GetGoals(ctx context.Context, goal *[]models.Goal) (error) {
 	// TODO: input validation
-	return s.DB.GetAllGoals(ctx, goal)
+	return s.DB.GetAllGoalRecords(ctx, goal)
 }
 
 func (s *serviceImpl) GetGoalById(ctx context.Context, id string) (*models.Goal, error) {

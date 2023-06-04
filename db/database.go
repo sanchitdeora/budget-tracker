@@ -66,7 +66,7 @@ const (
 
 type Database interface {
 	// transaction
-	GetAllTransactions(ctx context.Context, transactions *[]models.Transaction) error
+	GetAllTransactionRecords(ctx context.Context, transactions *[]models.Transaction) error
 	GetTransactionRecordById(ctx context.Context, key string, transaction *models.Transaction) error
 	InsertTransactionRecord(ctx context.Context, transaction models.Transaction) (string, error)
 	UpdateTransactionRecordById(ctx context.Context, id string, transaction models.Transaction) (string, error)
@@ -82,14 +82,14 @@ type Database interface {
 	DeleteBillRecordById(ctx context.Context, id string) (string, error)
 
 	// budget
-	GetAllBudgets(ctx context.Context, budgets *[]models.Budget) error
+	GetAllBudgetRecords(ctx context.Context, budgets *[]models.Budget) error
 	GetBudgetRecordById(ctx context.Context, key string) (*models.Budget, error)
 	InsertBudgetRecord(ctx context.Context, budget models.Budget) (string, error)
 	UpdateBudgetRecordById(ctx context.Context, id string, budget models.Budget) (string, error)
 	DeleteBudgetRecordById(ctx context.Context, id string) (string, error)
 
 	// goal
-	GetAllGoals(ctx context.Context, goals *[]models.Goal) error
+	GetAllGoalRecords(ctx context.Context, goals *[]models.Goal) error
 	GetGoalRecordById(ctx context.Context, key string) (*models.Goal, error)
 	InsertGoalRecord(ctx context.Context, goal models.Goal) (string, error)
 	UpdateGoalRecordById(ctx context.Context, id string, goal models.Goal) (string, error)

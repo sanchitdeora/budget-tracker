@@ -20,7 +20,7 @@ var (
 	transactionCollection *mongo.Collection
 	billCollection 		  *mongo.Collection
 	budgetCollection 	  *mongo.Collection
-	goalCollection 	  *mongo.Collection
+	goalCollection 	  	  *mongo.Collection
 )
 
 func Init() (*mongo.Client, context.Context, error) {

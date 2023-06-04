@@ -78,7 +78,7 @@ func (s *serviceImpl) UpdateBillIsPaid(ctx context.Context, id string) (string, 
 
 		var newTransaction models.Transaction
 		newTransaction.FromBill(bill, datePaid)
-		_, err := transaction.Service.CreateTransaction(transaction.NewService(&transaction.Opts{}), ctx, newTransaction)
+		_, err := s.TransactionService.CreateTransaction(ctx, newTransaction)
 		if err != nil {
 			return "", nil
 		}

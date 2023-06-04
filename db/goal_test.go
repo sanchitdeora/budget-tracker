@@ -13,7 +13,7 @@ import (
 
 // func createTestGoalDb()
 
-func TestGetAllGoals(t *testing.T) {
+func TestGetAllGoalRecords(t *testing.T) {
 	assert.Equal(t, 1, 1, "The two words should be the same.")
 }
 

@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (db *DatabaseImpl) GetAllTransactions(ctx context.Context, transactions *[]models.Transaction) error {
+func (db *DatabaseImpl) GetAllTransactionRecords(ctx context.Context, transactions *[]models.Transaction) error {
 	cur, err := transactionCollection.Find(ctx, bson.D{})
 	if err != nil {
 		log.Println(err)

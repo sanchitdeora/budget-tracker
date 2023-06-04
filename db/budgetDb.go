@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (db *DatabaseImpl) GetAllBudgets(ctx context.Context, budgets *[]models.Budget) error {
+func (db *DatabaseImpl) GetAllBudgetRecords(ctx context.Context, budgets *[]models.Budget) error {
 	cur, err := budgetCollection.Find(ctx, bson.D{})
 	if err != nil {
 		log.Println(err)
