@@ -29,6 +29,10 @@ func TestCreateBudgetByUser(t *testing.T) {
 	assert.Equal(t, 1, 1, "The two words should be the same.")
 }
 
+func TestCreateBudget(t *testing.T) {
+	assert.Equal(t, 1, 1, "The two words should be the same.")
+}
+
 func TestUpdateBudgetById(t *testing.T) {
 	assert.Equal(t, 1, 1, "The two words should be the same.")
 }

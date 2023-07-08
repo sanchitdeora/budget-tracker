@@ -3,13 +3,21 @@ import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
+import { CATEGORY_MAP } from './GlobalConstants';
+import { transformDateFormatToYyyyMmDd } from './StringUtils';
 
 class ReusableTransactionDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
         };
+
+        console.log(props);
     };
+
+    handleChangeCurrentTransaction() {
+
+    }
 
     render() {
         return(
@@ -25,6 +33,7 @@ class ReusableTransactionDialog extends React.Component {
                         
                         <label htmlFor='title'>Title</label><br></br>
                         <input
+                            defaultValue={this.props.currentTransaction.title}
                             type='text'
                             name='title'
                             className='transaction-input-box'
@@ -38,31 +47,19 @@ class ReusableTransactionDialog extends React.Component {
                         <select 
                             name='category'
                             className='transaction-input-box'
-                            defaultValue={'DEFAULT'}
+                            defaultValue={this.props.currentTransaction.category}
                             onChange={this.props.handleChange}
                         >
-                            <option value='DEFAULT' disabled>None</option>
-                            <option value='auto_and_transport'>Auto & Transport</option>
-                            <option value='bills_and_utilities'>Bills & Utilities</option>
-                            <option value='education'>Education</option>
-                            <option value='entertainment'>Entertainment</option>
-                            <option value='food_and_dining'>Food & Dining</option>
-                            <option value='health_and_fitness'>Health & Fitness</option>
-                            <option value='home'>Home</option>
-                            <option value='income'>Income</option>
-                            <option value='investments'>Investments</option>
-                            <option value='personal_care'>Personal Care</option>
-                            <option value='pets'>Pets</option>
-                            <option value='shopping'>Shopping</option>
-                            <option value='taxes'>Taxes</option>
-                            <option value='travel'>Travel</option>
-                            <option value='uncategorized'>Others</option>
+                            {CATEGORY_MAP.map(freq => (
+                                <option value={freq.id}>{freq.value}</option>
+                            ))} 
                         </select>
                     </div>
                     <br></br>
                     <div className='transaction-input-group'>
                         <label htmlFor='amount'>Amount</label><br></br>
                         <input
+                            defaultValue={this.props.currentTransaction.amount}
                             type='number'
                             name='amount'
                             className='transaction-input-box'
@@ -78,7 +75,7 @@ class ReusableTransactionDialog extends React.Component {
                             name='type'
                             value='debit'
                             placeholder='Debit'
-                            defaultChecked
+                            checked={this.props.currentTransaction.type === false}
                             onChange={this.props.handleChange}
                         /> Debit
                     </label>
@@ -88,6 +85,7 @@ class ReusableTransactionDialog extends React.Component {
                             name='type'
                             value='credit'
                             placeholder='Credit'
+                            checked={this.props.currentTransaction.type === true}
                             onChange={this.props.handleChange}
                             /> Credit
                     </label>
@@ -96,6 +94,7 @@ class ReusableTransactionDialog extends React.Component {
                     <div className='transaction-input-group'>
                         <label htmlFor='date'>Date</label><br></br>
                         <input
+                            defaultValue={transformDateFormatToYyyyMmDd(this.props.currentTransaction.date)}
                             type='date'
                             name='date'
                             className='transaction-input-box'
@@ -106,6 +105,7 @@ class ReusableTransactionDialog extends React.Component {
                     <div className='transaction-input-group'>
                         <label htmlFor='Note'>Note</label><br></br>
                         <textarea
+                            defaultValue={this.props.currentTransaction.note}
                             type='text'
                             name='note'
                             className='transaction-input-box'

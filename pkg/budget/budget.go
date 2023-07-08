@@ -2,6 +2,7 @@ package budget
 
 import (
 	"context"
+	"time"
 
 	"github.com/sanchitdeora/budget-tracker/db"
 	"github.com/sanchitdeora/budget-tracker/models"
@@ -16,7 +17,7 @@ type Service interface {
 	GetBudgetById(ctx context.Context, id string) (*models.Budget, error)
 	GetGoalMap(ctx context.Context, id string) ([]models.BudgetInputMap, error)
 	CreateBudgetByUser(ctx context.Context, budget models.Budget) (string, error)
-	// CreateBudget(ctx context.Context, budget models.Budget) (string, error)
+	CreateBudget(ctx context.Context, budget models.Budget, prevBudget models.Budget) (string, error)
 	UpdateBudgetById(ctx context.Context, id string, budget models.Budget) (string, error)
 	DeleteBudgetById(ctx context.Context, id string) (string, error)
 }
@@ -46,18 +47,13 @@ func (s *serviceImpl) GetBudgetById(ctx context.Context, id string) (*models.Bud
 	return s.DB.GetBudgetRecordById(ctx, id)
 }
 
-// no need for this function
-func (s *serviceImpl) GetGoalMap(ctx context.Context, id string) ([]models.BudgetInputMap, error) {
-	budget, err := s.GetBudgetById(ctx, id)
-	return budget.GoalMap, err
-}
-
 func (s *serviceImpl) CreateBudgetByUser(ctx context.Context, budget models.Budget) (string, error) {
 	// TODO: input validation
 	budget.SetCategory()
 	budget.SetFrequency()
-	budget.GetSavings()
+	budget.SetSavings()
 	budget.SetByUser()
+	setBudgetTime(&budget)
 
 	for _, val := range budget.GoalMap {
 		s.GoalService.UpdateBudgetIdsList(ctx, val.Id, budget.BudgetId)
@@ -66,20 +62,22 @@ func (s *serviceImpl) CreateBudgetByUser(ctx context.Context, budget models.Budg
 	return s.DB.InsertBudgetRecord(ctx, budget)
 }
 
-// func (s *serviceImpl) CreateBudget(ctx context.Context, budget models.Budget) (string, error) {
-// 	// TODO: input validation
-// 	budget.SetCategory()
-// 	budget.SetFrequency()
-// 	budget.GetSavings()
-// 	budget.AutoSet()
-// 	return db.InsertBudgetRecord(ctx, budget)
-// }
+func (s *serviceImpl) CreateBudget(ctx context.Context, budget models.Budget, prevBudget models.Budget) (string, error) {
+	// TODO: input validation
+	budget.SetCategory()
+	budget.SetFrequency()
+	budget.SetSavings()
+	budget.AutoSet(prevBudget.SequenceStartId, prevBudget.SequenceNumber)
+	setBudgetTime(&budget)
+
+	return s.DB.InsertBudgetRecord(ctx, budget)
+}
 
 func (s *serviceImpl) UpdateBudgetById(ctx context.Context, id string, budget models.Budget) (string, error) {
 	// TODO: input validation
 	budget.SetCategory()
 	budget.SetFrequency()
-	budget.GetSavings()
+	budget.SetSavings()
 
 	currentGoalMap, err := s.GetGoalMap(ctx, id)
 	if err != nil {
@@ -120,6 +118,12 @@ func (s *serviceImpl) DeleteBudgetById(ctx context.Context, id string) (string, 
 	return s.DB.DeleteBudgetRecordById(ctx, id)
 }
 
+// util functions
+func (s *serviceImpl) GetGoalMap(ctx context.Context, id string) ([]models.BudgetInputMap, error) {
+	budget, err := s.GetBudgetById(ctx, id)
+	return budget.GoalMap, err
+}
+
 func reduceGoalMapToGoalIdList(goalMap []models.BudgetInputMap) []string {
 	var result []string
 	for _, val := range goalMap {
@@ -127,3 +131,26 @@ func reduceGoalMapToGoalIdList(goalMap []models.BudgetInputMap) []string {
 	}
 	return result 
 }
+
+func setBudgetTime(budget *models.Budget) (error) {
+	if budget.CreationTime.IsZero() {
+		budget.CreationTime = time.Now().Local()
+	}
+
+	expTime, err := utils.CalculateEndDateWithFrequency(budget.CreationTime, budget.Frequency)
+	if err != nil {
+		return err
+	}
+	budget.ExpirationTime = expTime
+	return nil
+}
+
+// func checkBudgetExpiration(budget *models.Budget) {
+// 	if budget.IsClosed {
+// 		return
+// 	}
+
+// 	if time.Now() < budget.ExpirationTime {
+
+// 	} 
+// }

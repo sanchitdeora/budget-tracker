@@ -2,6 +2,7 @@ package goal
 
 import (
 	"context"
+	"log"
 
 	"github.com/google/uuid"
 	"github.com/sanchitdeora/budget-tracker/db"
@@ -15,6 +16,7 @@ type Service interface {
 	GetGoalById(ctx context.Context, id string) (*models.Goal, error)
 	CreateGoalById(ctx context.Context, goal models.Goal) (string, error)
 	UpdateGoalById(ctx context.Context, id string, goal models.Goal) (string, error)
+	UpdateGoalAmount(ctx context.Context, goalId string, currAmount float32, budgetId string) (string, error)
 	UpdateBudgetIdsList(ctx context.Context, goalId string, budgetId string) (string, error)
 	RemoveBudgetIdFromGoal(ctx context.Context, goalId string, budgetId string) (string, error)
 	DeleteGoalById(ctx context.Context, id string) (string, error)
@@ -77,10 +79,35 @@ func (s *serviceImpl) UpdateGoalById(ctx context.Context, id string, goal models
 func (s *serviceImpl) UpdateBudgetIdsList(ctx context.Context, goalId string, budgetId string) (string, error) {
 	// TODO: input validation
 	goal, err := s.DB.GetGoalRecordById(ctx, goalId)
+	log.Print("goal here1:", goal)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
+	log.Print("goal here2:", goal)
+	if (!utils.Contains(goal.BudgetIdList, budgetId)) {
+		goal.BudgetIdList = append(goal.BudgetIdList, budgetId)	
+	}
+	return s.DB.UpdateGoalRecordById(ctx, goalId, *goal)
+}
+
+func (s *serviceImpl) UpdateGoalAmount(ctx context.Context, goalId string, currAmount float32, budgetId string) (string, error) {
+	// TODO: input validation
+	goal, err := s.DB.GetGoalRecordById(ctx, goalId)
+	log.Print("goal here1:", goal)
+	if err != nil {
+		return "", err
+	}
+
+	if currAmount > 0 {
+		if currAmount >= goal.TargetAmount {
+			goal.CurrentAmount = goal.TargetAmount
+		} else {
+			goal.CurrentAmount += currAmount
+		}
+	}
+
+	log.Print("goal here2:", goal)
 	if (!utils.Contains(goal.BudgetIdList, budgetId)) {
 		goal.BudgetIdList = append(goal.BudgetIdList, budgetId)	
 	}

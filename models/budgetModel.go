@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -21,6 +22,7 @@ type Budget struct {
 	ExpirationTime  time.Time 		 `json:"expiration_time"`
 	SequenceStartId string    		 `json:"sequence_start_id"`
 	SequenceNumber  int       		 `json:"sequence_no"`
+	IsClosed 		bool	    	 `json:"is_closed"`
 }
 
 type BudgetInputMap struct  {
@@ -43,11 +45,9 @@ var BudgetFrequencyMap = []string{
 
 const BUDGET_PREFIX = "BG-"
 
-func (budget *Budget) GetSavings() float32 {
-	if budget.Savings == 0 {
-		budget.Savings = calculateSavings(budget.IncomeMap, budget.ExpenseMap, budget.GoalMap)
-	}
-
+func (budget *Budget) SetSavings() float32 {
+	budget.Savings = calculateSavings(budget.IncomeMap, budget.ExpenseMap, budget.GoalMap)
+	log.Print("set savings here:", budget.Savings)
 	return budget.Savings
 }
 
@@ -75,14 +75,17 @@ func (budget *Budget) SetCategory() {
 func (budget *Budget) SetByUser() {
 	budgetId := BUDGET_PREFIX + uuid.NewString()
 	budget.BudgetId = budgetId
+
 	budget.SequenceStartId = budgetId
 	budget.SequenceNumber = 0
 
-	if budget.CreationTime.IsZero() {
-		budget.CreationTime = time.Now().Local()
-	}
 }
-func (budget *Budget) AutoSet() {
+func (budget *Budget) AutoSet(sequenceStardId string, prevSequenceNo int) {
+	budgetId := BUDGET_PREFIX + uuid.NewString()
+	budget.BudgetId = budgetId
+	
+	budget.SequenceNumber = prevSequenceNo + 1
+	budget.SequenceStartId = sequenceStardId
 
 }
 

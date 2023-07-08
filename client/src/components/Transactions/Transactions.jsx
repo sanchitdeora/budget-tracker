@@ -20,7 +20,7 @@ class Transactions extends React.Component {
         super(props);
         this.state = {
             allTransactions: [],
-            transactionId: '',
+            transaction_id: '',
             title: '',
             category: '',
             amount: 0,
@@ -36,7 +36,7 @@ class Transactions extends React.Component {
 
     cleanTransactionState = () => {
         this.setState({
-            transactionId: '',
+            transaction_id: '',
             title: '',
             category: '',
             amount: 0,
@@ -47,12 +47,25 @@ class Transactions extends React.Component {
         })
     }
 
+    getEmptyTransaction = () => {
+        return {
+            transaction_id: '',
+            title: '',
+            category: '',
+            amount: 0,
+            date: new Date(),
+            type: false,
+            account: '',
+            note: '',
+        }
+    }
+
     handleChange = (event) => {
         let value = event.target.value;
         let name = event.target.name;
         if (name === 'type') {
             value = value === 'credit' ? true : false  
-            // console.log('Name: ' + name + ' value: ' + value)
+            console.log('Name: ' + name + ' value: ' + value)
             this.setState({
                 [name]: value,
             });
@@ -65,7 +78,7 @@ class Transactions extends React.Component {
             [name]: value,
         });
     }
-        
+
     // get transaction
 
     async getAllTransactions() {
@@ -73,8 +86,11 @@ class Transactions extends React.Component {
         console.log('get all transactions: ', res.data.body)
         if (res.data.body != null)
         {
+            // sort transactions by date
+            let sortedTransactions = res.data.body.sort((p1, p2) => (p1.date < p2.date) ? 1 : (p1.date > p2.date) ? -1 : 0);
+
             this.setState({
-                allTransactions: res.data.body,
+                allTransactions: sortedTransactions,
             });
         } else {
             this.setState({
@@ -126,8 +142,17 @@ class Transactions extends React.Component {
 
     handleEditTransactionOpen = (id) => {
         console.log('Edit transaction id: ', id)
+        let transaction = this.state.allTransactions.find(item => item.transaction_id === id);
         this.setState({
-            transactionId: id,
+            transaction_id: id,
+            title: transaction.title,
+            category: transaction.category,
+            amount: transaction.amount,
+            date: transaction.date,
+            type: transaction.type,
+            account: transaction.account,
+            note: transaction.note,
+
             isEditDialogOpen: true
         });
     }
@@ -149,7 +174,7 @@ class Transactions extends React.Component {
     }
 
     async putTransactionRequest(transactionBody) {
-        let res = await axios.put('/api/transaction/'+this.state.transactionId, transactionBody);
+        let res = await axios.put('/api/transaction/'+this.state.transaction_id, transactionBody);
         console.log("put transaction response", res);
         this.getAllTransactions();
     }
@@ -174,6 +199,36 @@ class Transactions extends React.Component {
         this.getAllTransactions();
     }
 
+
+    // render functions
+
+    renderEditTransactionDialogBox = () => {
+        return (
+            <ReusableTransactionDialog
+                title={'Edit Transaction'}
+                isDialogOpen={this.state.isEditDialogOpen}
+                currentTransaction={this.state.allTransactions.find(item => item.transaction_id === this.state.transaction_id)}
+                // currentTransaction={{}}
+                handleChange={this.handleChange}
+                handleClose={this.handleEditClose}
+                submitMethod={this.submitEditTransaction}
+            />
+        )
+    }
+
+    renderCreateTransactionDialogBox = () => {
+        return (
+            <ReusableTransactionDialog
+                title={'Add Transaction'}
+                isDialogOpen={this.state.isCreateDialogOpen}
+                // currentTransaction={this.getEmptyTransaction}
+                currentTransaction={{}}
+                handleChange={this.handleChange}
+                handleClose={this.handleCreateClose}
+                submitMethod={this.submitCreateTransaction}
+            />
+        )
+    }
 
     render() {
         return (
@@ -217,13 +272,10 @@ class Transactions extends React.Component {
                                             onClick={this.handleEditTransactionOpen.bind(this, data.transaction_id)}>
                                             <ModeEditIcon />
                                         </IconButton>
-                                        <ReusableTransactionDialog
-                                            title={'Edit Transaction'}
-                                            isDialogOpen={this.state.isEditDialogOpen}
-                                            handleChange={this.handleChange}
-                                            handleClose={this.handleEditClose}
-                                            submitMethod={this.submitEditTransaction}
-                                            />
+
+                                        <div className='fun'>{this.state.transaction_id}</div>
+
+                                        {this.state.transaction_id === data.transaction_id ? this.renderEditTransactionDialogBox() : ""}
                                         <IconButton 
                                             onClick={this.handleDeleteTransactionOpen.bind(this, data.transaction_id)}>
                                                 <DeleteIcon />
@@ -241,13 +293,7 @@ class Transactions extends React.Component {
                     </IconButton>
                 </div>
                 
-                <ReusableTransactionDialog
-                    title={'Add Transaction'}
-                    isDialogOpen={this.state.isCreateDialogOpen}
-                    handleChange={this.handleChange}
-                    handleClose={this.handleCreateClose}
-                    submitMethod={this.submitCreateTransaction}
-                />
+                {this.renderCreateTransactionDialogBox()}
             </div>
         );
     }

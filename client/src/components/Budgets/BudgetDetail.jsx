@@ -86,10 +86,10 @@ class BudgetDetail extends React.Component {
                             </div>
                             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <Box sx={{ width: '100%', mr: 1 }}>
-                                    <LinearProgress variant="determinate" color="primary" value={Math.round(500/dataMap[key].amount * 100)}/>
+                                    <LinearProgress variant="determinate" color="primary" value={Math.round(0/dataMap[key].amount * 100)}/>
                                 </Box>
                                 <Box sx={{ minWidth: 35 }}>
-                                    <Typography variant="body2" color="text.secondary">{`${(Math.round(500/dataMap[key].amount * 100))}%`}</Typography>
+                                    <Typography variant="body2" color="text.secondary">{`${(Math.round(0/dataMap[key].amount * 100))}%`}</Typography>
                                 </Box>
                             </Box>
                         </div>
