@@ -65,7 +65,7 @@ class Transactions extends React.Component {
         let name = event.target.name;
         if (name === 'type') {
             value = value === 'credit' ? true : false  
-            console.log('Name: ' + name + ' value: ' + value)
+            // console.log('Name: ' + name + ' value: ' + value)
             this.setState({
                 [name]: value,
             });

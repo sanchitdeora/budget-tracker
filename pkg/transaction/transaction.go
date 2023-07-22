@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"context"
+	"time"
 
 	"github.com/sanchitdeora/budget-tracker/db"
 	"github.com/sanchitdeora/budget-tracker/models"
@@ -11,6 +12,7 @@ import (
 type Service interface {
 	GetTransactions(ctx context.Context, transactions *[]models.Transaction) (error)
 	GetTransactionById(ctx context.Context, id string, transaction *models.Transaction) (error)
+	GetTransactionsByDate(ctx context.Context, startDate time.Time, endDate time.Time) ([]models.Transaction, error)
 	CreateTransaction(ctx context.Context, transaction models.Transaction) (string, error)
 	UpdateTransactionById(ctx context.Context, id string, transaction models.Transaction) (string, error)
 	DeleteTransactionById(ctx context.Context, id string) (string, error)
@@ -36,6 +38,11 @@ func (s *serviceImpl) GetTransactions(ctx context.Context, transactions *[]model
 func (s *serviceImpl) GetTransactionById(ctx context.Context, id string, transaction *models.Transaction) (error) {
 	// TODO: input validation
 	return s.DB.GetTransactionRecordById(ctx, id, transaction)
+}
+
+func (s *serviceImpl) GetTransactionsByDate(ctx context.Context, startDate time.Time, endDate time.Time) ([]models.Transaction, error) {
+	// TODO: input validation
+	return s.DB.GetAllTransactionRecordsByDateRange(ctx, startDate, endDate)
 }
 
 func (s *serviceImpl) CreateTransaction(ctx context.Context, transaction models.Transaction) (string, error) {

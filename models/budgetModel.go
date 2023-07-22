@@ -26,9 +26,10 @@ type Budget struct {
 }
 
 type BudgetInputMap struct  {
-	Id 		string  `json:"id"`
-	Name 	string  `json:"name"`
-	Amount 	float32 `json:"amount"`
+	Id            string  `json:"id"`
+	Name          string  `json:"name"`
+	CurrentAmount float32 `json:"current_amount" bson:"current_amount"`
+	Amount        float32 `json:"amount"`
 }
 
 var BudgetFrequencyMap = []string{

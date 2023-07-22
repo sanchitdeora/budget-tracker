@@ -2,11 +2,13 @@ package goal
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/google/uuid"
 	"github.com/sanchitdeora/budget-tracker/db"
 	"github.com/sanchitdeora/budget-tracker/models"
+	"github.com/sanchitdeora/budget-tracker/pkg/errors"
 	"github.com/sanchitdeora/budget-tracker/utils"
 )
 
@@ -14,6 +16,7 @@ import (
 type Service interface {
 	GetGoals(ctx context.Context, goal *[]models.Goal) (error)
 	GetGoalById(ctx context.Context, id string) (*models.Goal, error)
+	getCurrentAmountInGoals(ctx context.Context, goal *models.Goal) (float32, error)
 	CreateGoalById(ctx context.Context, goal models.Goal) (string, error)
 	UpdateGoalById(ctx context.Context, id string, goal models.Goal) (string, error)
 	UpdateGoalAmount(ctx context.Context, goalId string, currAmount float32, budgetId string) (string, error)
@@ -34,14 +37,39 @@ func NewService(opts *Opts) Service {
 	return &serviceImpl{Opts: opts}
 }
 
-func (s *serviceImpl) GetGoals(ctx context.Context, goal *[]models.Goal) (error) {
+func (s *serviceImpl) GetGoals(ctx context.Context, goals *[]models.Goal) (error) {
 	// TODO: input validation
-	return s.DB.GetAllGoalRecords(ctx, goal)
+	err := s.DB.GetAllGoalRecords(ctx, goals)
+	if err != nil {
+		return err
+	}
+
+	for idx, _ := range *goals {
+		amount, err := s.getCurrentAmountInGoals(ctx, &(*goals)[idx])
+		if err != nil {
+			return err
+		}
+
+		(*goals)[idx].CurrentAmount += amount
+	}
+	return nil
 }
 
 func (s *serviceImpl) GetGoalById(ctx context.Context, id string) (*models.Goal, error) {
 	// TODO: input validation
-	return s.DB.GetGoalRecordById(ctx, id)
+	goal, err := s.DB.GetGoalRecordById(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	amount, err := s.getCurrentAmountInGoals(ctx, goal)
+	if err != nil {
+		return nil, err
+	}
+
+	(*goal).CurrentAmount += amount
+
+	return goal, nil
 }
 
 func (s *serviceImpl) CreateGoalById(ctx context.Context, goal models.Goal) (string, error) {
@@ -162,8 +190,36 @@ func (s *serviceImpl) removeGoalMapInBudget(ctx context.Context, budgetId string
 
 func (s *serviceImpl) updateGoalMapInBudget(ctx context.Context, budgetId string, goal models.Goal) error {
 	budget, _ := s.DB.GetBudgetRecordById(ctx, budgetId)
+
+	
 	budget.GoalMap = append(budget.GoalMap, models.BudgetInputMap{Id: goal.GoalId, Name: goal.GoalName, Amount: 0})
 	
 	s.DB.UpdateBudgetRecordById(ctx, budgetId, *budget)
 	return nil
+}
+
+func (s *serviceImpl) getCurrentAmountInGoals(ctx context.Context, goal *models.Goal) (float32, error) {
+	var currAmount float32 = 0
+	fmt.Println("Current goal in getCurrentAmountInGoals: ", goal)
+
+	for _, budgetId := range goal.BudgetIdList {
+		budget, err := s.DB.GetBudgetRecordById(ctx, budgetId)
+		if budget == nil {
+			log.Println("No Budget record found")
+			return 0, errors.ErrNoBudgetFound
+		}
+		if err != nil {
+			log.Fatal("Error while fetching budgets", err)
+			return currAmount, err
+		}
+
+		fmt.Println("Current budget in getCurrentAmountInGoals: ", budget)
+		for _, bGoal := range (*budget).GoalMap {
+			if bGoal.Id == goal.GoalId {
+				currAmount += bGoal.CurrentAmount
+			}
+		}
+	}
+
+	return currAmount, nil
 }

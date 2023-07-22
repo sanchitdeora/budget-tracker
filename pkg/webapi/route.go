@@ -23,6 +23,9 @@ func route(router *gin.Engine, service *ApiService) *gin.Engine {
 	api.PUT("/transaction/:id", service.UpdateTransactionById)
 	api.DELETE("/transaction/:id", service.DeleteTransactionById)
 
+
+	api.GET("/transactions/startTime/:startEpoch/endTime/:endEpoch", service.GetAllTransactionsByDate)
+
 	// bills
 	api.GET("/bills", service.GetAllBills)
 	api.GET("/bill/:id", service.GetBillById)

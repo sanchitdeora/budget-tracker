@@ -107,6 +107,7 @@ class GoalCards extends React.Component {
         let target_date = new Date(this.state.target_date);
         console.log("Goal - Target Date in state: ", this.state.target_date, " date now: ", target_date)
         let goalBody = {
+            'goal_id': this.state.goal_id,
             'goal_name': this.state.goal_name,
             'current_amount': parseFloat(this.state.current_amount),
             'target_amount': parseFloat(this.state.target_amount),

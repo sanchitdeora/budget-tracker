@@ -69,7 +69,8 @@ func (db *DatabaseImpl) GetBudgetRecordById(ctx context.Context, key string) (*m
 func (db *DatabaseImpl) InsertBudgetRecord(ctx context.Context, budget models.Budget) (string, error) {
 	if budget.BudgetId == "" {
 		budget.BudgetId = BUDGET_PREFIX + uuid.NewString()
-	}	
+	}
+	fmt.Println("Insert budget: ", budget)
 	data := bson.D{
 		{Key: BUDGET_ID_KEY, Value: budget.BudgetId},
 		{Key: BUDGET_NAME_KEY, Value: budget.BudgetName},

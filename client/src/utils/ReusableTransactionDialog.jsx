@@ -10,13 +10,17 @@ class ReusableTransactionDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            transactionType: props.currentTransaction.type !== undefined ? props.currentTransaction.type : false,
         };
 
-        console.log(props);
+        console.log("heereee: ", props.currentTransaction.type !== undefined ? props.currentTransaction.type : false)
     };
 
-    handleChangeCurrentTransaction() {
-
+    handleChangeCurrentTransaction = (event) => {
+        console.log('Name: ' + event.target.name + ' value: ' + event.target.value)
+        let val = event.target.value === 'credit' ? true : false 
+        this.setState({transactionType: val});
+        this.props.handleChange(event)
     }
 
     render() {
@@ -75,8 +79,8 @@ class ReusableTransactionDialog extends React.Component {
                             name='type'
                             value='debit'
                             placeholder='Debit'
-                            checked={this.props.currentTransaction.type === false}
-                            onChange={this.props.handleChange}
+                            checked={this.state.transactionType === false}
+                            onChange={this.handleChangeCurrentTransaction}
                         /> Debit
                     </label>
                     <label htmlFor='Credit'>
@@ -85,8 +89,8 @@ class ReusableTransactionDialog extends React.Component {
                             name='type'
                             value='credit'
                             placeholder='Credit'
-                            checked={this.props.currentTransaction.type === true}
-                            onChange={this.props.handleChange}
+                            checked={this.state.transactionType === true}
+                            onChange={this.handleChangeCurrentTransaction}
                             /> Credit
                     </label>
                     </div>

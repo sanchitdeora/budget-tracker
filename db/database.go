@@ -68,6 +68,7 @@ type Database interface {
 	// transaction
 	GetAllTransactionRecords(ctx context.Context, transactions *[]models.Transaction) error
 	GetTransactionRecordById(ctx context.Context, key string, transaction *models.Transaction) error
+	GetAllTransactionRecordsByDateRange(ctx context.Context, startDate time.Time, endDate time.Time) ([]models.Transaction, error)
 	InsertTransactionRecord(ctx context.Context, transaction models.Transaction) (string, error)
 	UpdateTransactionRecordById(ctx context.Context, id string, transaction models.Transaction) (string, error)
 	DeleteTransactionRecordById(ctx context.Context, id string) (string, error)

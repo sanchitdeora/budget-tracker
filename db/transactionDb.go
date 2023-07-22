@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/sanchitdeora/budget-tracker/models"
@@ -40,7 +41,7 @@ func (db *DatabaseImpl) GetAllTransactionRecords(ctx context.Context, transactio
 
 	fmt.Printf("Get All transaction. Count of elements: %v\n", len(results))
 	return nil
-	
+
 }
 
 func (db *DatabaseImpl) GetTransactionRecordById(ctx context.Context, key string, transaction *models.Transaction) error {
@@ -63,6 +64,48 @@ func (db *DatabaseImpl) GetTransactionRecordById(ctx context.Context, key string
 
 	return nil
 	
+}
+
+func (db *DatabaseImpl) GetAllTransactionRecordsByDateRange(ctx context.Context, startDate time.Time, endDate time.Time) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+	
+	filter := bson.M{
+        "date": bson.M{
+            "$gt": startDate,
+            "$lt": endDate,
+        },
+	}
+	
+	// fmt.Println("filter here: ", filter)
+	cur, err := transactionCollection.Find(ctx, filter)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	var results []bson.M
+	for cur.Next(ctx) {
+		var result bson.M
+		err := cur.Decode(&result)
+		if err != nil {
+			log.Fatal(err)
+		}
+		results = append(results, result)
+	}
+
+	if err := cur.Err(); err != nil {
+		log.Fatal(err)
+	}
+	cur.Close(ctx)
+
+	err = utils.ConvertBsonToStruct(results, &transactions)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Get All transaction by date. Count of elements: %v\n", len(results))
+	return transactions, nil
+
 }
 
 func (db *DatabaseImpl) InsertTransactionRecord(ctx context.Context, transaction models.Transaction) (string, error) {
