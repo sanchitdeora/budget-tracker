@@ -97,17 +97,18 @@ func (mr *MockDatabaseMockRecorder) DeleteTransactionRecordById(arg0, arg1 inter
 }
 
 // GetAllBillRecords mocks base method.
-func (m *MockDatabase) GetAllBillRecords(arg0 context.Context, arg1 *[]models.Bill) error {
+func (m *MockDatabase) GetAllBillRecords(arg0 context.Context) (*[]models.Bill, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllBillRecords", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetAllBillRecords", arg0)
+	ret0, _ := ret[0].(*[]models.Bill)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetAllBillRecords indicates an expected call of GetAllBillRecords.
-func (mr *MockDatabaseMockRecorder) GetAllBillRecords(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockDatabaseMockRecorder) GetAllBillRecords(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllBillRecords", reflect.TypeOf((*MockDatabase)(nil).GetAllBillRecords), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllBillRecords", reflect.TypeOf((*MockDatabase)(nil).GetAllBillRecords), arg0)
 }
 
 // GetAllBudgetRecords mocks base method.
@@ -169,17 +170,18 @@ func (mr *MockDatabaseMockRecorder) GetAllTransactionRecordsByDateRange(arg0, ar
 }
 
 // GetBillRecordById mocks base method.
-func (m *MockDatabase) GetBillRecordById(arg0 context.Context, arg1 string, arg2 *models.Bill) error {
+func (m *MockDatabase) GetBillRecordById(arg0 context.Context, arg1 string) (*models.Bill, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBillRecordById", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetBillRecordById", arg0, arg1)
+	ret0, _ := ret[0].(*models.Bill)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetBillRecordById indicates an expected call of GetBillRecordById.
-func (mr *MockDatabaseMockRecorder) GetBillRecordById(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockDatabaseMockRecorder) GetBillRecordById(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBillRecordById", reflect.TypeOf((*MockDatabase)(nil).GetBillRecordById), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBillRecordById", reflect.TypeOf((*MockDatabase)(nil).GetBillRecordById), arg0, arg1)
 }
 
 // GetBudgetRecordById mocks base method.

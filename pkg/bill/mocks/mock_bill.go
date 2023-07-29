@@ -81,31 +81,33 @@ func (mr *MockServiceMockRecorder) DeleteBillById(arg0, arg1 interface{}) *gomoc
 }
 
 // GetBillById mocks base method.
-func (m *MockService) GetBillById(arg0 context.Context, arg1 string, arg2 *models.Bill) error {
+func (m *MockService) GetBillById(arg0 context.Context, arg1 string) (*models.Bill, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBillById", arg0, arg1, arg2)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetBillById", arg0, arg1)
+	ret0, _ := ret[0].(*models.Bill)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetBillById indicates an expected call of GetBillById.
-func (mr *MockServiceMockRecorder) GetBillById(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) GetBillById(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBillById", reflect.TypeOf((*MockService)(nil).GetBillById), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBillById", reflect.TypeOf((*MockService)(nil).GetBillById), arg0, arg1)
 }
 
 // GetBills mocks base method.
-func (m *MockService) GetBills(arg0 context.Context, arg1 *[]models.Bill) error {
+func (m *MockService) GetBills(arg0 context.Context) (*[]models.Bill, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBills", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetBills", arg0)
+	ret0, _ := ret[0].(*[]models.Bill)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetBills indicates an expected call of GetBills.
-func (mr *MockServiceMockRecorder) GetBills(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) GetBills(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBills", reflect.TypeOf((*MockService)(nil).GetBills), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBills", reflect.TypeOf((*MockService)(nil).GetBills), arg0)
 }
 
 // UpdateBillById mocks base method.

@@ -76,8 +76,8 @@ type Database interface {
 	DeleteTransactionRecordById(ctx context.Context, id string) (string, error)
 
 	// bill
-	GetAllBillRecords(ctx context.Context, bills *[]models.Bill) error
-	GetBillRecordById(ctx context.Context, id string, bill *models.Bill) error
+	GetAllBillRecords(ctx context.Context) (*[]models.Bill, error)
+	GetBillRecordById(ctx context.Context, id string) (*models.Bill, error)
 	InsertBillRecord(ctx context.Context, bill models.Bill) (string, error)
 	UpdateBillRecordById(ctx context.Context, id string, bill models.Bill) (string, error)
 	UpdateBillRecordIsPaid(ctx context.Context, id string, datePaid time.Time) (string, error)

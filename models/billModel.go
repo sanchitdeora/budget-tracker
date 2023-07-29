@@ -1,6 +1,7 @@
 package models
 
 import (
+	"log"
 	"strings"
 	"time"
 )
@@ -18,6 +19,7 @@ type Bill struct {
 	CreationTime    time.Time `json:"creation_time"`
 	SequenceStartId string    `json:"sequence_start_id"`
 	SequenceNumber  int       `json:"sequence_no"`
+	Account		    string    `json:"account"`
 }
 
 var BillCategoryMap = []string{
@@ -71,4 +73,28 @@ func (bill *Bill) SetFrequency() {
 			bill.Frequency = BillFrequencyMap[0]
 		}
 	}
+}
+
+func (bill *Bill) IsValid() bool {
+	var invalidErr []string
+	if bill.Title == "" {
+		invalidErr = append(invalidErr, "title cannot be empty")
+	}
+	if bill.AmountDue < 0 {
+		invalidErr = append(invalidErr, "amount cannot be less than zero")
+	}
+
+	// Account will be added later
+
+	// if bill.Account != "" {
+	// 	invalidErr = append(invalidErr, "account cannot be empty")
+	// 	return false
+	// }
+
+	if len(invalidErr) > 0 {
+		log.Println("Bill is invalid for the following reasons: ", strings.Join(invalidErr, ", "))
+		return false
+	}
+	
+	return true
 }
