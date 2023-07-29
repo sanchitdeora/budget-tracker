@@ -1,20 +1,21 @@
 package webapi
 
 import (
-	"fmt"
+	"errors"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sanchitdeora/budget-tracker/models"
+	"github.com/sanchitdeora/budget-tracker/pkg/exceptions"
 )
 
 
 func (service *ApiService) GetAllTransactions(c *gin.Context) {
 
-	var response []models.Transaction
-	err := service.TransactionService.GetTransactions(c, &response)
+	response, err := service.TransactionService.GetTransactions(c)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -29,14 +30,16 @@ func (service *ApiService) GetAllTransactions(c *gin.Context) {
 
 func (service *ApiService) GetTransactionById(c *gin.Context) {
 
-	var response models.Transaction
-	err := service.TransactionService.GetTransactionById(c, c.Param("id"), &response)
-	if response.TransactionId == "" {
-		c.AbortWithStatus(http.StatusNotFound)
-		return
-	}
+	response, err := service.TransactionService.GetTransactionById(c, c.Param("id"))
+
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		if errors.Is(err, exceptions.ErrValidationError) {
+			c.AbortWithError(http.StatusBadRequest, err)
+		} else if errors.Is(err, exceptions.ErrTransactionNotFound) {
+			c.AbortWithError(http.StatusNotFound, err)
+		} else {
+			c.AbortWithError(http.StatusInternalServerError, err)
+		}
 		return
 	}
 
@@ -53,16 +56,27 @@ func (service *ApiService) GetAllTransactionsByDate(c *gin.Context) {
 	endEpoch := c.Param("endEpoch")
 
 	t1, err := strconv.ParseInt(startEpoch, 10, 64)
-	t2, err := strconv.ParseInt(endEpoch, 10, 64)
-
-	fmt.Println("Start time", time.UnixMilli(t1), "end time: ", time.UnixMilli(t2))
-	// fmt.Println(time.Unix(startEpoch, 0))
-
-	var response []models.Transaction
-
-	response, err = service.TransactionService.GetTransactionsByDate(c, time.UnixMilli(t1), time.UnixMilli(t2))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	t2, err := strconv.ParseInt(endEpoch, 10, 64)
+	
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	log.Println("Start time: ", time.UnixMilli(t1), "end time: ", time.UnixMilli(t2))
+
+	response, err := service.TransactionService.GetTransactionsByDate(c, time.UnixMilli(t1), time.UnixMilli(t2))
+	if err != nil {
+		if errors.Is(err, exceptions.ErrValidationError) {
+			c.AbortWithError(http.StatusBadRequest, err)
+		} else {
+			c.AbortWithError(http.StatusInternalServerError, err)
+		}
 		return
 	}
 
@@ -83,7 +97,11 @@ func (service *ApiService) CreateTransaction(c *gin.Context) {
 	}
 	transactionId, err := service.TransactionService.CreateTransaction(c, transaction)
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		if errors.Is(err, exceptions.ErrValidationError) {
+			c.AbortWithError(http.StatusBadRequest, err)
+		} else {
+			c.AbortWithError(http.StatusInternalServerError, err)
+		}
 		return
 	}
 

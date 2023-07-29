@@ -64,11 +64,13 @@ const (
 	BUDGET_ID_LIST_KEY = "budget_id_list"
 )
 
+//go:generate mockgen -destination=./mocks/mock_database.go -package=mock_db github.com/sanchitdeora/budget-tracker/db Database
 type Database interface {
+
 	// transaction
-	GetAllTransactionRecords(ctx context.Context, transactions *[]models.Transaction) error
-	GetTransactionRecordById(ctx context.Context, key string, transaction *models.Transaction) error
-	GetAllTransactionRecordsByDateRange(ctx context.Context, startDate time.Time, endDate time.Time) ([]models.Transaction, error)
+	GetAllTransactionRecords(ctx context.Context) (*[]models.Transaction, error)
+	GetTransactionRecordById(ctx context.Context, key string) (*models.Transaction, error)
+	GetAllTransactionRecordsByDateRange(ctx context.Context, startDate time.Time, endDate time.Time) (*[]models.Transaction, error)
 	InsertTransactionRecord(ctx context.Context, transaction models.Transaction) (string, error)
 	UpdateTransactionRecordById(ctx context.Context, id string, transaction models.Transaction) (string, error)
 	DeleteTransactionRecordById(ctx context.Context, id string) (string, error)

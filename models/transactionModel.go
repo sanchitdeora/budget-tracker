@@ -1,6 +1,7 @@
 package models
 
 import (
+	"log"
 	"strings"
 	"time"
 )
@@ -55,4 +56,28 @@ func (transaction *Transaction) FromBill(bill Bill, datePaid time.Time) {
 	transaction.Account = ""
 	transaction.Note = bill.Note
 
+}
+
+func (transaction *Transaction) IsValid() bool {
+	var invalidErr []string
+	if transaction.Title == "" {
+		invalidErr = append(invalidErr, "title cannot be empty")
+	}
+	if transaction.Amount < 0 {
+		invalidErr = append(invalidErr, "amount cannot be less than zero")
+	}
+
+	// Account will be added later
+
+	// if transaction.Account != "" {
+	// 	invalidErr = append(invalidErr, "account cannot be empty")
+	// 	return false
+	// }
+
+	if len(invalidErr) > 0 {
+		log.Println("Transaction is invalid for the following reasons: ", strings.Join(invalidErr, ", "))
+		return false
+	}
+	
+	return true
 }

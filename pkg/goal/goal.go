@@ -8,15 +8,15 @@ import (
 	"github.com/google/uuid"
 	"github.com/sanchitdeora/budget-tracker/db"
 	"github.com/sanchitdeora/budget-tracker/models"
-	"github.com/sanchitdeora/budget-tracker/pkg/errors"
+	"github.com/sanchitdeora/budget-tracker/pkg/exceptions"
 	"github.com/sanchitdeora/budget-tracker/utils"
 )
 
-//go:generate mockgen -destination=../mocks/mock_goal.go -package=mocks github.com/sanchitdeora/budget-tracker/pkg/goal Service
+//go:generate mockgen -destination=./mocks/mock_goal.go -package=mock_goal github.com/sanchitdeora/budget-tracker/pkg/goal Service
 type Service interface {
 	GetGoals(ctx context.Context, goal *[]models.Goal) (error)
 	GetGoalById(ctx context.Context, id string) (*models.Goal, error)
-	getCurrentAmountInGoals(ctx context.Context, goal *models.Goal) (float32, error)
+	GetCurrentAmountInGoals(ctx context.Context, goal *models.Goal) (float32, error)
 	CreateGoalById(ctx context.Context, goal models.Goal) (string, error)
 	UpdateGoalById(ctx context.Context, id string, goal models.Goal) (string, error)
 	UpdateGoalAmount(ctx context.Context, goalId string, currAmount float32, budgetId string) (string, error)
@@ -44,8 +44,8 @@ func (s *serviceImpl) GetGoals(ctx context.Context, goals *[]models.Goal) (error
 		return err
 	}
 
-	for idx, _ := range *goals {
-		amount, err := s.getCurrentAmountInGoals(ctx, &(*goals)[idx])
+	for idx := range *goals {
+		amount, err := s.GetCurrentAmountInGoals(ctx, &(*goals)[idx])
 		if err != nil {
 			return err
 		}
@@ -62,7 +62,7 @@ func (s *serviceImpl) GetGoalById(ctx context.Context, id string) (*models.Goal,
 		return nil, err
 	}
 
-	amount, err := s.getCurrentAmountInGoals(ctx, goal)
+	amount, err := s.GetCurrentAmountInGoals(ctx, goal)
 	if err != nil {
 		return nil, err
 	}
@@ -107,12 +107,12 @@ func (s *serviceImpl) UpdateGoalById(ctx context.Context, id string, goal models
 func (s *serviceImpl) UpdateBudgetIdsList(ctx context.Context, goalId string, budgetId string) (string, error) {
 	// TODO: input validation
 	goal, err := s.DB.GetGoalRecordById(ctx, goalId)
-	log.Print("goal here1:", goal)
+	log.Println("goal here1:", goal)
 	if err != nil {
 		return "", err
 	}
 
-	log.Print("goal here2:", goal)
+	log.Println("goal here2:", goal)
 	if (!utils.Contains(goal.BudgetIdList, budgetId)) {
 		goal.BudgetIdList = append(goal.BudgetIdList, budgetId)	
 	}
@@ -122,7 +122,7 @@ func (s *serviceImpl) UpdateBudgetIdsList(ctx context.Context, goalId string, bu
 func (s *serviceImpl) UpdateGoalAmount(ctx context.Context, goalId string, currAmount float32, budgetId string) (string, error) {
 	// TODO: input validation
 	goal, err := s.DB.GetGoalRecordById(ctx, goalId)
-	log.Print("goal here1:", goal)
+	log.Println("goal here1:", goal)
 	if err != nil {
 		return "", err
 	}
@@ -135,7 +135,7 @@ func (s *serviceImpl) UpdateGoalAmount(ctx context.Context, goalId string, currA
 		}
 	}
 
-	log.Print("goal here2:", goal)
+	log.Println("goal here2:", goal)
 	if (!utils.Contains(goal.BudgetIdList, budgetId)) {
 		goal.BudgetIdList = append(goal.BudgetIdList, budgetId)	
 	}
@@ -198,22 +198,22 @@ func (s *serviceImpl) updateGoalMapInBudget(ctx context.Context, budgetId string
 	return nil
 }
 
-func (s *serviceImpl) getCurrentAmountInGoals(ctx context.Context, goal *models.Goal) (float32, error) {
+func (s *serviceImpl) GetCurrentAmountInGoals(ctx context.Context, goal *models.Goal) (float32, error) {
 	var currAmount float32 = 0
-	fmt.Println("Current goal in getCurrentAmountInGoals: ", goal)
+	fmt.Println("Current goal in GetCurrentAmountInGoals: ", goal)
 
 	for _, budgetId := range goal.BudgetIdList {
 		budget, err := s.DB.GetBudgetRecordById(ctx, budgetId)
 		if budget == nil {
 			log.Println("No Budget record found")
-			return 0, errors.ErrNoBudgetFound
+			return 0, exceptions.ErrNoBudgetsFound
 		}
 		if err != nil {
 			log.Fatal("Error while fetching budgets", err)
 			return currAmount, err
 		}
 
-		fmt.Println("Current budget in getCurrentAmountInGoals: ", budget)
+		fmt.Println("Current budget in GetCurrentAmountInGoals: ", budget)
 		for _, bGoal := range (*budget).GoalMap {
 			if bGoal.Id == goal.GoalId {
 				currAmount += bGoal.CurrentAmount

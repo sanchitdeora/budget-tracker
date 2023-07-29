@@ -60,9 +60,9 @@ func (s *serviceImpl) GetBudgets(ctx context.Context, budgets *[]models.Budget) 
 	return err
 }
 
-func updateCurrentAmounts(transactionType bool, budgetMaps *[]models.BudgetInputMap, transactions []models.Transaction) {
+func updateCurrentAmounts(transactionType bool, budgetMaps *[]models.BudgetInputMap, transactions *[]models.Transaction) {
 
-	typeTransactions := filterTransactionsByType(transactionType, transactions)
+	typeTransactions := filterTransactionsByType(transactionType, *transactions)
 
 	uncategorizedMapIndex := -1
 	var uncategorized models.BudgetInputMap

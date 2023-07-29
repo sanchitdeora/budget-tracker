@@ -52,13 +52,13 @@ func Init() (*mongo.Client, context.Context, error) {
 func GetUserRecordByEmail(ctx context.Context, key string) ([]byte, error) {
 	var user bson.M
 	if err := userCollection.FindOne(ctx, bson.M{EMAIL_KEY: key}).Decode(&user); err != nil {
-		log.Print("Error trying to get user from db", err)
+		log.Println("Error trying to get user from db", err)
 		return nil, err
 	}
 
 	userJSON, err := bson.MarshalExtJSON(&user, true, true)
 	if err != nil {
-		log.Print(err)
+		log.Println(err)
 		return nil, err
 	}
 	return userJSON, nil

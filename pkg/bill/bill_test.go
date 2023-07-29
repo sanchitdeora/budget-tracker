@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	mock_db "github.com/sanchitdeora/budget-tracker/db/mocks"
 	"github.com/sanchitdeora/budget-tracker/models"
+	mock_db "github.com/sanchitdeora/budget-tracker/db/mocks"
 	mock_transaction "github.com/sanchitdeora/budget-tracker/pkg/transaction/mocks"
 	"github.com/stretchr/testify/assert"
 )

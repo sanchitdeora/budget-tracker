@@ -48,7 +48,7 @@ const BUDGET_PREFIX = "BG-"
 
 func (budget *Budget) SetSavings() float32 {
 	budget.Savings = calculateSavings(budget.IncomeMap, budget.ExpenseMap, budget.GoalMap)
-	log.Print("set savings here:", budget.Savings)
+	log.Println("set savings here:", budget.Savings)
 	return budget.Savings
 }
 
