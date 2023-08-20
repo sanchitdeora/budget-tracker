@@ -7,15 +7,16 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sanchitdeora/budget-tracker/models"
+	"github.com/sanchitdeora/budget-tracker/pkg/exceptions"
 	"github.com/sanchitdeora/budget-tracker/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (db *DatabaseImpl) GetAllBudgetRecords(ctx context.Context, budgets *[]models.Budget) error {
+func (db *DatabaseImpl) GetAllBudgetRecords(ctx context.Context) (*[]models.Budget, error) {
 	cur, err := budgetCollection.Find(ctx, bson.D{})
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	var results []bson.M
@@ -23,42 +24,46 @@ func (db *DatabaseImpl) GetAllBudgetRecords(ctx context.Context, budgets *[]mode
 		var result bson.M
 		err := cur.Decode(&result)
 		if err != nil {
-			log.Fatal(err)
+			log.Println("error while fetching all budgets, error: ", err)
+			return nil, err
 		}
 		results = append(results, result)
 	}
 
 	if err := cur.Err(); err != nil {
-		log.Fatal(err)
+		log.Println("error while fetching all budgets, error: ", err)
+		return nil, err
 	}
 	cur.Close(ctx)
 
-	err = utils.ConvertBsonToStruct(results, budgets)
-	if err != nil {
-		log.Fatal(err)
+	var budgets []models.Budget
+	if err := utils.ConvertBsonToStruct(results, &budgets); err != nil {
+		log.Println("error while converting bson to struct, error: ", err)
+		return nil, err
 	}
 
 	fmt.Printf("Get All budget. Count of elements: %v\n", len(results))
-	return nil
+	return &budgets, nil
 	
 }
 
 func (db *DatabaseImpl) GetBudgetRecordById(ctx context.Context, key string) (*models.Budget, error) {
 	var result bson.M
-	var budget models.Budget
 
 	filter := bson.M{BUDGET_ID_KEY: key}
 	err := budgetCollection.FindOne(ctx, filter).Decode(&result)
-	if len(result) == 0 {
-		return nil, nil
-	}
 	if err != nil {
-		log.Println(err)
+		log.Println("error while fetching budget by id: ", key, " error: ", err)
 		return nil, err
 	}
+	if len(result) == 0 {
+		log.Println("budget not found for id: ", key)
+		return nil, exceptions.ErrBudgetNotFound
+	}
 
+	var budget models.Budget
 	if err := utils.ConvertBsonToStruct(result, &budget); err != nil {
-		log.Println(err)
+		log.Println("error while converting bson to struct, error: ", err)
 		return nil, err
 	}
 
@@ -66,7 +71,7 @@ func (db *DatabaseImpl) GetBudgetRecordById(ctx context.Context, key string) (*m
 	
 }
 
-func (db *DatabaseImpl) InsertBudgetRecord(ctx context.Context, budget models.Budget) (string, error) {
+func (db *DatabaseImpl) InsertBudgetRecord(ctx context.Context, budget *models.Budget) (string, error) {
 	if budget.BudgetId == "" {
 		budget.BudgetId = BUDGET_PREFIX + uuid.NewString()
 	}
@@ -87,13 +92,14 @@ func (db *DatabaseImpl) InsertBudgetRecord(ctx context.Context, budget models.Bu
 
 	result, err := budgetCollection.InsertOne(ctx, data)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("error while inserting budget, error: ", err)
+		return "", err
 	}
 	fmt.Printf("Created budget. ResultId: %v BudgetId: %v\n", result.InsertedID, budget.BudgetId)
 	return budget.BudgetId, err
 }
 
-func (db *DatabaseImpl) UpdateBudgetRecordById(ctx context.Context, id string, budget models.Budget) (string, error) {
+func (db *DatabaseImpl) UpdateBudgetRecordById(ctx context.Context, id string, budget *models.Budget) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
 			{Key: BUDGET_NAME_KEY, Value: budget.BudgetName},
@@ -108,7 +114,8 @@ func (db *DatabaseImpl) UpdateBudgetRecordById(ctx context.Context, id string, b
 
 	result, err := budgetCollection.UpdateOne(ctx, filter, data)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("error while updating budget with id: ", id, ", error: ", err)
+		return "", err
 	}
 	fmt.Printf("Updated budget. ModifiedCount: %v BudgetId: %v\n", result.ModifiedCount, id)
 	return id, err
@@ -119,7 +126,8 @@ func (db *DatabaseImpl) DeleteBudgetRecordById(ctx context.Context, id string) (
 
 	result, err := budgetCollection.DeleteOne(ctx, filter)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("error while deleting budget with id: ", id, ", error: ", err)
+		return "", err
 	}
 
 	fmt.Printf("Deleted budget. DeletedCount: %v BudgetId: %v\n", result.DeletedCount, id)

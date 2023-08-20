@@ -95,7 +95,7 @@ func (service *ApiService) CreateTransaction(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	transactionId, err := service.TransactionService.CreateTransaction(c, transaction)
+	transactionId, err := service.TransactionService.CreateTransaction(c, &transaction)
 	if err != nil {
 		if errors.Is(err, exceptions.ErrValidationError) {
 			c.AbortWithError(http.StatusBadRequest, err)
@@ -121,7 +121,7 @@ func (service *ApiService) UpdateTransactionById(c *gin.Context) {
 		return
 	}
 	
-	transactionId, err := service.TransactionService.UpdateTransactionById(c, c.Param("id"), transaction)
+	transactionId, err := service.TransactionService.UpdateTransactionById(c, c.Param("id"), &transaction)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

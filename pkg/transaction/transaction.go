@@ -15,8 +15,8 @@ type Service interface {
 	GetTransactions(ctx context.Context) (*[]models.Transaction, error)
 	GetTransactionById(ctx context.Context, id string) (*models.Transaction, error)
 	GetTransactionsByDate(ctx context.Context, startDate time.Time, endDate time.Time) (*[]models.Transaction, error)
-	CreateTransaction(ctx context.Context, transaction models.Transaction) (string, error)
-	UpdateTransactionById(ctx context.Context, id string, transaction models.Transaction) (string, error)
+	CreateTransaction(ctx context.Context, transaction *models.Transaction) (string, error)
+	UpdateTransactionById(ctx context.Context, id string, transaction *models.Transaction) (string, error)
 	DeleteTransactionById(ctx context.Context, id string) (string, error)
 }
 
@@ -52,7 +52,7 @@ func (s *serviceImpl) GetTransactionsByDate(ctx context.Context, startDate time.
 	return s.DB.GetAllTransactionRecordsByDateRange(ctx, startDate, endDate)
 }
 
-func (s *serviceImpl) CreateTransaction(ctx context.Context, transaction models.Transaction) (string, error) {
+func (s *serviceImpl) CreateTransaction(ctx context.Context, transaction *models.Transaction) (string, error) {
 	if !transaction.IsValid() {
 		return "", exceptions.ErrValidationError
 	}
@@ -61,7 +61,7 @@ func (s *serviceImpl) CreateTransaction(ctx context.Context, transaction models.
 	return s.DB.InsertTransactionRecord(ctx, transaction)
 }
 
-func (s *serviceImpl) UpdateTransactionById(ctx context.Context, id string, transaction models.Transaction) (string, error) {
+func (s *serviceImpl) UpdateTransactionById(ctx context.Context, id string, transaction *models.Transaction) (string, error) {
 	if id == "" {
 		log.Println("Missing Transaction Id")
 		return "", exceptions.ErrValidationError

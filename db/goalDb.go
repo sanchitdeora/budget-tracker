@@ -7,15 +7,16 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sanchitdeora/budget-tracker/models"
+	"github.com/sanchitdeora/budget-tracker/pkg/exceptions"
 	"github.com/sanchitdeora/budget-tracker/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (db *DatabaseImpl) GetAllGoalRecords(ctx context.Context, goals *[]models.Goal) error {
+func (db *DatabaseImpl) GetAllGoalRecords(ctx context.Context) (*[]models.Goal, error) {
 	cur, err := goalCollection.Find(ctx, bson.D{})
 	if err != nil {
 		log.Println(err)
-		return err
+		return nil, err
 	}
 
 	var results []bson.M
@@ -23,23 +24,27 @@ func (db *DatabaseImpl) GetAllGoalRecords(ctx context.Context, goals *[]models.G
 		var result bson.M
 		err := cur.Decode(&result)
 		if err != nil {
-			log.Fatal(err)
+			log.Println("error while fetching all goals, error: ", err)
+			return nil, err
 		}
 		results = append(results, result)
 	}
 
 	if err := cur.Err(); err != nil {
-		log.Fatal(err)
+		log.Println("error while fetching all goals, error: ", err)
+		return nil, err
 	}
 	cur.Close(ctx)
 
-	err = utils.ConvertBsonToStruct(results, goals)
+	var goals []models.Goal
+	err = utils.ConvertBsonToStruct(results, &goals)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("error while converting bson to struct, error: ", err)
+		return nil, err
 	}
 
 	fmt.Printf("Get All goal. Count of elements: %v\n", len(results))
-	return nil
+	return &goals, nil
 	
 }
 
@@ -48,12 +53,13 @@ func (db *DatabaseImpl) GetGoalRecordById(ctx context.Context, key string) (*mod
 	var goal models.Goal
 	filter := bson.M{GOAL_ID_KEY: key}
 	err := goalCollection.FindOne(ctx, filter).Decode(&result)
-	if len(result) == 0 {
-		return nil, nil
-	}
 	if err != nil {
 		log.Println(err)
 		return nil, err
+	}
+	if len(result) == 0 {
+		log.Println("goal not found for id: ", key)
+		return nil, exceptions.ErrGoalNotFound
 	}
 
 	if err := utils.ConvertBsonToStruct(result, &goal); err != nil {
@@ -65,7 +71,7 @@ func (db *DatabaseImpl) GetGoalRecordById(ctx context.Context, key string) (*mod
 	
 }
 
-func (db *DatabaseImpl) InsertGoalRecord(ctx context.Context, goal models.Goal) (string, error) {
+func (db *DatabaseImpl) InsertGoalRecord(ctx context.Context, goal *models.Goal) (string, error) {
 	if goal.GoalId == "" {
 		goal.GoalId = GOAL_PREFIX + uuid.NewString()
 	}	
@@ -86,7 +92,7 @@ func (db *DatabaseImpl) InsertGoalRecord(ctx context.Context, goal models.Goal) 
 	return goal.GoalId, err
 }
 
-func (db *DatabaseImpl) UpdateGoalRecordById(ctx context.Context, id string, goal models.Goal) (string, error) {
+func (db *DatabaseImpl) UpdateGoalRecordById(ctx context.Context, id string, goal *models.Goal) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
 			{Key: GOAL_NAME_KEY, Value: goal.GoalName},

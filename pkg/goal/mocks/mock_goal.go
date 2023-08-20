@@ -35,19 +35,19 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
 }
 
-// CreateGoalById mocks base method.
-func (m *MockService) CreateGoalById(arg0 context.Context, arg1 models.Goal) (string, error) {
+// CreateGoal mocks base method.
+func (m *MockService) CreateGoal(arg0 context.Context, arg1 *models.Goal) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateGoalById", arg0, arg1)
+	ret := m.ctrl.Call(m, "CreateGoal", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// CreateGoalById indicates an expected call of CreateGoalById.
-func (mr *MockServiceMockRecorder) CreateGoalById(arg0, arg1 interface{}) *gomock.Call {
+// CreateGoal indicates an expected call of CreateGoal.
+func (mr *MockServiceMockRecorder) CreateGoal(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGoalById", reflect.TypeOf((*MockService)(nil).CreateGoalById), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateGoal", reflect.TypeOf((*MockService)(nil).CreateGoal), arg0, arg1)
 }
 
 // DeleteGoalById mocks base method.
@@ -63,21 +63,6 @@ func (m *MockService) DeleteGoalById(arg0 context.Context, arg1 string) (string,
 func (mr *MockServiceMockRecorder) DeleteGoalById(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGoalById", reflect.TypeOf((*MockService)(nil).DeleteGoalById), arg0, arg1)
-}
-
-// GetCurrentAmountInGoals mocks base method.
-func (m *MockService) GetCurrentAmountInGoals(arg0 context.Context, arg1 *models.Goal) (float32, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetCurrentAmountInGoals", arg0, arg1)
-	ret0, _ := ret[0].(float32)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetCurrentAmountInGoals indicates an expected call of GetCurrentAmountInGoals.
-func (mr *MockServiceMockRecorder) GetCurrentAmountInGoals(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCurrentAmountInGoals", reflect.TypeOf((*MockService)(nil).GetCurrentAmountInGoals), arg0, arg1)
 }
 
 // GetGoalById mocks base method.
@@ -96,17 +81,18 @@ func (mr *MockServiceMockRecorder) GetGoalById(arg0, arg1 interface{}) *gomock.C
 }
 
 // GetGoals mocks base method.
-func (m *MockService) GetGoals(arg0 context.Context, arg1 *[]models.Goal) error {
+func (m *MockService) GetGoals(arg0 context.Context) (*[]models.Goal, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetGoals", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetGoals", arg0)
+	ret0, _ := ret[0].(*[]models.Goal)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetGoals indicates an expected call of GetGoals.
-func (mr *MockServiceMockRecorder) GetGoals(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) GetGoals(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGoals", reflect.TypeOf((*MockService)(nil).GetGoals), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGoals", reflect.TypeOf((*MockService)(nil).GetGoals), arg0)
 }
 
 // RemoveBudgetIdFromGoal mocks base method.
@@ -139,23 +125,8 @@ func (mr *MockServiceMockRecorder) UpdateBudgetIdsList(arg0, arg1, arg2 interfac
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateBudgetIdsList", reflect.TypeOf((*MockService)(nil).UpdateBudgetIdsList), arg0, arg1, arg2)
 }
 
-// UpdateGoalAmount mocks base method.
-func (m *MockService) UpdateGoalAmount(arg0 context.Context, arg1 string, arg2 float32, arg3 string) (string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateGoalAmount", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// UpdateGoalAmount indicates an expected call of UpdateGoalAmount.
-func (mr *MockServiceMockRecorder) UpdateGoalAmount(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateGoalAmount", reflect.TypeOf((*MockService)(nil).UpdateGoalAmount), arg0, arg1, arg2, arg3)
-}
-
 // UpdateGoalById mocks base method.
-func (m *MockService) UpdateGoalById(arg0 context.Context, arg1 string, arg2 models.Goal) (string, error) {
+func (m *MockService) UpdateGoalById(arg0 context.Context, arg1 string, arg2 *models.Goal) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateGoalById", arg0, arg1, arg2)
 	ret0, _ := ret[0].(string)

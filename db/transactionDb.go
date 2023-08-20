@@ -56,13 +56,13 @@ func (db *DatabaseImpl) GetTransactionRecordById(ctx context.Context, key string
 
 	filter := bson.M{TRANSACTION_ID_KEY: key}
 	err := transactionCollection.FindOne(ctx, filter).Decode(&result)
-	if len(result) == 0 {
-		log.Println("transaction not found for id: ", key)
-		return nil, exceptions.ErrTransactionNotFound
-	}
 	if err != nil {
 		log.Println("error while fetching transaction by id: ", key, " error: ", err)
 		return nil, err
+	}
+	if len(result) == 0 {
+		log.Println("transaction not found for id: ", key)
+		return nil, exceptions.ErrTransactionNotFound
 	}
 
 	var transaction models.Transaction
@@ -117,7 +117,7 @@ func (db *DatabaseImpl) GetAllTransactionRecordsByDateRange(ctx context.Context,
 
 }
 
-func (db *DatabaseImpl) InsertTransactionRecord(ctx context.Context, transaction models.Transaction) (string, error) {
+func (db *DatabaseImpl) InsertTransactionRecord(ctx context.Context, transaction *models.Transaction) (string, error) {
 	transactionId := TRANSACTION_PREFIX + uuid.NewString()
 	data := bson.D{
 		{Key: TRANSACTION_ID_KEY, Value: transactionId},
@@ -139,7 +139,7 @@ func (db *DatabaseImpl) InsertTransactionRecord(ctx context.Context, transaction
 	return transactionId, err
 }
 
-func (db *DatabaseImpl) UpdateTransactionRecordById(ctx context.Context, id string, transaction models.Transaction) (string, error) {
+func (db *DatabaseImpl) UpdateTransactionRecordById(ctx context.Context, id string, transaction *models.Transaction) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
 			{Key: TITLE_KEY, Value: transaction.Title},

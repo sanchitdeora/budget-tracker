@@ -71,31 +71,31 @@ type Database interface {
 	GetAllTransactionRecords(ctx context.Context) (*[]models.Transaction, error)
 	GetTransactionRecordById(ctx context.Context, key string) (*models.Transaction, error)
 	GetAllTransactionRecordsByDateRange(ctx context.Context, startDate time.Time, endDate time.Time) (*[]models.Transaction, error)
-	InsertTransactionRecord(ctx context.Context, transaction models.Transaction) (string, error)
-	UpdateTransactionRecordById(ctx context.Context, id string, transaction models.Transaction) (string, error)
+	InsertTransactionRecord(ctx context.Context, transaction *models.Transaction) (string, error)
+	UpdateTransactionRecordById(ctx context.Context, id string, transaction *models.Transaction) (string, error)
 	DeleteTransactionRecordById(ctx context.Context, id string) (string, error)
 
 	// bill
 	GetAllBillRecords(ctx context.Context) (*[]models.Bill, error)
 	GetBillRecordById(ctx context.Context, id string) (*models.Bill, error)
-	InsertBillRecord(ctx context.Context, bill models.Bill) (string, error)
-	UpdateBillRecordById(ctx context.Context, id string, bill models.Bill) (string, error)
+	InsertBillRecord(ctx context.Context, bill *models.Bill) (string, error)
+	UpdateBillRecordById(ctx context.Context, id string, bill *models.Bill) (string, error)
 	UpdateBillRecordIsPaid(ctx context.Context, id string, datePaid time.Time) (string, error)
 	UpdateBillRecordIsUnpaid(ctx context.Context, id string) (string, error)
 	DeleteBillRecordById(ctx context.Context, id string) (string, error)
 
 	// budget
-	GetAllBudgetRecords(ctx context.Context, budgets *[]models.Budget) error
+	GetAllBudgetRecords(ctx context.Context) (*[]models.Budget, error)
 	GetBudgetRecordById(ctx context.Context, key string) (*models.Budget, error)
-	InsertBudgetRecord(ctx context.Context, budget models.Budget) (string, error)
-	UpdateBudgetRecordById(ctx context.Context, id string, budget models.Budget) (string, error)
+	InsertBudgetRecord(ctx context.Context, budget *models.Budget) (string, error)
+	UpdateBudgetRecordById(ctx context.Context, id string, budget *models.Budget) (string, error)
 	DeleteBudgetRecordById(ctx context.Context, id string) (string, error)
 
 	// goal
-	GetAllGoalRecords(ctx context.Context, goals *[]models.Goal) error
+	GetAllGoalRecords(ctx context.Context) (*[]models.Goal, error)
 	GetGoalRecordById(ctx context.Context, key string) (*models.Goal, error)
-	InsertGoalRecord(ctx context.Context, goal models.Goal) (string, error)
-	UpdateGoalRecordById(ctx context.Context, id string, goal models.Goal) (string, error)
+	InsertGoalRecord(ctx context.Context, goal *models.Goal) (string, error)
+	UpdateGoalRecordById(ctx context.Context, id string, goal *models.Goal) (string, error)
 	DeleteGoalRecordById(ctx context.Context, id string) (string, error)
 }
 

@@ -1,6 +1,8 @@
 package models
 
 import (
+	"log"
+	"strings"
 	"time"
 )
 
@@ -11,6 +13,33 @@ type Goal struct {
 	TargetAmount	float32		`json:"target_amount"`
 	TargetDate		time.Time	`json:"target_date"`
 	BudgetIdList 	[]string	`json:"budget_id_list"`
+}
+
+func (goal *Goal) IsValid() bool {
+	var invalidErr []string
+	if goal.GoalName == "" {
+		invalidErr = append(invalidErr, "goal name cannot be empty")
+	}
+	if goal.CurrentAmount < 0 {
+		invalidErr = append(invalidErr, "current amount cannot be less than zero")
+	}
+	if goal.TargetAmount < 0 {
+		invalidErr = append(invalidErr, "target amount cannot be less than zero")
+	}
+
+	// Account will be added later
+
+	// if goal.Account != "" {
+	// 	invalidErr = append(invalidErr, "account cannot be empty")
+	// 	return false
+	// }
+
+	if len(invalidErr) > 0 {
+		log.Println("Goal is invalid for the following reasons: ", strings.Join(invalidErr, ", "))
+		return false
+	}
+	
+	return true
 }
 
 // func (goal *Goal) GetAmountSavingPerBudgetsFrequency() (map[string]float32, error) {

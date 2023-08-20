@@ -37,7 +37,7 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // CreateTransaction mocks base method.
-func (m *MockService) CreateTransaction(arg0 context.Context, arg1 models.Transaction) (string, error) {
+func (m *MockService) CreateTransaction(arg0 context.Context, arg1 *models.Transaction) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTransaction", arg0, arg1)
 	ret0, _ := ret[0].(string)
@@ -112,7 +112,7 @@ func (mr *MockServiceMockRecorder) GetTransactionsByDate(arg0, arg1, arg2 interf
 }
 
 // UpdateTransactionById mocks base method.
-func (m *MockService) UpdateTransactionById(arg0 context.Context, arg1 string, arg2 models.Transaction) (string, error) {
+func (m *MockService) UpdateTransactionById(arg0 context.Context, arg1 string, arg2 *models.Transaction) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateTransactionById", arg0, arg1, arg2)
 	ret0, _ := ret[0].(string)

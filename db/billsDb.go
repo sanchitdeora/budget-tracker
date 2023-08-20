@@ -54,13 +54,13 @@ func (db *DatabaseImpl) GetBillRecordById(ctx context.Context, key string) ( *mo
 
 	filter := bson.D{{Key: BILL_ID_KEY, Value: key}}
 	err := billCollection.FindOne(ctx, filter).Decode(&result)
-	if len(result) == 0 {
-		log.Println("bill not found for id: ", key)
-		return nil, exceptions.ErrBillNotFound
-	}
 	if err != nil {
 		log.Println("error while fetching bill by id: ", key, " error: ", err)
 		return nil, err
+	}
+	if len(result) == 0 {
+		log.Println("bill not found for id: ", key)
+		return nil, exceptions.ErrBillNotFound
 	}
 	
 	var bill models.Bill
@@ -73,7 +73,7 @@ func (db *DatabaseImpl) GetBillRecordById(ctx context.Context, key string) ( *mo
 	
 }
 
-func (db *DatabaseImpl) InsertBillRecord(ctx context.Context, bill models.Bill) (string, error) {
+func (db *DatabaseImpl) InsertBillRecord(ctx context.Context, bill *models.Bill) (string, error) {
 	billId := BILL_PREFIX + uuid.NewString()
 
 	if bill.SequenceStartId == "" && bill.SequenceNumber == 0 {
@@ -103,7 +103,7 @@ func (db *DatabaseImpl) InsertBillRecord(ctx context.Context, bill models.Bill) 
 	return billId, err
 }
 
-func (db *DatabaseImpl) UpdateBillRecordById(ctx context.Context, id string, bill models.Bill) (string, error) {
+func (db *DatabaseImpl) UpdateBillRecordById(ctx context.Context, id string, bill *models.Bill) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
 			{Key: TITLE_KEY, Value: bill.Title},

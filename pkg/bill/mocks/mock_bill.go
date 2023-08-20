@@ -36,7 +36,7 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // CreateBill mocks base method.
-func (m *MockService) CreateBill(arg0 context.Context, arg1 models.Bill) (string, error) {
+func (m *MockService) CreateBill(arg0 context.Context, arg1 *models.Bill) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateBill", arg0, arg1)
 	ret0, _ := ret[0].(string)
@@ -51,7 +51,7 @@ func (mr *MockServiceMockRecorder) CreateBill(arg0, arg1 interface{}) *gomock.Ca
 }
 
 // CreateBillByUser mocks base method.
-func (m *MockService) CreateBillByUser(arg0 context.Context, arg1 models.Bill) (string, error) {
+func (m *MockService) CreateBillByUser(arg0 context.Context, arg1 *models.Bill) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateBillByUser", arg0, arg1)
 	ret0, _ := ret[0].(string)
@@ -111,7 +111,7 @@ func (mr *MockServiceMockRecorder) GetBills(arg0 interface{}) *gomock.Call {
 }
 
 // UpdateBillById mocks base method.
-func (m *MockService) UpdateBillById(arg0 context.Context, arg1 string, arg2 models.Bill) (string, error) {
+func (m *MockService) UpdateBillById(arg0 context.Context, arg1 string, arg2 *models.Bill) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateBillById", arg0, arg1, arg2)
 	ret0, _ := ret[0].(string)

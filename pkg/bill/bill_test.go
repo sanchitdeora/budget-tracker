@@ -19,6 +19,10 @@ const (
 	TEST_TITLE = "test-title"
 )
 
+var (
+	ErrSomeError = errors.New("error found")
+)
+
 type ServiceMocks struct {
 	DB 			*mock_db.MockDatabase
 	Transaction *mock_transaction.MockService
@@ -65,7 +69,7 @@ func TestGetBills(t *testing.T) {
 	{	// error found
 		mocks.DB.EXPECT().
 			GetAllBillRecords(gomock.Any()).
-			Return(nil, errors.New("error found"))
+			Return(nil, ErrSomeError)
 
 		bills, err := (*service).GetBills(context.Background())
 
@@ -124,9 +128,10 @@ func TestCreateBill(t *testing.T) {
 			InsertBillRecord(gomock.Any(), gomock.Any()).
 			Return(TEST_ID, nil)
 
-		var bill models.Bill
-		bill.Title = TEST_TITLE
-		bill.AmountDue = 100
+		bill := &models.Bill{
+			Title: TEST_TITLE,
+			AmountDue: 100,
+		}
 		id, err := (*service).CreateBill(context.Background(), bill)
 
 		assert.Equal(t, TEST_ID, id)
@@ -135,22 +140,24 @@ func TestCreateBill(t *testing.T) {
 
 	{	// validation error
 
-		var bill models.Bill
-		bill.AmountDue = -100
+		bill := &models.Bill{
+			AmountDue: -100,
+		}
 		id, err := (*service).CreateBill(context.Background(), bill)
 
-		assert.NotNil(t, err)
+		assert.Equal(t, err, exceptions.ErrValidationError)
 		assert.Equal(t, "", id)
 	}
 
 	{	// happy path
 		mocks.DB.EXPECT().
 			InsertBillRecord(gomock.Any(), gomock.Any()).
-			Return("", errors.New("error found"))
+			Return("", ErrSomeError)
 
-		var bill models.Bill
-		bill.Title = TEST_TITLE
-		bill.AmountDue = 100
+		bill := &models.Bill{
+			Title: TEST_TITLE,
+			AmountDue: 100,
+		}
 		id, err := (*service).CreateBill(context.Background(), bill)
 	
 		assert.NotNil(t, err)
@@ -168,9 +175,10 @@ func TestCreateBillByUser(t *testing.T) {
 			InsertBillRecord(gomock.Any(), gomock.Any()).
 			Return(TEST_ID, nil)
 
-		var bill models.Bill
-		bill.Title = TEST_TITLE
-		bill.AmountDue = 100
+		bill := &models.Bill{
+			Title: TEST_TITLE,
+			AmountDue: 100,
+		}
 		id, err := (*service).CreateBillByUser(context.Background(), bill)
 
 		assert.Equal(t, TEST_ID, id)
@@ -178,8 +186,9 @@ func TestCreateBillByUser(t *testing.T) {
 	}
 
 	{	// validation error
-		var bill models.Bill
-		bill.AmountDue = -100
+		bill := &models.Bill{
+			AmountDue: -100,
+		}
 		id, err := (*service).CreateBillByUser(context.Background(), bill)
 
 		assert.NotNil(t, err)
@@ -189,11 +198,12 @@ func TestCreateBillByUser(t *testing.T) {
 	{	// happy path
 		mocks.DB.EXPECT().
 			InsertBillRecord(gomock.Any(), gomock.Any()).
-			Return("", errors.New("error found"))
+			Return("", ErrSomeError)
 
-		var bill models.Bill
-		bill.Title = TEST_TITLE
-		bill.AmountDue = 100
+		bill := &models.Bill{
+			Title: TEST_TITLE,
+			AmountDue: 100,
+		}
 		id, err := (*service).CreateBillByUser(context.Background(), bill)
 
 		assert.NotNil(t, err)
@@ -211,9 +221,10 @@ func TestUpdateBillById(t *testing.T) {
 			UpdateBillRecordById(gomock.Any(), TEST_ID, gomock.Any()).
 			Return(TEST_ID, nil)
 
-		var bill models.Bill
-		bill.Title = TEST_TITLE
-		bill.AmountDue = 100
+		bill := &models.Bill{
+			Title: TEST_TITLE,
+			AmountDue: 100,
+		}
 		id, err := (*service).UpdateBillById(context.Background(), TEST_ID, bill)
 
 		assert.Equal(t, TEST_ID, id)
@@ -221,16 +232,16 @@ func TestUpdateBillById(t *testing.T) {
 	}
 
 	{	// validation error	when no bill_id	
-		var bill models.Bill
-		id, err := (*service).UpdateBillById(context.Background(), "", bill)
+		id, err := (*service).UpdateBillById(context.Background(), "", &models.Bill{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", id)
 	}
 
 	{	// validation error when invalid bill provided
-		var bill models.Bill
-		bill.AmountDue = -100
+		bill := &models.Bill{
+			AmountDue: -100,
+		}
 		id, err := (*service).UpdateBillById(context.Background(), TEST_ID, bill)
 
 		assert.NotNil(t, err)
@@ -240,11 +251,12 @@ func TestUpdateBillById(t *testing.T) {
 	{	// error found
 		mocks.DB.EXPECT().
 			UpdateBillRecordById(gomock.Any(), TEST_ID, gomock.Any()).
-			Return("", errors.New("error found"))
+			Return("", ErrSomeError)
 
-		var bill models.Bill
-		bill.Title = TEST_TITLE
-		bill.AmountDue = 100
+		bill := &models.Bill{
+			Title: TEST_TITLE,
+			AmountDue: 100,
+		}
 		id, err := (*service).UpdateBillById(context.Background(), TEST_ID, bill)
 
 		assert.NotNil(t, err)
@@ -268,7 +280,7 @@ func TestUpdateBillIsPaid(t *testing.T) {
 	{	// error found while fetching bill by id
 		mocks.DB.EXPECT().
 			GetBillRecordById(context.Background(), TEST_ID).
-			Return(nil, errors.New("error found"))
+			Return(nil, ErrSomeError)
 
 		id, err := (*service).UpdateBillIsPaid(context.Background(), TEST_ID)
 
@@ -363,7 +375,7 @@ func TestUpdateBillIsPaid(t *testing.T) {
 			Return(expBill, nil)
 		mocks.Transaction.EXPECT().
 			CreateTransaction(gomock.Any(), gomock.Any()).
-			Return("", errors.New("error found"))
+			Return("", ErrSomeError)
 
 		id, err := (*service).UpdateBillIsPaid(context.Background(), "test-id")
 		assert.Equal(t, "", id)
@@ -408,7 +420,7 @@ func TestUpdateBillIsPaid(t *testing.T) {
 			Return("test-id", nil)
 		mocks.DB.EXPECT().
 			InsertBillRecord(gomock.Any(), gomock.Any()).
-			Return("", errors.New("error found"))
+			Return("", ErrSomeError)
 
 		id, err := (*service).UpdateBillIsPaid(context.Background(), "test-id")
 		assert.Equal(t, "", id)
@@ -442,7 +454,7 @@ func TestUpdateBillIsUnpaid(t *testing.T) {
 	{	// error found
 		mocks.DB.EXPECT().
 			UpdateBillRecordIsUnpaid(gomock.Any(), gomock.Any()).
-			Return("", errors.New("error found"))
+			Return("", ErrSomeError)
 
 		id, err := (*service).UpdateBillIsUnpaid(context.Background(), TEST_ID)
 
@@ -477,7 +489,7 @@ func TestDeleteBillById(t *testing.T) {
 	{	// error found
 		mocks.DB.EXPECT().
 			DeleteBillRecordById(gomock.Any(), gomock.Any()).
-			Return("", errors.New("error found"))
+			Return("", ErrSomeError)
 
 		id, err := (*service).DeleteBillById(context.Background(), TEST_ID)
 

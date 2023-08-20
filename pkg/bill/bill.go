@@ -16,9 +16,9 @@ import (
 type Service interface {
 	GetBills(ctx context.Context) (*[]models.Bill, error)
 	GetBillById(ctx context.Context, id string) (*models.Bill, error)
-	CreateBillByUser(ctx context.Context, bill models.Bill) (string, error)
-	CreateBill(ctx context.Context, bill models.Bill) (string, error)
-	UpdateBillById(ctx context.Context, id string, bill models.Bill) (string, error)
+	CreateBillByUser(ctx context.Context, bill *models.Bill) (string, error)
+	CreateBill(ctx context.Context, bill *models.Bill) (string, error)
+	UpdateBillById(ctx context.Context, id string, bill *models.Bill) (string, error)
 	UpdateBillIsPaid(ctx context.Context, id string) (string, error)
 	UpdateBillIsUnpaid(ctx context.Context, id string) (string, error)
 	DeleteBillById(ctx context.Context, id string) (string, error)
@@ -50,7 +50,7 @@ func (s *serviceImpl) GetBillById(ctx context.Context, id string) (*models.Bill,
 	return s.DB.GetBillRecordById(ctx, id)
 }
 
-func (s *serviceImpl) CreateBillByUser(ctx context.Context, bill models.Bill) (string, error) {
+func (s *serviceImpl) CreateBillByUser(ctx context.Context, bill *models.Bill) (string, error) {
 	if !bill.IsValid() {
 		return "", exceptions.ErrValidationError
 	}
@@ -61,7 +61,7 @@ func (s *serviceImpl) CreateBillByUser(ctx context.Context, bill models.Bill) (s
 	return s.DB.InsertBillRecord(ctx, bill)
 }
 
-func (s *serviceImpl) CreateBill(ctx context.Context, bill models.Bill) (string, error) {
+func (s *serviceImpl) CreateBill(ctx context.Context, bill *models.Bill) (string, error) {
 	if !bill.IsValid() {
 		return "", exceptions.ErrValidationError
 	}
@@ -71,7 +71,7 @@ func (s *serviceImpl) CreateBill(ctx context.Context, bill models.Bill) (string,
 	return s.DB.InsertBillRecord(ctx, bill)
 }
 
-func (s *serviceImpl) UpdateBillById(ctx context.Context, id string, bill models.Bill) (string, error) {
+func (s *serviceImpl) UpdateBillById(ctx context.Context, id string, bill *models.Bill) (string, error) {
 	if id == "" {
 		log.Println("Missing Bill Id")
 		return "", exceptions.ErrValidationError
@@ -103,7 +103,7 @@ func (s *serviceImpl) UpdateBillIsPaid(ctx context.Context, id string) (string, 
 	if !bill.IsPaid {
 		var newTransaction models.Transaction
 		newTransaction.FromBill(*bill, datePaid)
-		_, err := s.TransactionService.CreateTransaction(ctx, newTransaction)
+		_, err := s.TransactionService.CreateTransaction(ctx, &newTransaction)
 		if err != nil {
 			log.Println("error while creating transaction record", err)
 			return "", err
@@ -126,7 +126,7 @@ func (s *serviceImpl) UpdateBillIsPaid(ctx context.Context, id string) (string, 
 		newBill.SequenceNumber = bill.SequenceNumber + 1
 		newBill.SequenceStartId = bill.SequenceStartId
 
-		_, err = s.CreateBill(ctx, *newBill)
+		_, err = s.CreateBill(ctx, newBill)
 		if err != nil {
 			log.Println("error while creating new bill record", err)
 			return "", err

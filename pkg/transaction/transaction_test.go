@@ -19,6 +19,10 @@ const (
 	TEST_TITLE = "test-title"
 )
 
+var (
+	ErrSomeError = errors.New("error found")
+)
+
 type ServiceMocks struct {
 	DB *mock_db.MockDatabase
 }
@@ -65,7 +69,7 @@ func TestGetTransactions(t *testing.T) {
 	{ 	// error found
 		mocks.DB.EXPECT().
 			GetAllTransactionRecords(gomock.Any()).
-			Return(nil, errors.New("error found"))
+			Return(nil, ErrSomeError)
 
 		transactions, err := (*service).GetTransactions(context.Background())
 
@@ -134,7 +138,7 @@ func TestGetTransactionByDate(t *testing.T) {
 		assert.Equal(t, 1, len(*transactions))
 	}
 
-	{ 	// validation error empty transactions_id
+	{ 	// validation error empty transaction_id
 		transactions, err := (*service).GetTransactionsByDate(context.Background(), time.UnixMilli(1688245563949), time.UnixMilli(1688245563948))
 
 		assert.Nil(t, transactions)
@@ -165,9 +169,10 @@ func TestCreateTransaction(t *testing.T) {
 			InsertTransactionRecord(gomock.Any(), gomock.Any()).
 			Return(TEST_ID, nil)
 
-		var transaction models.Transaction
-		transaction.Title = TEST_TITLE
-		transaction.Amount = 100
+		transaction := &models.Transaction{
+			Title: TEST_TITLE,
+			Amount: 100,
+		}
 		id, err := (*service).CreateTransaction(context.Background(), transaction)
 
 		assert.Equal(t, TEST_ID, id)
@@ -176,8 +181,9 @@ func TestCreateTransaction(t *testing.T) {
 
 	{	// validation error
 
-		var transaction models.Transaction
-		transaction.Amount = -100
+		transaction := &models.Transaction{
+			Amount: -100,
+		}
 		id, err := (*service).CreateTransaction(context.Background(), transaction)
 
 		assert.NotNil(t, err)
@@ -187,11 +193,12 @@ func TestCreateTransaction(t *testing.T) {
 	{	// error found
 		mocks.DB.EXPECT().
 			InsertTransactionRecord(gomock.Any(), gomock.Any()).
-			Return("", errors.New("error found"))
+			Return("", ErrSomeError)
 
-		var transaction models.Transaction
-		transaction.Title = TEST_TITLE
-		transaction.Amount = 100
+		transaction := &models.Transaction{
+			Title: TEST_TITLE,
+			Amount: 100,
+		}
 		id, err := (*service).CreateTransaction(context.Background(), transaction)
 
 		assert.NotNil(t, err)
@@ -209,9 +216,10 @@ func TestUpdateTransactionById(t *testing.T) {
 			UpdateTransactionRecordById(gomock.Any(), TEST_ID, gomock.Any()).
 			Return(TEST_ID, nil)
 
-		var transaction models.Transaction
-		transaction.Title = TEST_TITLE
-		transaction.Amount = 100
+		transaction := &models.Transaction{
+			Title: TEST_TITLE,
+			Amount: 100,
+		}
 		id, err := (*service).UpdateTransactionById(context.Background(), TEST_ID, transaction)
 
 		assert.Equal(t, TEST_ID, id)
@@ -219,16 +227,16 @@ func TestUpdateTransactionById(t *testing.T) {
 	}
 
 	{	// validation error	when no transaction_id	
-		var transaction models.Transaction
-		id, err := (*service).UpdateTransactionById(context.Background(), "", transaction)
+		id, err := (*service).UpdateTransactionById(context.Background(), "", &models.Transaction{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", id)
 	}
 
 	{	// validation error when invalid transaction provided
-		var transaction models.Transaction
-		transaction.Amount = -100
+		transaction := &models.Transaction{
+			Amount: -100,
+		}
 		id, err := (*service).UpdateTransactionById(context.Background(), TEST_ID, transaction)
 
 		assert.NotNil(t, err)
@@ -238,11 +246,12 @@ func TestUpdateTransactionById(t *testing.T) {
 	{	// error found
 		mocks.DB.EXPECT().
 			UpdateTransactionRecordById(gomock.Any(), TEST_ID, gomock.Any()).
-			Return("", errors.New("error found"))
+			Return("", ErrSomeError)
 
-		var transaction models.Transaction
-		transaction.Title = TEST_TITLE
-		transaction.Amount = 100
+		transaction := &models.Transaction{
+			Title: TEST_TITLE,
+			Amount: 100,
+		}
 		id, err := (*service).UpdateTransactionById(context.Background(), TEST_ID, transaction)
 
 		assert.NotNil(t, err)
@@ -276,7 +285,7 @@ func TestDeleteTransactionById(t *testing.T) {
 	{	// error found
 		mocks.DB.EXPECT().
 			DeleteTransactionRecordById(gomock.Any(), gomock.Any()).
-			Return("", errors.New("error found"))
+			Return("", ErrSomeError)
 
 		id, err := (*service).DeleteTransactionById(context.Background(), TEST_ID)
 

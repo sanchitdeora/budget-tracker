@@ -112,31 +112,33 @@ func (mr *MockDatabaseMockRecorder) GetAllBillRecords(arg0 interface{}) *gomock.
 }
 
 // GetAllBudgetRecords mocks base method.
-func (m *MockDatabase) GetAllBudgetRecords(arg0 context.Context, arg1 *[]models.Budget) error {
+func (m *MockDatabase) GetAllBudgetRecords(arg0 context.Context) (*[]models.Budget, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllBudgetRecords", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetAllBudgetRecords", arg0)
+	ret0, _ := ret[0].(*[]models.Budget)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetAllBudgetRecords indicates an expected call of GetAllBudgetRecords.
-func (mr *MockDatabaseMockRecorder) GetAllBudgetRecords(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockDatabaseMockRecorder) GetAllBudgetRecords(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllBudgetRecords", reflect.TypeOf((*MockDatabase)(nil).GetAllBudgetRecords), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllBudgetRecords", reflect.TypeOf((*MockDatabase)(nil).GetAllBudgetRecords), arg0)
 }
 
 // GetAllGoalRecords mocks base method.
-func (m *MockDatabase) GetAllGoalRecords(arg0 context.Context, arg1 *[]models.Goal) error {
+func (m *MockDatabase) GetAllGoalRecords(arg0 context.Context) (*[]models.Goal, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAllGoalRecords", arg0, arg1)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "GetAllGoalRecords", arg0)
+	ret0, _ := ret[0].(*[]models.Goal)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetAllGoalRecords indicates an expected call of GetAllGoalRecords.
-func (mr *MockDatabaseMockRecorder) GetAllGoalRecords(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockDatabaseMockRecorder) GetAllGoalRecords(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllGoalRecords", reflect.TypeOf((*MockDatabase)(nil).GetAllGoalRecords), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllGoalRecords", reflect.TypeOf((*MockDatabase)(nil).GetAllGoalRecords), arg0)
 }
 
 // GetAllTransactionRecords mocks base method.
@@ -230,7 +232,7 @@ func (mr *MockDatabaseMockRecorder) GetTransactionRecordById(arg0, arg1 interfac
 }
 
 // InsertBillRecord mocks base method.
-func (m *MockDatabase) InsertBillRecord(arg0 context.Context, arg1 models.Bill) (string, error) {
+func (m *MockDatabase) InsertBillRecord(arg0 context.Context, arg1 *models.Bill) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertBillRecord", arg0, arg1)
 	ret0, _ := ret[0].(string)
@@ -245,7 +247,7 @@ func (mr *MockDatabaseMockRecorder) InsertBillRecord(arg0, arg1 interface{}) *go
 }
 
 // InsertBudgetRecord mocks base method.
-func (m *MockDatabase) InsertBudgetRecord(arg0 context.Context, arg1 models.Budget) (string, error) {
+func (m *MockDatabase) InsertBudgetRecord(arg0 context.Context, arg1 *models.Budget) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertBudgetRecord", arg0, arg1)
 	ret0, _ := ret[0].(string)
@@ -260,7 +262,7 @@ func (mr *MockDatabaseMockRecorder) InsertBudgetRecord(arg0, arg1 interface{}) *
 }
 
 // InsertGoalRecord mocks base method.
-func (m *MockDatabase) InsertGoalRecord(arg0 context.Context, arg1 models.Goal) (string, error) {
+func (m *MockDatabase) InsertGoalRecord(arg0 context.Context, arg1 *models.Goal) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertGoalRecord", arg0, arg1)
 	ret0, _ := ret[0].(string)
@@ -275,7 +277,7 @@ func (mr *MockDatabaseMockRecorder) InsertGoalRecord(arg0, arg1 interface{}) *go
 }
 
 // InsertTransactionRecord mocks base method.
-func (m *MockDatabase) InsertTransactionRecord(arg0 context.Context, arg1 models.Transaction) (string, error) {
+func (m *MockDatabase) InsertTransactionRecord(arg0 context.Context, arg1 *models.Transaction) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertTransactionRecord", arg0, arg1)
 	ret0, _ := ret[0].(string)
@@ -290,7 +292,7 @@ func (mr *MockDatabaseMockRecorder) InsertTransactionRecord(arg0, arg1 interface
 }
 
 // UpdateBillRecordById mocks base method.
-func (m *MockDatabase) UpdateBillRecordById(arg0 context.Context, arg1 string, arg2 models.Bill) (string, error) {
+func (m *MockDatabase) UpdateBillRecordById(arg0 context.Context, arg1 string, arg2 *models.Bill) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateBillRecordById", arg0, arg1, arg2)
 	ret0, _ := ret[0].(string)
@@ -335,7 +337,7 @@ func (mr *MockDatabaseMockRecorder) UpdateBillRecordIsUnpaid(arg0, arg1 interfac
 }
 
 // UpdateBudgetRecordById mocks base method.
-func (m *MockDatabase) UpdateBudgetRecordById(arg0 context.Context, arg1 string, arg2 models.Budget) (string, error) {
+func (m *MockDatabase) UpdateBudgetRecordById(arg0 context.Context, arg1 string, arg2 *models.Budget) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateBudgetRecordById", arg0, arg1, arg2)
 	ret0, _ := ret[0].(string)
@@ -350,7 +352,7 @@ func (mr *MockDatabaseMockRecorder) UpdateBudgetRecordById(arg0, arg1, arg2 inte
 }
 
 // UpdateGoalRecordById mocks base method.
-func (m *MockDatabase) UpdateGoalRecordById(arg0 context.Context, arg1 string, arg2 models.Goal) (string, error) {
+func (m *MockDatabase) UpdateGoalRecordById(arg0 context.Context, arg1 string, arg2 *models.Goal) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateGoalRecordById", arg0, arg1, arg2)
 	ret0, _ := ret[0].(string)
@@ -365,7 +367,7 @@ func (mr *MockDatabaseMockRecorder) UpdateGoalRecordById(arg0, arg1, arg2 interf
 }
 
 // UpdateTransactionRecordById mocks base method.
-func (m *MockDatabase) UpdateTransactionRecordById(arg0 context.Context, arg1 string, arg2 models.Transaction) (string, error) {
+func (m *MockDatabase) UpdateTransactionRecordById(arg0 context.Context, arg1 string, arg2 *models.Transaction) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateTransactionRecordById", arg0, arg1, arg2)
 	ret0, _ := ret[0].(string)

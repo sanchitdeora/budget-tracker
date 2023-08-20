@@ -10,8 +10,7 @@ import (
 
 func (service *ApiService) GetAllGoals(c *gin.Context) {
 
-	var response []models.Goal
-	err := service.GoalService.GetGoals(c, &response)
+	goals, err := service.GoalService.GetGoals(c)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -19,15 +18,15 @@ func (service *ApiService) GetAllGoals(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"message": "Success",
-		"body":    response,
+		"body":    goals,
 	})
 
 }
 
 func (service *ApiService) GetGoalById(c *gin.Context) {
 	
-	response, err := service.GoalService.GetGoalById(c, c.Param("id"))
-	if response.GoalId == "" {
+	goal, err := service.GoalService.GetGoalById(c, c.Param("id"))
+	if goal.GoalId == "" {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
@@ -37,7 +36,7 @@ func (service *ApiService) GetGoalById(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Success",
-		"body":    response,
+		"body":    goal,
 	})
 
 }
@@ -50,7 +49,7 @@ func (service *ApiService) CreateGoal(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	goalId, err := service.GoalService.CreateGoalById(c, goal)
+	goalId, err := service.GoalService.CreateGoal(c, &goal)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -72,7 +71,7 @@ func (service *ApiService) UpdateGoalById(c *gin.Context) {
 		return
 	}
 	
-	goalId, err := service.GoalService.UpdateGoalById(c, c.Param("id"), goal)
+	goalId, err := service.GoalService.UpdateGoalById(c, c.Param("id"), &goal)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

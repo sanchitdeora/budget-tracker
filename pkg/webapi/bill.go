@@ -10,8 +10,7 @@ import (
 
 func (service *ApiService) GetAllBills(c *gin.Context) {
 
-	var response []models.Bill
-	err := service.BillService.GetBills(c, &response)
+	bills, err := service.BillService.GetBills(c)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -19,16 +18,15 @@ func (service *ApiService) GetAllBills(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"message": "Success",
-		"body":    response,
+		"body":    bills,
 	})
 
 }
 
 func (service *ApiService) GetBillById(c *gin.Context) {
 
-	var response models.Bill
-	err := service.BillService.GetBillById(c, c.Param("id"), &response)
-	if response.BillId == "" {
+	bill, err := service.BillService.GetBillById(c, c.Param("id"))
+	if bill.BillId == "" {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
@@ -38,7 +36,7 @@ func (service *ApiService) GetBillById(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Success",
-		"body":    response,
+		"body":    bill,
 	})
 
 }
@@ -51,7 +49,7 @@ func (service *ApiService) CreateBill(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	billId, err := service.BillService.CreateBillByUser(c, bill)
+	billId, err := service.BillService.CreateBillByUser(c, &bill)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -73,7 +71,7 @@ func (service *ApiService) UpdateBillById(c *gin.Context) {
 		return
 	}
 	
-	billId, err := service.BillService.UpdateBillById(c, c.Param("id"), bill)
+	billId, err := service.BillService.UpdateBillById(c, c.Param("id"), &bill)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
