@@ -5,6 +5,10 @@ import Divider from '@mui/material/Divider';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckIcon from '@mui/icons-material/Check';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -226,14 +230,14 @@ class Bills extends React.Component {
                                         marginLeft='2%'
                                     >
                                         <div>
-                                            {data.is_paid ? 
-                                            <Button variant='text' onClick={this.handleBillPaid.bind(this, data.bill_id, false)}>
-                                                Unpaid
-                                            </Button> 
+                                            {data.is_paid ?
+                                            <IconButton color="primary" onClick={this.handleBillPaid.bind(this, data.bill_id, false)}>
+                                                <CheckIcon />
+                                            </IconButton> 
                                             :
-                                            <Button variant='text' onClick={this.handleBillPaid.bind(this, data.bill_id, true)}>
-                                                Paid
-                                            </Button>
+                                            <IconButton onClick={this.handleBillPaid.bind(this, data.bill_id, true)}>
+                                                <RadioButtonUncheckedIcon />
+                                            </IconButton> 
                                             }
                                         </div>
                                         <div>
