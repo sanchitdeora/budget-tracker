@@ -38,7 +38,7 @@ func route(router *gin.Engine, service *ApiService) *gin.Engine {
 	// budgets
 	api.GET("/budgets", service.GetAllBudgets)
 	api.GET("/budget/:id", service.GetBudgetById)
-	api.POST("/budget", service.CreateBudget)
+	api.POST("/budget", service.CreateBudgetByUser)
 	api.PUT("/budget/:id", service.UpdateBudgetById)
 	api.DELETE("/budget/:id", service.DeleteBudgetById)
 

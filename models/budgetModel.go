@@ -46,13 +46,41 @@ var BudgetFrequencyMap = []string{
 
 const BUDGET_PREFIX = "BG-"
 
+
+func (budget *Budget) IsValid() bool {
+	var invalidErr []string
+	if budget.BudgetName == "" {
+		invalidErr = append(invalidErr, "budget name cannot be empty")
+	}
+	if budget.IsClosed {
+		invalidErr = append(invalidErr, "budget should not be closed")
+	}
+
+	// Account will be added later
+
+	// if budget.Account != "" {
+	// 	invalidErr = append(invalidErr, "account cannot be empty")
+	// 	return false
+	// }
+
+	if len(invalidErr) > 0 {
+		log.Println("Budget is invalid for the following reasons: ", strings.Join(invalidErr, ", "))
+		return false
+	}
+	
+	return true
+}
+
 func (budget *Budget) SetSavings() float32 {
 	budget.Savings = calculateSavings(budget.IncomeMap, budget.ExpenseMap, budget.GoalMap)
-	log.Println("set savings here:", budget.Savings)
 	return budget.Savings
 }
 
 func (budget *Budget) SetFrequency() {
+	if budget.Frequency == "" {
+		budget.Frequency = ONCE_FREQUENCY
+		return
+	}
 	for index, frequency := range BudgetFrequencyMap {
 		if frequency == strings.ToLower(budget.Frequency) {
 			budget.Frequency = BudgetFrequencyMap[index]
@@ -69,8 +97,6 @@ func (budget *Budget) SetCategory() {
 	// replace unknown categories with uncategorized
 	budget.IncomeMap = updateCategoryInBudgetMap(budget.IncomeMap)
 	budget.ExpenseMap = updateCategoryInBudgetMap(budget.ExpenseMap)
-
-	fmt.Println("Main Object expense map: ", budget.ExpenseMap)
 }
 
 func (budget *Budget) SetByUser() {
@@ -104,16 +130,12 @@ func updateCategoryInBudgetMap(budgetMap []BudgetInputMap) []BudgetInputMap{
 				break
 			}
 			if index == len(TransactionCategoryMap) - 1 {
-				fmt.Println("allowedCategory here: ", allowedCategory)
-
 				uncategorized.Amount += val.Amount
 				valToBeDeleted = append(valToBeDeleted, val.Id)
 			}
 		}
 	}
 	if len(valToBeDeleted) > 0 {
-		fmt.Println("values to be deleted", valToBeDeleted)
-
 		for _, id := range valToBeDeleted {
 			i := slices.IndexFunc(budgetMap, func(b BudgetInputMap) bool { return b.Id == id })
 
@@ -123,19 +145,16 @@ func updateCategoryInBudgetMap(budgetMap []BudgetInputMap) []BudgetInputMap{
 			fmt.Println(budgetMap)
 		}
 
-		fmt.Println("after deleting:", budgetMap)
 	}
 
 	if uncategorized.Amount > 0 {
 		idx := slices.IndexFunc(budgetMap, func(b BudgetInputMap) bool { return b.Id == UNCATEGORIZED_CATEGORY })
 		if idx > -1 {
-			fmt.Println("index for uncategorized found: ", idx, "with value: ", budgetMap[idx])
 			budgetMap[idx].Amount += uncategorized.Amount
 		} else {
 			budgetMap = append(budgetMap, uncategorized)
 		}
 	}
-	fmt.Println("after uncategorized setting:", budgetMap)
 
 	return budgetMap
 }

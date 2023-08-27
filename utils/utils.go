@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/sanchitdeora/budget-tracker/models"
-	"github.com/sanchitdeora/budget-tracker/pkg/exceptions"
 )
 
 func Contains(s []string, v string) bool {
@@ -29,29 +28,24 @@ func Remove[T comparable](s []T, index int) []T{
     return append(s[:index], s[index+1:]...)
 }
 
-func CalculateEndDateWithFrequency(currDate time.Time, freq string) (time.Time, error) {
-
-	if !Contains(models.BillFrequencyMap, freq) || models.ONCE_FREQUENCY == freq {
-		return currDate, exceptions.ErrFrequencyNotSupported
-	}
+func CalculateEndDateWithFrequency(currDate time.Time, freq string) time.Time {
 	if freq == models.DAILY_FREQUENCY {
-		return currDate.AddDate(0, 0, 1), nil
+		return currDate.AddDate(0, 0, 1)
 	} else if freq == models.WEEKLY_FREQUENCY {
-		return currDate.AddDate(0, 0, 7), nil
+		return currDate.AddDate(0, 0, 7)
 	} else if freq == models.BI_WEEKLY_FREQUENCY {
-		return currDate.AddDate(0, 0, 14), nil
+		return currDate.AddDate(0, 0, 14)
 	} else if freq == models.MONTHLY_FREQUENCY {
-		return currDate.AddDate(0, 1, 0), nil
+		return currDate.AddDate(0, 1, 0)
 	} else if freq == models.BI_MONTHLY_FREQUENCY {
-		return currDate.AddDate(0, 2, 0), nil
+		return currDate.AddDate(0, 2, 0)
 	} else if freq == models.QUARTERLY_FREQUENCY {
-		return currDate.AddDate(0, 3, 0), nil
+		return currDate.AddDate(0, 3, 0)
 	} else if freq == models.HALF_YEARLY_FREQUENCY {
-		return currDate.AddDate(0, 6, 0), nil
+		return currDate.AddDate(0, 6, 0)
 	} else if freq == models.YEARLY_FREQUENCY {
-		return currDate.AddDate(1, 0, 0), nil
-	} else {
-		return currDate, exceptions.ErrFrequencyNotSupported
+		return currDate.AddDate(1, 0, 0)
 	}
 
+	return currDate
 }

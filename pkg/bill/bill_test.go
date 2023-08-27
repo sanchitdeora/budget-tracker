@@ -382,27 +382,6 @@ func TestUpdateBillIsPaid(t *testing.T) {
 		assert.NotNil(t, err)
 	}
 
-	{	// error found while calculating end date with frequency	
-		expBill := &models.Bill{
-			BillId: TEST_ID,
-			Title: TEST_TITLE,
-			AmountDue: 100,
-			IsPaid: false,
-			Frequency: "test-invalid-frequency",
-		}
-
-		mocks.DB.EXPECT().
-			GetBillRecordById(gomock.Any(), "test-id").
-			Return(expBill, nil)
-		mocks.Transaction.EXPECT().
-			CreateTransaction(gomock.Any(), gomock.Any()).
-			Return("test-id", nil)
-
-		id, err := (*service).UpdateBillIsPaid(context.Background(), "test-id")
-		assert.Equal(t, "", id)
-		assert.NotNil(t, err)
-	}
-
 	{	// error found while creating new bill	
 		expBill := &models.Bill{
 			BillId: TEST_ID,

@@ -41,7 +41,7 @@ func (service *ApiService) GetBudgetById(c *gin.Context) {
 
 }
 
-func (service *ApiService) CreateBudget(c *gin.Context) {
+func (service *ApiService) CreateBudgetByUser(c *gin.Context) {
 	var budget models.Budget
 	err := c.BindJSON(&budget)
 	if err != nil {

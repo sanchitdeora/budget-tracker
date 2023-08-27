@@ -27,10 +27,10 @@ type ServiceMocks struct {
 	DB *mock_db.MockDatabase
 }
 
-func createTestTransaction(ctrl *gomock.Controller) (*Service, *ServiceMocks) {
+func createTestTransaction(ctrl *gomock.Controller) (Service, *ServiceMocks) {
 	db := mock_db.NewMockDatabase(ctrl)
 	service := NewService(&Opts{DB: db})
-	return &service, &ServiceMocks{DB: db}
+	return service, &ServiceMocks{DB: db}
 }
 
 func TestGetTransactions(t *testing.T) {
@@ -47,7 +47,7 @@ func TestGetTransactions(t *testing.T) {
 			GetAllTransactionRecords(gomock.Any()).
 			Return(expTx, nil)
 
-		transactions, err := (*service).GetTransactions(context.Background())
+		transactions, err := service.GetTransactions(context.Background())
 
 		assert.Nil(t, err)
 		assert.NotNil(t, transactions)
@@ -59,7 +59,7 @@ func TestGetTransactions(t *testing.T) {
 			GetAllTransactionRecords(gomock.Any()).
 			Return(&[]models.Transaction{}, nil)
 
-		transactions, err := (*service).GetTransactions(context.Background())
+		transactions, err := service.GetTransactions(context.Background())
 
 		assert.Nil(t, err)
 		assert.NotNil(t, transactions)
@@ -71,7 +71,7 @@ func TestGetTransactions(t *testing.T) {
 			GetAllTransactionRecords(gomock.Any()).
 			Return(nil, ErrSomeError)
 
-		transactions, err := (*service).GetTransactions(context.Background())
+		transactions, err := service.GetTransactions(context.Background())
 
 		assert.NotNil(t, err)
 		assert.Nil(t, transactions)
@@ -91,26 +91,26 @@ func TestGetTransactionById(t *testing.T) {
 			GetTransactionRecordById(gomock.Any(), gomock.Any()).
 			Return(expTx, nil)
 
-		transaction, err := (*service).GetTransactionById(context.Background(), TEST_ID)
+		transaction, err := service.GetTransactionById(context.Background(), TEST_ID)
 
 		assert.Nil(t, err)
 		assert.NotNil(t, transaction)
 	}
 
-	{ 	// validation error empty transactions id
-		transaction, err := (*service).GetTransactionById(context.Background(), "")
+	{ 	// validation error empty transaction id
+		transaction, err := service.GetTransactionById(context.Background(), "")
 
 		assert.Nil(t, transaction)
 		assert.NotNil(t, err)
 		assert.Equal(t, exceptions.ErrValidationError, err)
 	}
 
-	{ 	// not found error no transactions found
+	{ 	// not found error no transaction found
 		mocks.DB.EXPECT().
 			GetTransactionRecordById(gomock.Any(), gomock.Any()).
 			Return(nil, exceptions.ErrTransactionNotFound)
 
-		transaction, err := (*service).GetTransactionById(context.Background(), TEST_ID)
+		transaction, err := service.GetTransactionById(context.Background(), TEST_ID)
 
 		assert.Nil(t, transaction)
 		assert.NotNil(t, err)
@@ -131,7 +131,7 @@ func TestGetTransactionByDate(t *testing.T) {
 			GetAllTransactionRecordsByDateRange(gomock.Any(), gomock.Any(), gomock.Any()).
 			Return(expTx, nil)
 
-		transactions, err := (*service).GetTransactionsByDate(context.Background(), time.UnixMilli(1688245563949), time.UnixMilli(1690923963949))
+		transactions, err := service.GetTransactionsByDate(context.Background(), time.UnixMilli(1688245563949), time.UnixMilli(1690923963949))
 
 		assert.Nil(t, err)
 		assert.NotNil(t, transactions)
@@ -139,7 +139,7 @@ func TestGetTransactionByDate(t *testing.T) {
 	}
 
 	{ 	// validation error empty transaction_id
-		transactions, err := (*service).GetTransactionsByDate(context.Background(), time.UnixMilli(1688245563949), time.UnixMilli(1688245563948))
+		transactions, err := service.GetTransactionsByDate(context.Background(), time.UnixMilli(1688245563949), time.UnixMilli(1688245563948))
 
 		assert.Nil(t, transactions)
 		assert.NotNil(t, err)
@@ -151,7 +151,7 @@ func TestGetTransactionByDate(t *testing.T) {
 			GetAllTransactionRecordsByDateRange(gomock.Any(), gomock.Any(), gomock.Any()).
 			Return(&[]models.Transaction{}, nil)
 
-		transactions, err := (*service).GetTransactionsByDate(context.Background(), time.UnixMilli(1688245563949), time.UnixMilli(1690923963949))
+		transactions, err := service.GetTransactionsByDate(context.Background(), time.UnixMilli(1688245563949), time.UnixMilli(1690923963949))
 
 		assert.Nil(t, err)
 		assert.NotNil(t, transactions)
@@ -173,7 +173,7 @@ func TestCreateTransaction(t *testing.T) {
 			Title: TEST_TITLE,
 			Amount: 100,
 		}
-		id, err := (*service).CreateTransaction(context.Background(), transaction)
+		id, err := service.CreateTransaction(context.Background(), transaction)
 
 		assert.Equal(t, TEST_ID, id)
 		assert.Nil(t, err)
@@ -184,7 +184,7 @@ func TestCreateTransaction(t *testing.T) {
 		transaction := &models.Transaction{
 			Amount: -100,
 		}
-		id, err := (*service).CreateTransaction(context.Background(), transaction)
+		id, err := service.CreateTransaction(context.Background(), transaction)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", id)
@@ -199,7 +199,7 @@ func TestCreateTransaction(t *testing.T) {
 			Title: TEST_TITLE,
 			Amount: 100,
 		}
-		id, err := (*service).CreateTransaction(context.Background(), transaction)
+		id, err := service.CreateTransaction(context.Background(), transaction)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", id)
@@ -220,14 +220,14 @@ func TestUpdateTransactionById(t *testing.T) {
 			Title: TEST_TITLE,
 			Amount: 100,
 		}
-		id, err := (*service).UpdateTransactionById(context.Background(), TEST_ID, transaction)
+		id, err := service.UpdateTransactionById(context.Background(), TEST_ID, transaction)
 
 		assert.Equal(t, TEST_ID, id)
 		assert.Nil(t, err)
 	}
 
 	{	// validation error	when no transaction_id	
-		id, err := (*service).UpdateTransactionById(context.Background(), "", &models.Transaction{})
+		id, err := service.UpdateTransactionById(context.Background(), "", &models.Transaction{})
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", id)
@@ -237,7 +237,7 @@ func TestUpdateTransactionById(t *testing.T) {
 		transaction := &models.Transaction{
 			Amount: -100,
 		}
-		id, err := (*service).UpdateTransactionById(context.Background(), TEST_ID, transaction)
+		id, err := service.UpdateTransactionById(context.Background(), TEST_ID, transaction)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", id)
@@ -252,7 +252,7 @@ func TestUpdateTransactionById(t *testing.T) {
 			Title: TEST_TITLE,
 			Amount: 100,
 		}
-		id, err := (*service).UpdateTransactionById(context.Background(), TEST_ID, transaction)
+		id, err := service.UpdateTransactionById(context.Background(), TEST_ID, transaction)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", id)
@@ -266,17 +266,17 @@ func TestDeleteTransactionById(t *testing.T) {
 	service, mocks := createTestTransaction(ctrl)
 	{	// happy path
 		mocks.DB.EXPECT().
-			DeleteTransactionRecordById(gomock.Any(), gomock.Any()).
+			DeleteTransactionRecordById(gomock.Any(), TEST_ID).
 			Return(TEST_ID, nil)
 
-		id, err := (*service).DeleteTransactionById(context.Background(), TEST_ID)
+		id, err := service.DeleteTransactionById(context.Background(), TEST_ID)
 
 		assert.Equal(t, TEST_ID, id)
 		assert.Nil(t, err)
 	}
 
 	{	// validation error	
-		id, err := (*service).DeleteTransactionById(context.Background(), "")
+		id, err := service.DeleteTransactionById(context.Background(), "")
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", id)
@@ -284,10 +284,10 @@ func TestDeleteTransactionById(t *testing.T) {
 
 	{	// error found
 		mocks.DB.EXPECT().
-			DeleteTransactionRecordById(gomock.Any(), gomock.Any()).
+			DeleteTransactionRecordById(gomock.Any(), TEST_ID).
 			Return("", ErrSomeError)
 
-		id, err := (*service).DeleteTransactionById(context.Background(), TEST_ID)
+		id, err := service.DeleteTransactionById(context.Background(), TEST_ID)
 
 		assert.NotNil(t, err)
 		assert.Equal(t, "", id)

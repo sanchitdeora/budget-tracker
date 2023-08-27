@@ -64,6 +64,10 @@ func (bill *Bill) SetCategory() {
 }
 
 func (bill *Bill) SetFrequency() {
+	if bill.Frequency == "" {
+		bill.Frequency = ONCE_FREQUENCY
+		return
+	}
 	for index, frequency := range BillFrequencyMap {
 		if frequency == strings.ToLower(bill.Frequency) {
 			bill.Frequency = BillFrequencyMap[index]

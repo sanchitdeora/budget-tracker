@@ -112,11 +112,8 @@ func (s *serviceImpl) UpdateBillIsPaid(ctx context.Context, id string) (string, 
 
 	if bill.Frequency != models.ONCE_FREQUENCY {
 		// create new bill entry for next frequency period
-		newDueDate, err := utils.CalculateEndDateWithFrequency(bill.DueDate, bill.Frequency)
-		if err != nil {
-			log.Println("error while calculating end date with frequency: ", bill.Frequency, "error: ", err)
-			return "", err
-		}
+		bill.SetFrequency()
+		newDueDate:= utils.CalculateEndDateWithFrequency(bill.DueDate, bill.Frequency)
 
 		newBill := bill
 		newBill.BillId = ""
