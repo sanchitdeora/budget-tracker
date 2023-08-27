@@ -62,7 +62,7 @@ func Login(c *gin.Context) {
 		})
 	}
 
-	log.Println("LoginBody outside: ", loginBody)
+	log.Println("LoginBody outside:", loginBody)
 
 	c.JSON(200, gin.H{
 		"message":          "Login",

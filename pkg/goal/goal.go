@@ -53,7 +53,7 @@ func (s *serviceImpl) GetGoals(ctx context.Context) (*[]models.Goal, error) {
 
 func (s *serviceImpl) GetGoalById(ctx context.Context, id string) (*models.Goal, error) {
 	if id == "" {
-		log.Println("Missing Goal Id")
+		log.Println("missing Goal Id", ctx)
 		return nil, exceptions.ErrValidationError
 	}
 
@@ -86,7 +86,7 @@ func (s *serviceImpl) CreateGoal(ctx context.Context, goal *models.Goal) (string
 
 func (s *serviceImpl) UpdateGoalById(ctx context.Context, id string, goal *models.Goal) (string, error) {
 	if id == "" {
-		log.Println("Missing Goal Id")
+		log.Println("missing Goal Id", ctx)
 		return "", exceptions.ErrValidationError
 	}
 
@@ -120,11 +120,11 @@ func (s *serviceImpl) UpdateGoalById(ctx context.Context, id string, goal *model
 
 func (s *serviceImpl) UpdateBudgetIdsList(ctx context.Context, goalId string, budgetId string) (string, error) {
 	if goalId == "" {
-		log.Println("Missing Goal Id")
+		log.Println("missing Goal Id", ctx)
 		return "", exceptions.ErrValidationError
 	}
 	if budgetId == "" {
-		log.Println("Missing Budget Id")
+		log.Println("missing Budget Id", ctx)
 		return "", exceptions.ErrValidationError
 	}
 
@@ -142,11 +142,11 @@ func (s *serviceImpl) UpdateBudgetIdsList(ctx context.Context, goalId string, bu
 
 func (s *serviceImpl) RemoveBudgetIdFromGoal(ctx context.Context, goalId string, budgetId string) (string, error) {
 	if goalId == "" {
-		log.Println("Missing Goal Id")
+		log.Println("missing Goal Id", ctx)
 		return "", exceptions.ErrValidationError
 	}
 	if budgetId == "" {
-		log.Println("Missing Budget Id")
+		log.Println("missing Budget Id", ctx)
 		return "", exceptions.ErrValidationError
 	}
 
@@ -216,7 +216,7 @@ func (s *serviceImpl) updateGoalMapInBudget(ctx context.Context, budgetId string
 
 	_, err = s.DB.UpdateBudgetRecordById(ctx, budgetId, budget)
 	if err != nil {
-		log.Println("error while updating goal map in budget, goalId: ", goal.GoalId, "budgetId: ", budgetId, "error: ", err)
+		log.Println("error while updating goal map in budget, goalId:", goal.GoalId, "budgetId:", budgetId, "error:", err)
 		return err
 	}
 	return nil
@@ -234,20 +234,20 @@ func (s *serviceImpl) updateCurrentAmountInGoals(ctx context.Context, goal *mode
 
 func (s *serviceImpl) getCurrentAmountInGoals(ctx context.Context, goal *models.Goal) (float32, error) {
 	var currAmount float32 = 0
-	fmt.Println("Current goal in GetCurrentAmountInGoals: ", goal)
+	fmt.Println("Current goal in GetCurrentAmountInGoals:", goal)
 
 	for _, budgetId := range goal.BudgetIdList {
 		budget, err := s.DB.GetBudgetRecordById(ctx, budgetId)
 		if err != nil {
-			log.Println("Error while fetching budgets", err)
+			log.Println("error while fetching budgets", err, ctx)
 			return currAmount, err
 		}
 		if budget == nil {
-			log.Println("No Budget record found")
+			log.Println("no Budget record found for budgetId:", budgetId, ctx)
 			return 0, exceptions.ErrNoBudgetsFound
 		}
 
-		// fmt.Println("Current budget in GetCurrentAmountInGoals: ", budget)
+		// fmt.Println("Current budget in GetCurrentAmountInGoals:", budget)
 		for _, bGoal := range (*budget).GoalMap {
 			if bGoal.Id == goal.GoalId {
 				currAmount += bGoal.CurrentAmount
@@ -261,11 +261,11 @@ func (s *serviceImpl) getCurrentAmountInGoals(ctx context.Context, goal *models.
 // Need to figure out where its used
 // func (s *serviceImpl) UpdateGoalAmount(ctx context.Context, goalId string, currAmount float32, budgetId string) (string, error) {
 // 	if goalId == "" {
-// 		log.Println("Missing Goal Id")
+// 		log.Println("missing Goal Id", ctx)
 // 		return "", exceptions.ErrValidationError
 // 	}
 // 	if budgetId == "" {
-// 		log.Println("Missing Budget Id")
+// 		log.Println("missing Budget Id", ctx)
 // 		return "", exceptions.ErrValidationError
 // 	}
 

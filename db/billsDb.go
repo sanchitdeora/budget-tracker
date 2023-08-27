@@ -16,7 +16,7 @@ import (
 func (db *DatabaseImpl) GetAllBillRecords(ctx context.Context) (*[]models.Bill, error) {
 	cur, err := billCollection.Find(ctx, bson.D{})
 	if err != nil {
-		log.Println(err)
+		log.Println("error while fetching all bills, error:", err, ctx)
 		return nil, err
 	}
 
@@ -25,14 +25,14 @@ func (db *DatabaseImpl) GetAllBillRecords(ctx context.Context) (*[]models.Bill, 
 		var result bson.M
 		err := cur.Decode(&result)
 		if err != nil {
-			log.Println("error while fetching all bills, error: ", err)
+			log.Println("error while fetching all bills, error:", err, ctx)
 			return nil, err
 		}
 		results = append(results, result)
 	}
 
 	if err := cur.Err(); err != nil {
-		log.Println("error while fetching all bills, error: ", err)
+		log.Println("error while fetching all bills, error:", err, ctx)
 		return nil, err
 	}
 	cur.Close(ctx)
@@ -40,7 +40,7 @@ func (db *DatabaseImpl) GetAllBillRecords(ctx context.Context) (*[]models.Bill, 
 	var bills []models.Bill
 	err = utils.ConvertBsonToStruct(results, &bills)
 	if err != nil {
-		log.Println("error while converting bson to struct, error: ", err)
+		log.Println("error while converting bson to struct, error:", err, ctx)
 		return nil, err
 	}
 
@@ -55,17 +55,17 @@ func (db *DatabaseImpl) GetBillRecordById(ctx context.Context, key string) ( *mo
 	filter := bson.D{{Key: BILL_ID_KEY, Value: key}}
 	err := billCollection.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
-		log.Println("error while fetching bill by id: ", key, " error: ", err)
+		log.Println("error while fetching bill by id:", key, " error:", err, ctx)
 		return nil, err
 	}
 	if len(result) == 0 {
-		log.Println("bill not found for id: ", key)
+		log.Println("bill not found for id:", key, ctx)
 		return nil, exceptions.ErrBillNotFound
 	}
 	
 	var bill models.Bill
 	if err := utils.ConvertBsonToStruct(result, &bill); err != nil {
-		log.Println("error while converting bson to struct, error: ", err)
+		log.Println("error while converting bson to struct, error:", err, ctx)
 		return nil, err
 	}
 	
@@ -96,7 +96,7 @@ func (db *DatabaseImpl) InsertBillRecord(ctx context.Context, bill *models.Bill)
 
 	result, err := billCollection.InsertOne(ctx, data)
 	if err != nil {
-		log.Println("error while inserting bill to unpaid, error: ", err)
+		log.Println("error while inserting bill to unpaid, error:", err, ctx)
 		return "", err
 	}
 	fmt.Printf("Created bill. ResultId: %v BillId: %v\n", result.InsertedID, billId)
@@ -122,17 +122,18 @@ func (db *DatabaseImpl) UpdateBillRecordById(ctx context.Context, id string, bil
 
 	result, err := billCollection.UpdateOne(ctx, filter, data)
 	if err != nil {
-		log.Println("error while updating bill with BillId: ", id, ", error: ", err)
+		log.Println("error while updating bill with BillId:", id, ", error:", err, ctx)
 		return "", err
 	}
 	fmt.Printf("Updated bill. ModifiedCount: %v BillId: %v\n", result.ModifiedCount, id)
 	return id, err
 }
 
-func (db *DatabaseImpl) UpdateBillRecordIsPaid(ctx context.Context, id string, datePaid time.Time) (string, error) {
+func (db *DatabaseImpl) UpdateBillRecordIsPaid(ctx context.Context, id string, nextBillId string, datePaid time.Time) (string, error) {
 	data := bson.D{{Key: "$set", 
 		Value: bson.D{
 			{Key: IS_PAID_KEY, Value: true},
+			{Key: NEXT_SEQUENCE_ID_KEY, Value: nextBillId},
 			{Key: DATE_PAID_KEY, Value: datePaid},
 		}},
 	}
@@ -140,7 +141,7 @@ func (db *DatabaseImpl) UpdateBillRecordIsPaid(ctx context.Context, id string, d
 
 	result, err := billCollection.UpdateOne(ctx, filter, data)
 	if err != nil {
-		log.Println("error while updating bill to paid with BillId: ", id, ", error: ", err)
+		log.Println("error while updating bill to paid with BillId:", id, ", error:", err, ctx)
 		return "", err
 	}
 	fmt.Printf("IsPaid set to true for bill. ModifiedCount: %v BillId: %v\n", result.ModifiedCount, id)
@@ -157,7 +158,7 @@ func (db *DatabaseImpl) UpdateBillRecordIsUnpaid(ctx context.Context, id string)
 
 	result, err := billCollection.UpdateOne(ctx, filter, data)
 	if err != nil {
-		log.Println("error while updating bill to unpaid with BillId: ", id, ", error: ", err)
+		log.Println("error while updating bill to unpaid with BillId:", id, ", error:", err, ctx)
 		return "", err
 	}
 	fmt.Printf("IsPaid set to false for bill. ModifiedCount: %v BillId: %v\n", result.ModifiedCount, id)
@@ -169,7 +170,7 @@ func (db *DatabaseImpl) DeleteBillRecordById(ctx context.Context, id string) (st
 
 	result, err := billCollection.DeleteOne(ctx, filter)
 	if err != nil {
-		log.Println("error while deleting bill with BillId: ", id, ", error: ", err)
+		log.Println("error while deleting bill with BillId:", id, ", error:", err, ctx)
 		return "", err
 	}
 

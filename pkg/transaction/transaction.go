@@ -38,7 +38,7 @@ func (s *serviceImpl) GetTransactions(ctx context.Context) (*[]models.Transactio
 
 func (s *serviceImpl) GetTransactionById(ctx context.Context, id string) (*models.Transaction, error) {
 	if id == "" {
-		log.Println("Missing Transaction Id")
+		log.Println("missing Transaction Id", ctx)
 		return nil, exceptions.ErrValidationError
 	}
 	return s.DB.GetTransactionRecordById(ctx, id)
@@ -46,7 +46,7 @@ func (s *serviceImpl) GetTransactionById(ctx context.Context, id string) (*model
 
 func (s *serviceImpl) GetTransactionsByDate(ctx context.Context, startDate time.Time, endDate time.Time) (*[]models.Transaction, error) {
 	if endDate.Before(startDate) {
-		log.Println("end date cannot be before start date")
+		log.Println("end date cannot be before start date", ctx)
 		return nil, exceptions.ErrValidationError
 	}
 	return s.DB.GetAllTransactionRecordsByDateRange(ctx, startDate, endDate)
@@ -63,7 +63,7 @@ func (s *serviceImpl) CreateTransaction(ctx context.Context, transaction *models
 
 func (s *serviceImpl) UpdateTransactionById(ctx context.Context, id string, transaction *models.Transaction) (string, error) {
 	if id == "" {
-		log.Println("Missing Transaction Id")
+		log.Println("missing Transaction Id", ctx)
 		return "", exceptions.ErrValidationError
 	}
 
@@ -76,7 +76,7 @@ func (s *serviceImpl) UpdateTransactionById(ctx context.Context, id string, tran
 
 func (s *serviceImpl) DeleteTransactionById(ctx context.Context, id string) (string, error) {
 	if id == "" {
-		log.Println("Missing Transaction Id")
+		log.Println("missing Transaction Id", ctx)
 		return "", exceptions.ErrValidationError
 	}
 

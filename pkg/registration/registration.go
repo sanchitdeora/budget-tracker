@@ -31,7 +31,7 @@ func LoginService(ctx context.Context, login *models.Login) error {
 		return errors.New("invaid login")
 	}
 	login.SurveyComplete = loginFromDB.SurveyComplete
-	log.Println("LoginBody inside: ", login)
+	log.Println("LoginBody inside:", login)
 
 	return err
 }

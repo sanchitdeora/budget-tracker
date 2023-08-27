@@ -19,6 +19,7 @@ type Bill struct {
 	CreationTime    time.Time `json:"creation_time"`
 	SequenceStartId string    `json:"sequence_start_id"`
 	SequenceNumber  int       `json:"sequence_no"`
+	NextSequenceId 	string	  `json:"next_sequence_id"`
 	Account		    string    `json:"account"`
 }
 
@@ -96,9 +97,9 @@ func (bill *Bill) IsValid() bool {
 	// }
 
 	if len(invalidErr) > 0 {
-		log.Println("Bill is invalid for the following reasons: ", strings.Join(invalidErr, ", "))
+		log.Println("bill is invalid for the following reasons:", strings.Join(invalidErr, ", "))
 		return false
 	}
-	
+
 	return true
 }

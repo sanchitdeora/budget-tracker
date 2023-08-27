@@ -15,7 +15,7 @@ import (
 func (db *DatabaseImpl) GetAllBudgetRecords(ctx context.Context) (*[]models.Budget, error) {
 	cur, err := budgetCollection.Find(ctx, bson.D{})
 	if err != nil {
-		log.Println(err)
+		log.Println("error while fetching all budgets, error:", err, ctx)
 		return nil, err
 	}
 
@@ -24,21 +24,21 @@ func (db *DatabaseImpl) GetAllBudgetRecords(ctx context.Context) (*[]models.Budg
 		var result bson.M
 		err := cur.Decode(&result)
 		if err != nil {
-			log.Println("error while fetching all budgets, error: ", err)
+			log.Println("error while fetching all budgets, error:", err, ctx)
 			return nil, err
 		}
 		results = append(results, result)
 	}
 
 	if err := cur.Err(); err != nil {
-		log.Println("error while fetching all budgets, error: ", err)
+		log.Println("error while fetching all budgets, error:", err, ctx)
 		return nil, err
 	}
 	cur.Close(ctx)
 
 	var budgets []models.Budget
 	if err := utils.ConvertBsonToStruct(results, &budgets); err != nil {
-		log.Println("error while converting bson to struct, error: ", err)
+		log.Println("error while converting bson to struct, error:", err, ctx)
 		return nil, err
 	}
 
@@ -52,17 +52,17 @@ func (db *DatabaseImpl) GetBudgetRecordById(ctx context.Context, key string) (*m
 	filter := bson.M{BUDGET_ID_KEY: key}
 	err := budgetCollection.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
-		log.Println("error while fetching budget by id: ", key, " error: ", err)
+		log.Println("error while fetching budget by id:", key, " error:", err, ctx)
 		return nil, err
 	}
 	if len(result) == 0 {
-		log.Println("budget not found for id: ", key)
+		log.Println("budget not found for id:", key, ctx)
 		return nil, exceptions.ErrBudgetNotFound
 	}
 
 	var budget models.Budget
 	if err := utils.ConvertBsonToStruct(result, &budget); err != nil {
-		log.Println("error while converting bson to struct, error: ", err)
+		log.Println("error while converting bson to struct, error:", err, ctx)
 		return nil, err
 	}
 
@@ -73,7 +73,7 @@ func (db *DatabaseImpl) InsertBudgetRecord(ctx context.Context, budget *models.B
 	if budget.BudgetId == "" {
 		budget.BudgetId = BUDGET_PREFIX + uuid.NewString()
 	}
-	fmt.Println("Insert budget: ", budget)
+	fmt.Println("Insert budget:", budget)
 	data := bson.D{
 		{Key: BUDGET_ID_KEY, Value: budget.BudgetId},
 		{Key: BUDGET_NAME_KEY, Value: budget.BudgetName},
@@ -90,7 +90,7 @@ func (db *DatabaseImpl) InsertBudgetRecord(ctx context.Context, budget *models.B
 
 	result, err := budgetCollection.InsertOne(ctx, data)
 	if err != nil {
-		log.Println("error while inserting budget, error: ", err)
+		log.Println("error while inserting budget, error:", err, ctx)
 		return "", err
 	}
 	fmt.Printf("Created budget. ResultId: %v BudgetId: %v\n", result.InsertedID, budget.BudgetId)
@@ -117,7 +117,7 @@ func (db *DatabaseImpl) UpdateBudgetRecordById(ctx context.Context, id string, b
 
 	result, err := budgetCollection.UpdateOne(ctx, filter, data)
 	if err != nil {
-		log.Println("error while updating budget with id: ", id, ", error: ", err)
+		log.Println("error while updating budget with id:", id, ", error:", err, ctx)
 		return "", err
 	}
 	fmt.Printf("Updated budget. ModifiedCount: %v BudgetId: %v\n", result.ModifiedCount, id)
@@ -129,7 +129,7 @@ func (db *DatabaseImpl) DeleteBudgetRecordById(ctx context.Context, id string) (
 
 	result, err := budgetCollection.DeleteOne(ctx, filter)
 	if err != nil {
-		log.Println("error while deleting budget with id: ", id, ", error: ", err)
+		log.Println("error while deleting budget with id:", id, ", error:", err, ctx)
 		return "", err
 	}
 

@@ -16,7 +16,7 @@ import (
 func (db *DatabaseImpl) GetAllTransactionRecords(ctx context.Context) (*[]models.Transaction, error) {
 	cur, err := transactionCollection.Find(ctx, bson.D{})
 	if err != nil {
-		log.Println(err)
+		log.Println("error while fetching all transactions, error:", err, ctx)
 		return nil, err
 	}
 
@@ -27,23 +27,23 @@ func (db *DatabaseImpl) GetAllTransactionRecords(ctx context.Context) (*[]models
 		var result bson.M
 		err := cur.Decode(&result)
 		if err != nil {
-			log.Println("error while fetching all transactions, error: ", err)
+			log.Println("error while fetching all transactions, error:", err, ctx)
 			return nil, err
 		}
 		results = append(results, result)
 	}
 
-	// fmt.Println("Got Results for all transactions in bson: ", len(results))
+	// fmt.Println("Got Results for all transactions in bson:", len(results))
 
 	if err := cur.Err(); err != nil {
-		log.Println("error while fetching all transactions, error: ", err)
+		log.Println("error while fetching all transactions, error:", err, ctx)
 		return nil, err
 	}
 	cur.Close(ctx)
 
 	var transactions []models.Transaction
 	if err := utils.ConvertBsonToStruct(results, &transactions); err != nil {
-		log.Println("error while converting bson to struct, error: ", err)
+		log.Println("error while converting bson to struct, error:", err, ctx)
 		return nil, err
 	}
 
@@ -57,17 +57,17 @@ func (db *DatabaseImpl) GetTransactionRecordById(ctx context.Context, key string
 	filter := bson.M{TRANSACTION_ID_KEY: key}
 	err := transactionCollection.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
-		log.Println("error while fetching transaction by id: ", key, " error: ", err)
+		log.Println("error while fetching transaction by id:", key, " error:", err, ctx)
 		return nil, err
 	}
 	if len(result) == 0 {
-		log.Println("transaction not found for id: ", key)
+		log.Println("transaction not found for id:", key, ctx)
 		return nil, exceptions.ErrTransactionNotFound
 	}
 
 	var transaction models.Transaction
 	if err := utils.ConvertBsonToStruct(result, &transaction); err != nil {
-		log.Println("error while converting bson to struct, error: ", err)
+		log.Println("error while converting bson to struct, error:", err, ctx)
 		return nil, err
 	}
 
@@ -82,10 +82,10 @@ func (db *DatabaseImpl) GetAllTransactionRecordsByDateRange(ctx context.Context,
         },
 	}
 	
-	// fmt.Println("filter here: ", filter)
+	// fmt.Println("filter here:", filter)
 	cur, err := transactionCollection.Find(ctx, filter)
 	if err != nil {
-		log.Println("error while fetching transaction by date, startDate: ", startDate, "endDate: ", endDate, " error: ", err)
+		log.Println("error while fetching transaction by date, startDate:", startDate, "endDate:", endDate, "error:", err, ctx)
 		return nil, err
 	}
 	
@@ -94,21 +94,21 @@ func (db *DatabaseImpl) GetAllTransactionRecordsByDateRange(ctx context.Context,
 		var result bson.M
 		err := cur.Decode(&result)
 		if err != nil {
-			log.Println("error while fetching transactions by date, error: ", err)
+			log.Println("error while fetching transactions by date, error:", err, ctx)
 			return nil, err
 		}
 		results = append(results, result)
 	}
 
 	if err := cur.Err(); err != nil {
-		log.Println("error while fetching transactions by date, error: ", err)
+		log.Println("error while fetching transactions by date, error:", err, ctx)
 		return nil, err
 	}
 	cur.Close(ctx)
 	
 	var transactions []models.Transaction
 	if err := utils.ConvertBsonToStruct(results, &transactions); err != nil {
-		log.Println("error while converting bson to struct, error: ", err)
+		log.Println("error while converting bson to struct, error:", err, ctx)
 		return nil, err
 	}
 
@@ -132,7 +132,7 @@ func (db *DatabaseImpl) InsertTransactionRecord(ctx context.Context, transaction
 
 	result, err := transactionCollection.InsertOne(ctx, data)
 	if err != nil {
-		log.Println("error while inserting transaction, error: ", err)
+		log.Println("error while inserting transaction, error:", err, ctx)
 		return "", err
 	}
 	fmt.Printf("Created transaction. ResultId: %v TransactionId: %v\n", result.InsertedID, transactionId)
@@ -155,7 +155,7 @@ func (db *DatabaseImpl) UpdateTransactionRecordById(ctx context.Context, id stri
 
 	result, err := transactionCollection.UpdateOne(ctx, filter, data)
 	if err != nil {
-		log.Println("error while updating transaction with id: ", id, ", error: ", err)
+		log.Println("error while updating transaction with id:", id, ", error:", err, ctx)
 		return "", err
 	}
 	fmt.Printf("Updated transaction. ModifiedCount: %v TransactionId: %v\n", result.ModifiedCount, id)
@@ -167,7 +167,7 @@ func (db *DatabaseImpl) DeleteTransactionRecordById(ctx context.Context, id stri
 
 	result, err := transactionCollection.DeleteOne(ctx, filter)
 	if err != nil {
-		log.Println("error while deleting transaction with id: ", id, ", error: ", err)
+		log.Println("error while deleting transaction with id:", id, ", error:", err, ctx)
 		return "", err
 	}
 

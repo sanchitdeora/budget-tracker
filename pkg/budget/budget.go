@@ -8,9 +8,9 @@ import (
 	"github.com/sanchitdeora/budget-tracker/db"
 	"github.com/sanchitdeora/budget-tracker/models"
 	"github.com/sanchitdeora/budget-tracker/pkg/bill"
+	"github.com/sanchitdeora/budget-tracker/pkg/exceptions"
 	"github.com/sanchitdeora/budget-tracker/pkg/goal"
 	"github.com/sanchitdeora/budget-tracker/pkg/transaction"
-	"github.com/sanchitdeora/budget-tracker/pkg/exceptions"
 	"github.com/sanchitdeora/budget-tracker/utils"
 )
 
@@ -82,7 +82,7 @@ func (s *serviceImpl) CreateBudgetByUser(ctx context.Context, budget *models.Bud
 		}
 	}
 
-	log.Println("creating a new budget by user request: ", budget, ctx)
+	log.Println("creating a new budget by user request:", budget, ctx)
 	return s.DB.InsertBudgetRecord(ctx, budget)
 }
 
@@ -103,7 +103,7 @@ func (s *serviceImpl) CreateRecurringBudget(ctx context.Context, budget *models.
 	budget.AutoSet(prevBudget.SequenceStartId, prevBudget.SequenceNumber)
 	setBudgetTime(budget)
 
-	log.Println("creating a new budget: ", budget, ctx)
+	log.Println("creating a new budget:", budget, ctx)
 
 	// update prev budget to be marked as closed
 	// prevBudget.IsClosed = true
@@ -149,7 +149,7 @@ func (s *serviceImpl) UpdateBudgetById(ctx context.Context, id string, budget *m
 		}
 	}
 
-	log.Println("Updating a new budget: ", budget)
+	log.Println("updating a new budget:", budget, ctx)
 	return s.DB.UpdateBudgetRecordById(ctx, id, budget)
 }
 

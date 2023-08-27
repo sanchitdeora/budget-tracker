@@ -52,13 +52,13 @@ func Init() (*mongo.Client, context.Context, error) {
 func GetUserRecordByEmail(ctx context.Context, key string) ([]byte, error) {
 	var user bson.M
 	if err := userCollection.FindOne(ctx, bson.M{EMAIL_KEY: key}).Decode(&user); err != nil {
-		log.Println("Error trying to get user from db", err)
+		log.Println("error trying to get user from db", err, ctx)
 		return nil, err
 	}
 
 	userJSON, err := bson.MarshalExtJSON(&user, true, true)
 	if err != nil {
-		log.Println(err)
+		log.Println("error while marshaling ext json to get user record, error:", err, ctx)
 		return nil, err
 	}
 	return userJSON, nil
@@ -70,7 +70,7 @@ func UpdateUserRecord(ctx context.Context, value string, update primitive.D) err
 
 	_, err := userCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
-		log.Println("Error trying to insert bdoc in mongo", err)
+		log.Println("error trying to insert bdoc in mongo", err, ctx)
 		return err
 	}
 
@@ -89,13 +89,13 @@ func addRecordToCollection(ctx context.Context, record []byte, collection *mongo
 	var bdoc interface{}
 	err := bson.UnmarshalExtJSON(record, true, &bdoc)
 	if err != nil {
-		log.Println(err)
+		log.Println(err, ctx)
 		return err
 	}
 
 	result, err := collection.InsertOne(ctx, bdoc)
 	if err != nil {
-		log.Println("Error trying to insert bdoc in mongo", err)
+		log.Println("error trying to insert bdoc in mongo", err, ctx)
 		return err
 	}
 	fmt.Println(result.InsertedID)

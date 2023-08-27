@@ -75,9 +75,9 @@ func (transaction *Transaction) IsValid() bool {
 	// }
 
 	if len(invalidErr) > 0 {
-		log.Println("Transaction is invalid for the following reasons: ", strings.Join(invalidErr, ", "))
+		log.Println("transaction is invalid for the following reasons:", strings.Join(invalidErr, ", "))
 		return false
 	}
-	
+
 	return true
 }

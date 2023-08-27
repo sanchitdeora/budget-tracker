@@ -35,10 +35,10 @@ func (goal *Goal) IsValid() bool {
 	// }
 
 	if len(invalidErr) > 0 {
-		log.Println("Goal is invalid for the following reasons: ", strings.Join(invalidErr, ", "))
+		log.Println("goal is invalid for the following reasons:", strings.Join(invalidErr, ", "))
 		return false
 	}
-	
+
 	return true
 }
 

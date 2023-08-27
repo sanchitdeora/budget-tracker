@@ -145,7 +145,7 @@ class BudgetDetail extends React.Component {
 
     getProgressPercentage = (currAmount, totalAmount) => {
         // console.log('Get progress percentage: ', currAmount, 'total amount: ', totalAmount)
-        currAmount = currAmount && currAmount > 0 ? currAmount : 0;
+        currAmount = (currAmount && currAmount > 0) ? currAmount : 0;
 
         if (totalAmount <= 0 || currAmount >= totalAmount) {
             return 100;

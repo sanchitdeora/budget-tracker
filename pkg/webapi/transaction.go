@@ -2,7 +2,6 @@ package webapi
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -67,8 +66,6 @@ func (service *ApiService) GetAllTransactionsByDate(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-
-	log.Println("Start time: ", time.UnixMilli(t1), "end time: ", time.UnixMilli(t2))
 
 	response, err := service.TransactionService.GetTransactionsByDate(c, time.UnixMilli(t1), time.UnixMilli(t2))
 	if err != nil {

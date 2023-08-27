@@ -36,6 +36,7 @@ const (
 	SAVINGS_KEY = "savings"
 	SEQUENCE_NUMBER_KEY = "sequence_no"
 	SEQUENCE_START_ID_KEY = "sequence_start_id"
+	NEXT_SEQUENCE_ID_KEY = "next_sequence_id"
 	TARGET_AMOUNT_KEY = "target_amount"
 	TARGET_DATE_KEY = "target_date"
 	TITLE_KEY = "title"
@@ -81,7 +82,7 @@ type Database interface {
 	GetBillRecordById(ctx context.Context, id string) (*models.Bill, error)
 	InsertBillRecord(ctx context.Context, bill *models.Bill) (string, error)
 	UpdateBillRecordById(ctx context.Context, id string, bill *models.Bill) (string, error)
-	UpdateBillRecordIsPaid(ctx context.Context, id string, datePaid time.Time) (string, error)
+	UpdateBillRecordIsPaid(ctx context.Context, id string, nextBillId string, datePaid time.Time) (string, error)
 	UpdateBillRecordIsUnpaid(ctx context.Context, id string) (string, error)
 	DeleteBillRecordById(ctx context.Context, id string) (string, error)
 
@@ -111,14 +112,14 @@ func AddUser(ctx context.Context, user models.User) error {
 
 	record, err := json.Marshal(user)
 	if err != nil {
-		log.Println(err)
+		log.Println(err, ctx)
 		return err
 	}
 
 	// fmt.Println("Inside db create account record", string(record))
 	err = AddUserRecord(ctx, record)
 	if err != nil {
-		log.Println(err)
+		log.Println(err, ctx)
 		return err
 	}
 	return nil
@@ -139,7 +140,7 @@ func UpdateUser(ctx context.Context, user models.User) error {
 
 	err := UpdateUserRecord(ctx, user.Email, update)
 	if err != nil {
-		log.Println(err)
+		log.Println(err, ctx)
 		return err
 	}
 	return nil
@@ -149,13 +150,13 @@ func GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
 	userRecord, err := GetUserRecordByEmail(ctx, email)
 	if err != nil {
-		log.Println(err)
+		log.Println(err, ctx)
 		return nil, err
 	}
 
 	err = json.Unmarshal(userRecord, &user)
 	if err != nil {
-		log.Println(err)
+		log.Println(err, ctx)
 		return nil, err
 	}
 	return &user, nil
@@ -166,13 +167,13 @@ func AddSurvey(ctx context.Context, survey *models.Survey) error {
 	survey.SurveyID = SURVEY_PREFIX + uuid.NewString()
 	record, err := json.Marshal(survey)
 	if err != nil {
-		log.Println(err)
+		log.Println(err, ctx)
 		return err
 	}
 
 	err = AddSurveyRecord(ctx, record)
 	if err != nil {
-		log.Println(err)
+		log.Println(err, ctx)
 		return err
 	}
 	return nil
@@ -182,13 +183,13 @@ func GetLoginInfo(ctx context.Context, login *models.Login) (*models.Login, erro
 	var loginDB models.Login
 	userRecord, err := GetUserRecordByEmail(ctx, login.Email)
 	if err != nil {
-		log.Println(err)
+		log.Println(err, ctx)
 		return nil, err
 	}
 
 	err = json.Unmarshal(userRecord, &loginDB)
 	if err != nil {
-		log.Println(err)
+		log.Println(err, ctx)
 		return nil, err
 	}
 	// fmt.Println("After unmarshall", loginDB)
