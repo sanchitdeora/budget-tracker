@@ -44,7 +44,6 @@ func (db *DatabaseImpl) GetAllBudgetRecords(ctx context.Context) (*[]models.Budg
 
 	fmt.Printf("Get All budget. Count of elements: %v\n", len(results))
 	return &budgets, nil
-	
 }
 
 func (db *DatabaseImpl) GetBudgetRecordById(ctx context.Context, key string) (*models.Budget, error) {
@@ -68,7 +67,6 @@ func (db *DatabaseImpl) GetBudgetRecordById(ctx context.Context, key string) (*m
 	}
 
 	return &budget, nil
-	
 }
 
 func (db *DatabaseImpl) InsertBudgetRecord(ctx context.Context, budget *models.Budget) (string, error) {
@@ -108,6 +106,11 @@ func (db *DatabaseImpl) UpdateBudgetRecordById(ctx context.Context, id string, b
 			{Key: BUDGET_GOAL_MAP_KEY, Value: budget.GoalMap},
 			{Key: FREQUENCY_KEY, Value: budget.Frequency},
 			{Key: SAVINGS_KEY, Value: budget.Savings},
+			{Key: CREATION_TIME_KEY, Value: budget.CreationTime},
+			{Key: EXPIRATION_TIME_KEY, Value: budget.ExpirationTime},
+			{Key: SEQUENCE_START_ID_KEY, Value: budget.SequenceStartId},
+			{Key: SEQUENCE_NUMBER_KEY, Value: budget.SequenceNumber},
+			{Key: IS_CLOSED_KEY, Value: budget.IsClosed},
 		}},
 	}
 	filter := bson.D{{Key: BUDGET_ID_KEY, Value: id}}

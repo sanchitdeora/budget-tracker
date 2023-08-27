@@ -7,6 +7,7 @@ import BudgetMapInput from './BudgetMapInput';
 import { CATEGORY_MAP, FREQUENCY_MAP } from './GlobalConstants';
 import axios from 'axios';
 import { EXPENSES, GOALS, INCOMES } from '../components/Budgets/BudgetConstants';
+import { transformDateFormatToYyyyMmDd } from './StringUtils';
 
 class ReusableBudgetDialog extends React.Component {
     constructor(props) {
@@ -107,6 +108,18 @@ class ReusableBudgetDialog extends React.Component {
                             optionsList={this.state.allGoals}
                             handleChange={this.handleGoalChange}
                             currentDataMap={this.props.currentBudget.goal_map ? this.props.currentBudget.goal_map : []}
+                        />
+                    </div>
+
+                    <br></br>
+                    <div className='budget-input-group'>
+                        <label htmlFor='date'>Date</label><br></br>
+                        <input
+                            defaultValue={transformDateFormatToYyyyMmDd(this.props.currentBudget.creation_date)}
+                            type='date'
+                            name='creation_time'
+                            className='budget-input-box'
+                            onChange={this.props.handleInputChange}
                         />
                     </div>
 

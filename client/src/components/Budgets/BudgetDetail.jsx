@@ -122,6 +122,7 @@ class BudgetDetail extends React.Component {
             'goal_map': this.props.budget.goal_map,
             'frequency': this.props.budget.frequency,
             'savings': parseFloat(this.props.budget.savings),
+            'creation_time': this.props.budget.creation_time,
         }
         console.log('The budgets edit form was submitted with the following data:', budgetBody);
         this.putBudgetRequest(budgetBody)

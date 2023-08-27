@@ -120,6 +120,7 @@ func (s *serviceImpl) UpdateBudgetById(ctx context.Context, id string, budget *m
 	if err := validateBudget(ctx, budget); err != nil {
 		return "", err
 	}
+	setBudgetTime(budget)
 
 	currentBudget, err := s.GetBudgetById(ctx, id)
 	if err != nil {

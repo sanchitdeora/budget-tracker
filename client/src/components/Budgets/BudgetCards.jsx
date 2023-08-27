@@ -28,7 +28,8 @@ class BudgetCards extends React.Component {
             goal_map: [],
             frequency: '',
             savings: 0,
-            
+            creation_time: new Date(),
+
             isBudgetOpen: false,
             isCreateDialogOpen: false,
             isEditDialogOpen: false,
@@ -71,6 +72,7 @@ class BudgetCards extends React.Component {
             'goal_map': this.state.goal_map,
             'frequency': this.state.frequency,
             'savings': parseFloat(this.state.savings),
+            'creation_time': new Date(this.state.creation_time + "T00:00:00-05:00"),
         }
         console.log('The create budgets form was submitted with the following data:', budgetBody);
         this.postBudgetRequest(budgetBody)
@@ -101,6 +103,7 @@ class BudgetCards extends React.Component {
             'goal_map': this.state.goal_map,
             'frequency': this.state.frequency,
             'savings': parseFloat(this.state.savings),
+            'creation_time': new Date(this.state.creation_time + "T00:00:00-05:00"),
         }
         console.log('The budgets edit form was submitted with the following data:', budgetBody);
         this.putBudgetRequest(budgetBody)
@@ -224,6 +227,7 @@ class BudgetCards extends React.Component {
             goal_map: [],
             frequency: '',
             savings: 0,
+            creation_time: new Date(),
         })
     }
 
@@ -237,6 +241,7 @@ class BudgetCards extends React.Component {
             goal_map: budget.goal_map,
             frequency: budget.frequency,
             savings: budget.savings,
+            creation_time: budget.creation_time,
         })
     }
 

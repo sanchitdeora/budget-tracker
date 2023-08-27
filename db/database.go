@@ -30,6 +30,7 @@ const (
 	FREQUENCY_KEY = "frequency"
 	INCOME_KEY = "income"
 	IS_PAID_KEY = "is_paid"
+	IS_CLOSED_KEY = "is_closed"
 	NAME_KEY = "name"
 	NOTE_KEY = "note"
 	SAVINGS_KEY = "savings"
