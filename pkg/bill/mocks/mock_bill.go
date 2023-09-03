@@ -35,19 +35,16 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
 }
 
-// CreateBill mocks base method.
-func (m *MockService) CreateBill(arg0 context.Context, arg1 *models.Bill) (string, error) {
+// BillMaintainer mocks base method.
+func (m *MockService) BillMaintainer(arg0 context.Context) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateBill", arg0, arg1)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	m.ctrl.Call(m, "BillMaintainer", arg0)
 }
 
-// CreateBill indicates an expected call of CreateBill.
-func (mr *MockServiceMockRecorder) CreateBill(arg0, arg1 interface{}) *gomock.Call {
+// BillMaintainer indicates an expected call of BillMaintainer.
+func (mr *MockServiceMockRecorder) BillMaintainer(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBill", reflect.TypeOf((*MockService)(nil).CreateBill), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BillMaintainer", reflect.TypeOf((*MockService)(nil).BillMaintainer), arg0)
 }
 
 // CreateBillByUser mocks base method.
@@ -63,6 +60,21 @@ func (m *MockService) CreateBillByUser(arg0 context.Context, arg1 *models.Bill) 
 func (mr *MockServiceMockRecorder) CreateBillByUser(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateBillByUser", reflect.TypeOf((*MockService)(nil).CreateBillByUser), arg0, arg1)
+}
+
+// CreateRecurringBill mocks base method.
+func (m *MockService) CreateRecurringBill(arg0 context.Context, arg1 *models.Bill) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CreateRecurringBill", arg0, arg1)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CreateRecurringBill indicates an expected call of CreateRecurringBill.
+func (mr *MockServiceMockRecorder) CreateRecurringBill(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateRecurringBill", reflect.TypeOf((*MockService)(nil).CreateRecurringBill), arg0, arg1)
 }
 
 // DeleteBillById mocks base method.

@@ -19,9 +19,12 @@ type Service interface {
 	GetBudgets(ctx context.Context) (*[]models.Budget, error)
 	GetBudgetById(ctx context.Context, id string) (*models.Budget, error)
 	CreateBudgetByUser(ctx context.Context, budget *models.Budget) (string, error)
-	CreateRecurringBudget(ctx context.Context, budget *models.Budget, prevBudget *models.Budget) (string, error)
 	UpdateBudgetById(ctx context.Context, id string, budget *models.Budget) (string, error)
 	DeleteBudgetById(ctx context.Context, id string) (string, error)
+	
+	// Maintain recurring budgets
+	BudgetMaintainer(ctx context.Context)
+	CreateRecurringBudget(ctx context.Context, prevBudget *models.Budget) (string, error)
 }
 
 type Opts struct {
@@ -39,6 +42,21 @@ func NewService(opts *Opts) Service {
 	return &serviceImpl{Opts: opts}
 }
 
+func (s *serviceImpl) updateBudgetCurrentAmount(ctx context.Context, budget *models.Budget) error {
+	transactions, err := s.TransactionService.GetTransactionsByDate(ctx, budget.CreationTime, budget.ExpirationTime)
+	if err != nil {
+		log.Println("error while fetching transactionsByDate for budgetId:", budget.BudgetId, err, ctx)
+		return  err
+	}
+
+	if transactions != nil && len(*transactions) > 0 {
+		updateCurrentAmounts(true, &budget.IncomeMap, transactions)
+		updateCurrentAmounts(false, &budget.ExpenseMap, transactions)
+	}
+
+	return nil
+}
+
 func (s *serviceImpl) GetBudgets(ctx context.Context) (*[]models.Budget, error) {
 	budgets, err := s.DB.GetAllBudgetRecords(ctx)
 	if err != nil {
@@ -46,14 +64,11 @@ func (s *serviceImpl) GetBudgets(ctx context.Context) (*[]models.Budget, error) 
 		return nil, err
 	}
 
-	for i, budget := range *budgets {
-		transactions, err := s.TransactionService.GetTransactionsByDate(ctx, budget.CreationTime, budget.ExpirationTime)
+	for i := range *budgets {
+		err = s.updateBudgetCurrentAmount(ctx, &(*budgets)[i])
 		if err != nil {
 			return nil, err
 		}
-
-		updateCurrentAmounts(true, &(*budgets)[i].IncomeMap, transactions)
-		updateCurrentAmounts(false, &(*budgets)[i].ExpenseMap, transactions)
 	}
 
 	return budgets, nil
@@ -64,52 +79,68 @@ func (s *serviceImpl) GetBudgetById(ctx context.Context, id string) (*models.Bud
 		log.Println("missing Budget Id", ctx)
 		return nil, exceptions.ErrValidationError
 	}
-	return s.DB.GetBudgetRecordById(ctx, id)
+
+	budget, err := s.DB.GetBudgetRecordById(ctx, id)
+	if err != nil {
+		log.Println("error getting budget record for id:", id, ctx, err)
+		return nil, err
+	}
+
+	err = s.updateBudgetCurrentAmount(ctx, budget)
+	if err != nil {
+		return nil, err
+	}
+
+	return budget, nil
 }
 
 func (s *serviceImpl) CreateBudgetByUser(ctx context.Context, budget *models.Budget) (string, error) {
-	if err := validateBudget(ctx, budget); err != nil {
+	if !budget.IsValid() {
+		log.Println("budget is invalid:", budget)
+		return "", exceptions.ErrValidationError
+	}
+	budget.SetCategory()
+	budget.SetFrequency()
+
+	setBudgetTime(budget)
+	
+	log.Println("creating a new budget by user request:", budget, ctx)
+	
+	budgetId, err := s.DB.InsertBudgetRecord(ctx, budget)
+	if err != nil {
+		log.Println("error while inserting budget:", budget, "error:", err, ctx)
 		return "", err
 	}
-	budget.SetByUser()
-	setBudgetTime(budget)
 
 	for _, val := range budget.GoalMap {
-		_, err := s.GoalService.UpdateBudgetIdsList(ctx, val.Id, budget.BudgetId)
+		_, err := s.GoalService.UpdateBudgetIdsList(ctx, val.Id, budgetId)
 		if err != nil {
-			log.Println("error while updating budgets ids list for the goal:", val.Id, "budgetId:", budget.BudgetId, "error:", err, ctx)
+			log.Println("error while updating budgets ids list for the goal:", val.Id, "budgetId:", budgetId, "error:", err, ctx)
 			return "", err
 		}
 	}
 
-	log.Println("creating a new budget by user request:", budget, ctx)
-	return s.DB.InsertBudgetRecord(ctx, budget)
+	return budgetId, nil
 }
 
 // Plan this more
-func (s *serviceImpl) CreateRecurringBudget(ctx context.Context, budget *models.Budget, prevBudget *models.Budget) (string, error) {
-	if err := validateBudget(ctx, budget); err != nil {
-		return "", err
-	}
-	if prevBudget.BudgetId == "" {
+func (s *serviceImpl) CreateRecurringBudget(ctx context.Context, prevBudget *models.Budget) (string, error) {
+	if prevBudget == nil || prevBudget.BudgetId == "" {
 		log.Println("missing Budget Id while creating a recurring budget", ctx)
 		return "", exceptions.ErrValidationError
 	}
 	if !prevBudget.IsValid() {
-		log.Println("prev budget:",prevBudget.BudgetId, "is invalid", ctx)
+		log.Println("budget:", prevBudget.BudgetId, "is invalid", ctx)
 		return "", exceptions.ErrValidationError
 	}
 
-	budget.AutoSet(prevBudget.SequenceStartId, prevBudget.SequenceNumber)
-	setBudgetTime(budget)
+	var budget models.Budget
+	budget.CreateFromPreviousBudget(prevBudget)
+	setBudgetTime(&budget)
 
 	log.Println("creating a new budget:", budget, ctx)
 
-	// update prev budget to be marked as closed
-	// prevBudget.IsClosed = true
-	// s.DB.UpdateBudgetRecordById(ctx, prevBudget.BudgetId, prevBudget)
-
-	return s.DB.InsertBudgetRecord(ctx, budget)
+	return s.DB.InsertBudgetRecord(ctx, &budget)
 }
 
 func (s *serviceImpl) UpdateBudgetById(ctx context.Context, id string, budget *models.Budget) (string, error) {
@@ -117,8 +148,8 @@ func (s *serviceImpl) UpdateBudgetById(ctx context.Context, id string, budget *m
 		log.Println("missing Budget Id", ctx)
 		return "", exceptions.ErrValidationError
 	}
-	if err := validateBudget(ctx, budget); err != nil {
-		return "", err
+	if !budget.IsValid() {
+		return "", exceptions.ErrValidationError
 	}
 	setBudgetTime(budget)
 
@@ -174,19 +205,48 @@ func (s *serviceImpl) DeleteBudgetById(ctx context.Context, id string) (string, 
 	return s.DB.DeleteBudgetRecordById(ctx, id)
 }
 
-// util functions
+// Maintainer functions
+func (s *serviceImpl) BudgetMaintainer(ctx context.Context) {
+	log.Println("start budget maintainer", ctx)
 
-func validateBudget(ctx context.Context, budget *models.Budget) error{
-	if !budget.IsValid() {
-		return exceptions.ErrValidationError
+	successfulCounter := 0
+	budgets, err := s.GetBudgets(ctx)
+	if err != nil {
+		log.Println("error while fetching budget records", "error:", err, ctx)
+		return
 	}
 	
-	budget.SetCategory()
-	budget.SetFrequency()
-	budget.SetSavings()
+	for _, budget := range *budgets{
+		if budget.Frequency == models.ONCE_FREQUENCY || 
+			budget.NextSequenceId != "" || 
+			budget.ExpirationTime.IsZero() || 
+			time.Since(budget.ExpirationTime) < 0 {
 
-	return nil
+			continue
+		}
+
+		if time.Since(budget.ExpirationTime) >= 0 {
+			newBudgetId, err := s.CreateRecurringBudget(ctx, &budget)
+			if err != nil {
+				log.Println("error while creating new budget id:", newBudgetId, "error:", err, ctx)
+				continue
+			}
+			
+			budget.NextSequenceId = newBudgetId
+			budget.IsClosed = true
+			_, err = s.DB.UpdateBudgetRecordById(ctx, budget.BudgetId, &budget)
+			if err != nil {
+				log.Println("error while updating budget id:", budget.BudgetId, "error:", err, ctx)
+				continue
+			}
+			successfulCounter++
+		}
+	}
+
+	log.Println("complete budget maintainer with successfully updating", successfulCounter, "budgets", ctx)
 }
+
+// util functions
 
 func filterTransactionsByCategory(categoryId string, transactions []models.Transaction) []models.Transaction {
 	var filteredTransactions []models.Transaction
@@ -248,9 +308,7 @@ func setBudgetTime(budget *models.Budget) {
 	if budget.CreationTime.IsZero() {
 		budget.CreationTime = time.Now().Local()
 	}
-
-	expTime := utils.CalculateEndDateWithFrequency(budget.CreationTime, budget.Frequency)
-	budget.ExpirationTime = expTime
+	budget.ExpirationTime = utils.CalculateEndDateWithFrequency(budget.CreationTime, budget.Frequency)
 }
 
 func updateCurrentAmounts(transactionType bool, budgetMaps *[]models.BudgetInputMap, transactions *[]models.Transaction) {
@@ -275,6 +333,7 @@ func updateCurrentAmounts(transactionType bool, budgetMaps *[]models.BudgetInput
 		} else {
 			uncategorized.Amount = budgetMap.Amount
 			uncategorizedMapIndex = i
+			(*budgetMaps) = append((*budgetMaps), uncategorized)
 		}
 	}
 

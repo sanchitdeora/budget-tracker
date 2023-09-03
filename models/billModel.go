@@ -20,6 +20,7 @@ type Bill struct {
 	SequenceStartId string    `json:"sequence_start_id"`
 	SequenceNumber  int       `json:"sequence_no"`
 	NextSequenceId 	string	  `json:"next_sequence_id"`
+	TransactionId	string 	  `json:"transaction_id"`
 	Account		    string    `json:"account"`
 }
 
@@ -46,9 +47,9 @@ var BillFrequencyMap = []string{
 }
 
 func (bill *Bill) SetByUser() {
-	if bill.CreationTime.IsZero() {
-		bill.CreationTime = time.Now().Local()
-	}
+	// if bill.CreationTime.IsZero() {
+	// 	bill.CreationTime = time.Now().Local()
+	// }
 	bill.SequenceNumber = 0
 }
 
@@ -103,3 +104,11 @@ func (bill *Bill) IsValid() bool {
 
 	return true
 }
+
+// func (bill *Bill) GetExpirationTime() time.Time {
+// 	if (bill.Frequency == ONCE_FREQUENCY || bill.CreationTime == time.Time{}) {
+// 		log.Println("bill either has no frequency or creation time, billId:", bill.BillId)
+// 		return time.Time{}
+// 	}
+// 	return utils.CalculateEndDateWithFrequency(bill.CreationTime, bill.Frequency)
+// }

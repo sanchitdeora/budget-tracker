@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"golang.org/x/exp/slices"
 )
 
@@ -22,6 +21,7 @@ type Budget struct {
 	ExpirationTime  time.Time 		 `json:"expiration_time"`
 	SequenceStartId string    		 `json:"sequence_start_id"`
 	SequenceNumber  int       		 `json:"sequence_no"`
+	NextSequenceId  string			 `json:"next_sequence_id"`
 	IsClosed 		bool	    	 `json:"is_closed"`
 }
 
@@ -99,21 +99,25 @@ func (budget *Budget) SetCategory() {
 	budget.ExpenseMap = updateCategoryInBudgetMap(budget.ExpenseMap)
 }
 
-func (budget *Budget) SetByUser() {
-	budgetId := BUDGET_PREFIX + uuid.NewString()
-	budget.BudgetId = budgetId
+func (budget *Budget) CreateFromPreviousBudget(prev *Budget) {
+	budget.BudgetName = prev.BudgetName
+	budget.IncomeMap = createNewBudgetInputMap(&prev.IncomeMap)
+	budget.ExpenseMap = createNewBudgetInputMap(&prev.ExpenseMap)
+	budget.GoalMap = createNewBudgetInputMap(&prev.GoalMap)
+	budget.Frequency = prev.Frequency
 
-	budget.SequenceStartId = budgetId
-	budget.SequenceNumber = 0
+	if prev.SequenceStartId == "" {
+		budget.SequenceStartId = prev.BudgetId	
+	} else {
+		budget.SequenceStartId = prev.SequenceStartId
+	}
+	budget.SequenceNumber = prev.SequenceNumber + 1
 
-}
-func (budget *Budget) AutoSet(sequenceStardId string, prevSequenceNo int) {
-	budgetId := BUDGET_PREFIX + uuid.NewString()
-	budget.BudgetId = budgetId
-	
-	budget.SequenceNumber = prevSequenceNo + 1
-	budget.SequenceStartId = sequenceStardId
+	budget.CreationTime = prev.ExpirationTime
 
+	budget.SetCategory()
+	budget.SetFrequency()
+	budget.SetSavings()
 }
 
 func updateCategoryInBudgetMap(budgetMap []BudgetInputMap) []BudgetInputMap{
@@ -177,4 +181,16 @@ func calculateSavings(incomeMap []BudgetInputMap, spendingLimitMap []BudgetInput
 	}
 
 	return totalSavings
+}
+
+func createNewBudgetInputMap(prevMap *[]BudgetInputMap) (newMap []BudgetInputMap) { 
+	for _, input := range *prevMap {
+		newMap = append(newMap, BudgetInputMap{
+			Id: input.Id,
+			Name: input.Name,
+			Amount: input.Amount,
+			CurrentAmount: 0,
+		})
+	}
+	return newMap
 }

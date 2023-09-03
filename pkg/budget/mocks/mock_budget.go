@@ -35,6 +35,18 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 	return m.recorder
 }
 
+// BudgetMaintainer mocks base method.
+func (m *MockService) BudgetMaintainer(arg0 context.Context) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "BudgetMaintainer", arg0)
+}
+
+// BudgetMaintainer indicates an expected call of BudgetMaintainer.
+func (mr *MockServiceMockRecorder) BudgetMaintainer(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BudgetMaintainer", reflect.TypeOf((*MockService)(nil).BudgetMaintainer), arg0)
+}
+
 // CreateBudgetByUser mocks base method.
 func (m *MockService) CreateBudgetByUser(arg0 context.Context, arg1 *models.Budget) (string, error) {
 	m.ctrl.T.Helper()
@@ -51,18 +63,18 @@ func (mr *MockServiceMockRecorder) CreateBudgetByUser(arg0, arg1 interface{}) *g
 }
 
 // CreateRecurringBudget mocks base method.
-func (m *MockService) CreateRecurringBudget(arg0 context.Context, arg1, arg2 *models.Budget) (string, error) {
+func (m *MockService) CreateRecurringBudget(arg0 context.Context, arg1 *models.Budget) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateRecurringBudget", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "CreateRecurringBudget", arg0, arg1)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // CreateRecurringBudget indicates an expected call of CreateRecurringBudget.
-func (mr *MockServiceMockRecorder) CreateRecurringBudget(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) CreateRecurringBudget(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateRecurringBudget", reflect.TypeOf((*MockService)(nil).CreateRecurringBudget), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateRecurringBudget", reflect.TypeOf((*MockService)(nil).CreateRecurringBudget), arg0, arg1)
 }
 
 // DeleteBudgetById mocks base method.
@@ -108,21 +120,6 @@ func (m *MockService) GetBudgets(arg0 context.Context) (*[]models.Budget, error)
 func (mr *MockServiceMockRecorder) GetBudgets(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBudgets", reflect.TypeOf((*MockService)(nil).GetBudgets), arg0)
-}
-
-// GetGoalMap mocks base method.
-func (m *MockService) GetGoalMap(arg0 context.Context, arg1 string) (*[]models.BudgetInputMap, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetGoalMap", arg0, arg1)
-	ret0, _ := ret[0].(*[]models.BudgetInputMap)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetGoalMap indicates an expected call of GetGoalMap.
-func (mr *MockServiceMockRecorder) GetGoalMap(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGoalMap", reflect.TypeOf((*MockService)(nil).GetGoalMap), arg0, arg1)
 }
 
 // UpdateBudgetById mocks base method.

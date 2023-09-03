@@ -73,6 +73,10 @@ func (db *DatabaseImpl) InsertBudgetRecord(ctx context.Context, budget *models.B
 	if budget.BudgetId == "" {
 		budget.BudgetId = BUDGET_PREFIX + uuid.NewString()
 	}
+	if budget.SequenceStartId == "" {
+		budget.SequenceStartId = budget.BudgetId
+		budget.SequenceNumber = 0
+	}
 	fmt.Println("Insert budget:", budget)
 	data := bson.D{
 		{Key: BUDGET_ID_KEY, Value: budget.BudgetId},
@@ -86,6 +90,7 @@ func (db *DatabaseImpl) InsertBudgetRecord(ctx context.Context, budget *models.B
 		{Key: EXPIRATION_TIME_KEY, Value: budget.ExpirationTime},
 		{Key: SEQUENCE_NUMBER_KEY, Value: budget.SequenceNumber},
 		{Key: SEQUENCE_START_ID_KEY, Value: budget.SequenceStartId},
+		{Key: NEXT_SEQUENCE_ID_KEY, Value: ""},
 	}
 
 	result, err := budgetCollection.InsertOne(ctx, data)
@@ -110,6 +115,7 @@ func (db *DatabaseImpl) UpdateBudgetRecordById(ctx context.Context, id string, b
 			{Key: EXPIRATION_TIME_KEY, Value: budget.ExpirationTime},
 			{Key: SEQUENCE_START_ID_KEY, Value: budget.SequenceStartId},
 			{Key: SEQUENCE_NUMBER_KEY, Value: budget.SequenceNumber},
+			{Key: NEXT_SEQUENCE_ID_KEY, Value: budget.NextSequenceId},
 			{Key: IS_CLOSED_KEY, Value: budget.IsClosed},
 		}},
 	}

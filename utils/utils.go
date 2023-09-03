@@ -2,8 +2,6 @@ package utils
 
 import (
 	"time"
-
-	"github.com/sanchitdeora/budget-tracker/models"
 )
 
 func Contains(s []string, v string) bool {
@@ -29,21 +27,21 @@ func Remove[T comparable](s []T, index int) []T{
 }
 
 func CalculateEndDateWithFrequency(currDate time.Time, freq string) time.Time {
-	if freq == models.DAILY_FREQUENCY {
+	if freq == "daily" {
 		return currDate.AddDate(0, 0, 1)
-	} else if freq == models.WEEKLY_FREQUENCY {
+	} else if freq == "weekly" {
 		return currDate.AddDate(0, 0, 7)
-	} else if freq == models.BI_WEEKLY_FREQUENCY {
+	} else if freq == "bi_weekly" {
 		return currDate.AddDate(0, 0, 14)
-	} else if freq == models.MONTHLY_FREQUENCY {
+	} else if freq == "monthly" {
 		return currDate.AddDate(0, 1, 0)
-	} else if freq == models.BI_MONTHLY_FREQUENCY {
+	} else if freq == "bi_monthly" {
 		return currDate.AddDate(0, 2, 0)
-	} else if freq == models.QUARTERLY_FREQUENCY {
+	} else if freq == "quarterly" {
 		return currDate.AddDate(0, 3, 0)
-	} else if freq == models.HALF_YEARLY_FREQUENCY {
+	} else if freq == "half_yearly" {
 		return currDate.AddDate(0, 6, 0)
-	} else if freq == models.YEARLY_FREQUENCY {
+	} else if freq == "yearly" {
 		return currDate.AddDate(1, 0, 0)
 	}
 

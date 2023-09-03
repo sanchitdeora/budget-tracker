@@ -10,14 +10,15 @@ import (
 	mock_db "github.com/sanchitdeora/budget-tracker/db/mocks"
 	"github.com/sanchitdeora/budget-tracker/models"
 	mock_bill "github.com/sanchitdeora/budget-tracker/pkg/bill/mocks"
+	"github.com/sanchitdeora/budget-tracker/pkg/exceptions"
 	mock_goal "github.com/sanchitdeora/budget-tracker/pkg/goal/mocks"
 	mock_transaction "github.com/sanchitdeora/budget-tracker/pkg/transaction/mocks"
-	"github.com/sanchitdeora/budget-tracker/pkg/exceptions"
 	"github.com/stretchr/testify/assert"
 )
 
 const (
 	TEST_ID 		 	  = "test-id"
+	TEST_ID_2 		 	  = "test-id-2"
 	TEST_NAME		 	  = "test-name"
 	TEST_INCOME_MAP_ID_1  = "test-income-map-id-1"
 	TEST_EXPENSE_MAP_ID_1 = "test-expense-map-id-1"
@@ -206,11 +207,24 @@ func TestGetBudgetById(t *testing.T) {
 		mocks.DB.EXPECT().
 			GetBudgetRecordById(gomock.Any(), gomock.Any()).
 			Return(&TEST_BUDGET_HAPPY_PATH, nil)
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(&TEST_TRANSACTIONS_HAPPY_PATH, nil)
 
 		budget, err := service.GetBudgetById(context.Background(), TEST_ID)
 
 		assert.Nil(t, err)
 		assert.NotNil(t, budget)
+		assert.Equal(t, models.INCOME_CATEGORY, budget.IncomeMap[0].Id)
+		assert.Equal(t, TEST_AMOUNT_500, budget.IncomeMap[0].CurrentAmount)
+		assert.Equal(t, models.UNCATEGORIZED_CATEGORY, budget.IncomeMap[1].Id)
+		assert.Equal(t, TEST_AMOUNT_500, budget.IncomeMap[1].CurrentAmount)
+
+		assert.Equal(t, models.BILLS_AND_UTILITIES_CATEGORY, budget.ExpenseMap[0].Id)
+		assert.Equal(t, TEST_AMOUNT_500, budget.ExpenseMap[0].CurrentAmount)
+		assert.Equal(t, models.UNCATEGORIZED_CATEGORY, budget.ExpenseMap[1].Id)
+		assert.Equal(t, TEST_AMOUNT_500, budget.ExpenseMap[1].CurrentAmount)
+		
 	}
 
 	{ 	// validation error empty budget id
@@ -232,9 +246,48 @@ func TestGetBudgetById(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, exceptions.ErrBudgetNotFound, err)
 	}
+
+	{	// error while updating current amounts
+		mocks.DB.EXPECT().
+			GetBudgetRecordById(gomock.Any(), gomock.Any()).
+			Return(&TEST_BUDGET_HAPPY_PATH, nil)
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(nil, ErrSomeError)
+
+		budget, err := service.GetBudgetById(context.Background(), TEST_ID)
+
+		assert.Nil(t, budget)
+		assert.Equal(t, ErrSomeError, err)
+
+	}
 }
 
-func TestCreateBudgetByUser(t *testing.T) {
+
+// TestCreateBudgetByUser
+func TestCreateBudgetByUser_HappyPath(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	service, mocks := createTestBudget(ctrl)
+
+	budget := TEST_BUDGET_HAPPY_PATH
+	budget.BudgetId = ""
+
+	mocks.DB.EXPECT().
+		InsertBudgetRecord(gomock.Any(), &budget).
+		Return(TEST_ID, nil)
+	mocks.Goal.EXPECT().
+		UpdateBudgetIdsList(gomock.Any(), TEST_GOAL_MAP_ID_1, TEST_ID).
+		Return("", nil)
+
+	id, err := service.CreateBudgetByUser(context.Background(), &budget)
+
+	assert.Equal(t, TEST_ID, id)
+	assert.Nil(t, err)
+}
+
+func TestCreateBudgetByUser_ReturnsError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -263,8 +316,11 @@ func TestCreateBudgetByUser(t *testing.T) {
 	{ 	// error while updating budget ids list in goal
 		budget := TEST_BUDGET_HAPPY_PATH
 		budget.BudgetId = ""
+		mocks.DB.EXPECT().
+			InsertBudgetRecord(gomock.Any(), gomock.Any()).
+			Return(TEST_ID, nil)
 		mocks.Goal.EXPECT().
-			UpdateBudgetIdsList(gomock.Any(), TEST_GOAL_MAP_ID_1, gomock.Any()).
+			UpdateBudgetIdsList(gomock.Any(), TEST_GOAL_MAP_ID_1, TEST_ID).
 			Return("", ErrSomeError)
 
 		id, err := service.CreateBudgetByUser(context.Background(), &budget)
@@ -273,37 +329,69 @@ func TestCreateBudgetByUser(t *testing.T) {
 		assert.Equal(t, "", id)
 	}
 
-	{ 	// happy path
-		budget := TEST_BUDGET_HAPPY_PATH
-		budget.BudgetId = ""
-		mocks.Goal.EXPECT().
-			UpdateBudgetIdsList(gomock.Any(), TEST_GOAL_MAP_ID_1, gomock.Any()).
-			Return("", nil)
-		mocks.DB.EXPECT().
-			InsertBudgetRecord(gomock.Any(), &budget).
-			Return("", nil)
-
-		id, err := service.CreateBudgetByUser(context.Background(), &budget)
-
-		assert.NotNil(t, id)
-		assert.Nil(t, err)
-	}
 }
 
-func TestCreateRecurringBudget(t *testing.T) {
+
+// TestCreateRecurringBudget
+
+func TestCreateRecurringBudget_HappyPath(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	service, mocks := createTestBudget(ctrl)
+	
+	timeNow := time.Now()
+	prevBudget := &models.Budget{
+		BudgetId: TEST_ID, 
+		BudgetName: TEST_NAME,
+		ExpenseMap: []models.BudgetInputMap{{
+			Id: models.BILLS_AND_UTILITIES_CATEGORY,
+			Amount: 100,
+			Name: TEST_NAME,
+		}},
+		ExpirationTime: timeNow,
+		Frequency: models.MONTHLY_FREQUENCY,
+	}
+
+	expBudget := &models.Budget{
+		BudgetName: TEST_NAME,
+		ExpenseMap: []models.BudgetInputMap{{
+			Id: models.BILLS_AND_UTILITIES_CATEGORY,
+			Amount: 100,
+			Name: TEST_NAME,
+		}},
+		Savings: -100,
+		Frequency: models.MONTHLY_FREQUENCY,
+		CreationTime: timeNow,
+		ExpirationTime: timeNow.AddDate(0, 1, 0),
+		SequenceNumber: 1,
+		SequenceStartId: TEST_ID,
+	}
+
+	mocks.DB.EXPECT().
+		InsertBudgetRecord(gomock.Any(), expBudget).
+		Return(TEST_ID_2, nil)
+
+	id, err := service.CreateRecurringBudget(context.Background(), prevBudget)
+
+	assert.Nil(t, err)
+	assert.Equal(t, TEST_ID_2, id)
+}
+
+func TestCreateRecurringBudget_ReturnsError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	service, mocks := createTestBudget(ctrl)
 	{ 	// validation error for current budget
-		id, err := service.CreateRecurringBudget(context.Background(), &models.Budget{IsClosed: true}, nil)
+		id, err := service.CreateRecurringBudget(context.Background(), nil)
 
 		assert.Equal(t, exceptions.ErrValidationError, err)
 		assert.Equal(t, "", id)
 	}
 
 	{ 	// validation error for prev budget when no budget id
-		id, err := service.CreateRecurringBudget(context.Background(), &models.Budget{BudgetName: TEST_NAME}, &models.Budget{})
+		id, err := service.CreateRecurringBudget(context.Background(), &models.Budget{})
 
 		assert.Equal(t, exceptions.ErrValidationError, err)
 		assert.Equal(t, "", id)
@@ -311,7 +399,7 @@ func TestCreateRecurringBudget(t *testing.T) {
 
 	{	// validation error for prev budget when invalid transaction provided
 		prevBudget := &models.Budget{BudgetId: "id", BudgetName: TEST_NAME, IsClosed: true}
-		id, err := service.CreateRecurringBudget(context.Background(), &models.Budget{BudgetName: TEST_NAME}, prevBudget)
+		id, err := service.CreateRecurringBudget(context.Background(), prevBudget)
 
 		assert.Equal(t, exceptions.ErrValidationError, err)
 		assert.Equal(t, "", id)
@@ -319,28 +407,14 @@ func TestCreateRecurringBudget(t *testing.T) {
 
 	{ 	// error while inserting budget
 		prevBudget := &models.Budget{BudgetId: "id", BudgetName: TEST_NAME}
-		budget := &models.Budget{BudgetName: TEST_NAME}
 		mocks.DB.EXPECT().
 			InsertBudgetRecord(gomock.Any(), gomock.Any()).
 			Return("", ErrSomeError)
 
-		id, err := service.CreateRecurringBudget(context.Background(), budget, prevBudget)
+		id, err := service.CreateRecurringBudget(context.Background(), prevBudget)
 
 		assert.Equal(t, ErrSomeError, err)
 		assert.Equal(t, "", id)
-	}
-
-	{ 	// happy path
-		prevBudget := &models.Budget{BudgetId: "id", BudgetName: TEST_NAME}
-		budget := &models.Budget{BudgetName: TEST_NAME}
-		mocks.DB.EXPECT().
-			InsertBudgetRecord(gomock.Any(), gomock.Any()).
-			Return("", nil)
-
-		id, err := service.CreateRecurringBudget(context.Background(), budget, prevBudget)
-
-		assert.NotNil(t, id)
-		assert.Nil(t, err)
 	}
 }
 
@@ -380,6 +454,9 @@ func TestUpdateBudgetById(t *testing.T) {
 		mocks.DB.EXPECT().
 			GetBudgetRecordById(gomock.Any(), TEST_ID).
 			Return(&TEST_BUDGET_HAPPY_PATH, nil)
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(&TEST_TRANSACTIONS_HAPPY_PATH, nil)
 		mocks.Goal.EXPECT().
 			RemoveBudgetIdFromGoal(gomock.Any(), TEST_GOAL_MAP_ID_1, TEST_ID).
 			Return("", ErrSomeError)
@@ -400,6 +477,9 @@ func TestUpdateBudgetById(t *testing.T) {
 		mocks.DB.EXPECT().
 			GetBudgetRecordById(gomock.Any(), TEST_ID).
 			Return(&TEST_BUDGET_HAPPY_PATH, nil)
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(&TEST_TRANSACTIONS_HAPPY_PATH, nil)
 		mocks.Goal.EXPECT().
 			RemoveBudgetIdFromGoal(gomock.Any(), TEST_GOAL_MAP_ID_1, TEST_ID).
 			Return("", nil)
@@ -423,6 +503,9 @@ func TestUpdateBudgetById(t *testing.T) {
 		mocks.DB.EXPECT().
 			GetBudgetRecordById(gomock.Any(), TEST_ID).
 			Return(&TEST_BUDGET_HAPPY_PATH, nil)
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(&TEST_TRANSACTIONS_HAPPY_PATH, nil)
 		mocks.Goal.EXPECT().
 			RemoveBudgetIdFromGoal(gomock.Any(), TEST_GOAL_MAP_ID_1, TEST_ID).
 			Return("", nil)
@@ -449,6 +532,9 @@ func TestUpdateBudgetById(t *testing.T) {
 		mocks.DB.EXPECT().
 			GetBudgetRecordById(gomock.Any(), TEST_ID).
 			Return(&TEST_BUDGET_HAPPY_PATH, nil)
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(&TEST_TRANSACTIONS_HAPPY_PATH, nil)
 		mocks.Goal.EXPECT().
 			RemoveBudgetIdFromGoal(gomock.Any(), TEST_GOAL_MAP_ID_1, TEST_ID).
 			Return("", nil)
@@ -475,6 +561,9 @@ func TestDeleteBudgetById(t *testing.T) {
 		mocks.DB.EXPECT().
 			GetBudgetRecordById(gomock.Any(), TEST_ID).
 			Return(&TEST_BUDGET_HAPPY_PATH, nil)
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(&TEST_TRANSACTIONS_HAPPY_PATH, nil)
 		mocks.Goal.EXPECT().
 			RemoveBudgetIdFromGoal(gomock.Any(), TEST_GOAL_MAP_ID_1, TEST_ID).
 			Return("", nil)
@@ -510,6 +599,9 @@ func TestDeleteBudgetById(t *testing.T) {
 		mocks.DB.EXPECT().
 			GetBudgetRecordById(gomock.Any(), TEST_ID).
 			Return(&TEST_BUDGET_HAPPY_PATH, nil)
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(&TEST_TRANSACTIONS_HAPPY_PATH, nil)
 		mocks.Goal.EXPECT().
 			RemoveBudgetIdFromGoal(gomock.Any(), TEST_GOAL_MAP_ID_1, TEST_ID).
 			Return("", ErrSomeError)
@@ -524,6 +616,9 @@ func TestDeleteBudgetById(t *testing.T) {
 		mocks.DB.EXPECT().
 			GetBudgetRecordById(gomock.Any(), TEST_ID).
 			Return(&TEST_BUDGET_HAPPY_PATH, nil)
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(&TEST_TRANSACTIONS_HAPPY_PATH, nil)
 		mocks.Goal.EXPECT().
 			RemoveBudgetIdFromGoal(gomock.Any(), TEST_GOAL_MAP_ID_1, TEST_ID).
 			Return("", nil)
@@ -535,5 +630,84 @@ func TestDeleteBudgetById(t *testing.T) {
 
 		assert.Equal(t, ErrSomeError, err)
 		assert.Equal(t, "", id)
+	}
+}
+
+
+// TestBudgetMaintainer
+
+func TestBudgetMaintainer(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	service, mocks := createTestBudget(ctrl)
+
+	timeNow := time.Now()
+	{	// maintainer lifecycle
+		budgets := &[]models.Budget{
+			{
+				Frequency: models.ONCE_FREQUENCY,
+			},
+			{
+				Frequency: models.MONTHLY_FREQUENCY,
+				NextSequenceId: "test-next-sequence-id",
+			},
+			{
+				Frequency: models.MONTHLY_FREQUENCY,
+			},
+			{
+				Frequency: models.MONTHLY_FREQUENCY,
+				ExpirationTime: timeNow.AddDate(0, 0, 1),
+			},
+			{
+				BudgetId: TEST_ID+"-fail",
+				BudgetName: TEST_NAME,
+				Frequency: models.MONTHLY_FREQUENCY,
+				ExpirationTime: timeNow.AddDate(0, 0, -1),
+			},
+			{
+				BudgetId: TEST_ID,
+				BudgetName: TEST_NAME,
+				Frequency: models.MONTHLY_FREQUENCY,
+				ExpirationTime: timeNow.AddDate(0, 0, -1),
+			},
+		}
+
+		expBudget := &models.Budget{
+			BudgetName: TEST_NAME,
+			Frequency: models.MONTHLY_FREQUENCY,
+			CreationTime: timeNow.AddDate(0, 0, -1),
+			ExpirationTime: timeNow.AddDate(0, 1, -1),
+			SequenceStartId: TEST_ID,
+			SequenceNumber: 1,
+		}
+
+		mocks.DB.EXPECT().
+			GetAllBudgetRecords(gomock.Any()).
+			Return(budgets, nil)
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(nil, nil).
+			AnyTimes()
+		mocks.DB.EXPECT().
+			InsertBudgetRecord(gomock.Any(), gomock.Any()).
+			Return("", ErrSomeError).
+			Times(1)
+		mocks.DB.EXPECT().
+			InsertBudgetRecord(gomock.Any(), expBudget).
+			Return(TEST_ID_2, nil)
+		mocks.DB.EXPECT().
+			UpdateBudgetRecordById(gomock.Any(), TEST_ID, gomock.Any()).
+			Return(TEST_ID, nil)
+
+		service.BudgetMaintainer(context.Background())
+	}
+
+	{	// error found while fetching budget, close maintainer
+		mocks.DB.EXPECT().
+			GetAllBudgetRecords(gomock.Any()).
+			Return(nil, ErrSomeError)
+
+		service.BudgetMaintainer(context.Background())
 	}
 }

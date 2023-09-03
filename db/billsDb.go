@@ -89,9 +89,10 @@ func (db *DatabaseImpl) InsertBillRecord(ctx context.Context, bill *models.Bill)
 		{Key: FREQUENCY_KEY, Value: bill.Frequency},
 		{Key: NOTE_KEY, Value: bill.Note},
 		{Key: IS_PAID_KEY, Value: bill.IsPaid},
-		{Key: CREATION_TIME_KEY, Value: bill.CreationTime},
+		{Key: CREATION_TIME_KEY, Value: time.Now().Local()},
 		{Key: SEQUENCE_START_ID_KEY, Value: bill.SequenceStartId},
 		{Key: SEQUENCE_NUMBER_KEY, Value: bill.SequenceNumber},
+		{Key: ACCOUNT_KEY, Value: bill.Account},
 	}
 
 	result, err := billCollection.InsertOne(ctx, data)
@@ -113,9 +114,10 @@ func (db *DatabaseImpl) UpdateBillRecordById(ctx context.Context, id string, bil
 			{Key: FREQUENCY_KEY, Value: bill.Frequency},
 			{Key: NOTE_KEY, Value: bill.Note},
 			{Key: IS_PAID_KEY, Value: bill.IsPaid},
-			{Key: CREATION_TIME_KEY, Value: bill.CreationTime},
 			{Key: SEQUENCE_START_ID_KEY, Value: bill.SequenceStartId},
 			{Key: SEQUENCE_NUMBER_KEY, Value: bill.SequenceNumber},
+			{Key: NEXT_SEQUENCE_ID_KEY, Value: bill.NextSequenceId},
+			{Key: TRANSACTION_ID_KEY, Value: bill.TransactionId},
 		}},
 	}
 	filter := bson.D{{Key: BILL_ID_KEY, Value: id}}

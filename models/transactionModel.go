@@ -47,11 +47,11 @@ func (transaction *Transaction) SetCategory() {
 	}
 }
 
-func (transaction *Transaction) FromBill(bill Bill, datePaid time.Time) {
+func (transaction *Transaction) FromBill(bill *Bill) {
 	transaction.Title = bill.Title
 	transaction.Category = BILLS_AND_UTILITIES_CATEGORY
 	transaction.Amount = bill.AmountDue
-	transaction.Date = datePaid
+	transaction.Date = bill.DatePaid
 	transaction.Type = false
 	transaction.Account = ""
 	transaction.Note = bill.Note

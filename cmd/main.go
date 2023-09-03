@@ -1,7 +1,9 @@
 package main
 
 import (
+	"context"
 	"log"
+	"time"
 
 	"github.com/sanchitdeora/budget-tracker/db"
 	"github.com/sanchitdeora/budget-tracker/pkg/bill"
@@ -45,11 +47,34 @@ func main() {
 		GoalService: goalService,
 	}
 
+	// Add go routines here
+	// create new bills & budgets here according to the time. check once every day
+	go runMaintainer(service)
+
 	// Start Router
 	webapi.StartRouter(service)
+}
 
+func runMaintainer(s *webapi.ApiService) {
+	dur, _ := time.ParseDuration("24h")
+	updateBudgetTicker := time.NewTicker(dur)
+	n := 0
+	for {
+		select {
+			case <-updateBudgetTicker.C:
+				go updateBills(s, n)
+				updateBudgets(s, n)
+				n++
+			}
+	}
+}
 
-	// Add go routines here
-		// create new bills & budgets here according to the time. check once every day
+func updateBudgets(s *webapi.ApiService, n int) {
+	log.Println("running updateBudgets. No:", n)
+	s.BudgetService.BudgetMaintainer(context.Background())
+}
 
+func updateBills(s *webapi.ApiService, n int) {
+	log.Println("running updateBills. No:", n)
+	s.BillService.BillMaintainer(context.Background())
 }

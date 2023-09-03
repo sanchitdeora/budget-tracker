@@ -8,6 +8,7 @@
 
 # testing
 /client/coverage
+c.out
 
 # production
 /client/build
