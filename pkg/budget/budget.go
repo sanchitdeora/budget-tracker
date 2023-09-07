@@ -42,21 +42,6 @@ func NewService(opts *Opts) Service {
 	return &serviceImpl{Opts: opts}
 }
 
-func (s *serviceImpl) updateBudgetCurrentAmount(ctx context.Context, budget *models.Budget) error {
-	transactions, err := s.TransactionService.GetTransactionsByDate(ctx, budget.CreationTime, budget.ExpirationTime)
-	if err != nil {
-		log.Println("error while fetching transactionsByDate for budgetId:", budget.BudgetId, err, ctx)
-		return  err
-	}
-
-	if transactions != nil && len(*transactions) > 0 {
-		updateCurrentAmounts(true, &budget.IncomeMap, transactions)
-		updateCurrentAmounts(false, &budget.ExpenseMap, transactions)
-	}
-
-	return nil
-}
-
 func (s *serviceImpl) GetBudgets(ctx context.Context) (*[]models.Budget, error) {
 	budgets, err := s.DB.GetAllBudgetRecords(ctx)
 	if err != nil {
@@ -333,7 +318,6 @@ func updateCurrentAmounts(transactionType bool, budgetMaps *[]models.BudgetInput
 		} else {
 			uncategorized.Amount = budgetMap.Amount
 			uncategorizedMapIndex = i
-			(*budgetMaps) = append((*budgetMaps), uncategorized)
 		}
 	}
 
@@ -344,5 +328,34 @@ func updateCurrentAmounts(transactionType bool, budgetMaps *[]models.BudgetInput
 		} else {
 			(*budgetMaps)[uncategorizedMapIndex].CurrentAmount = totalAmountOfTransactions(filteredTypeTransactions)
 		}
+	}
+
+}
+
+func (s *serviceImpl) updateBudgetCurrentAmount(ctx context.Context, budget *models.Budget) error {
+	transactions, err := s.TransactionService.GetTransactionsByDate(ctx, budget.CreationTime, budget.ExpirationTime)
+	if err != nil {
+		log.Println("error while fetching transactionsByDate for budgetId:", budget.BudgetId, err, ctx)
+		return  err
+	}
+
+	if transactions != nil && len(*transactions) > 0 {
+		updateCurrentAmounts(true, &budget.IncomeMap, transactions)
+		updateCurrentAmounts(false, &budget.ExpenseMap, transactions)
+	} else {
+		resetBudgetMapCurrentAmount(&budget.IncomeMap)
+		resetBudgetMapCurrentAmount(&budget.ExpenseMap)
+	}
+
+	return nil
+}
+
+func resetBudgetMapCurrentAmount(budgetMaps *[]models.BudgetInputMap) {
+	if budgetMaps == nil || len(*budgetMaps) <= 0 {
+		return
+	}
+
+	for i := range *budgetMaps {
+		(*budgetMaps)[i].CurrentAmount = 0
 	}
 }

@@ -759,6 +759,12 @@ func TestBillMaintainer(t *testing.T) {
 				Frequency: models.MONTHLY_FREQUENCY,
 				DueDate: timeNow.AddDate(0, 0, -1),
 			},
+			{
+				BillId: TEST_ID,
+				Title: TEST_TITLE,
+				Frequency: models.MONTHLY_FREQUENCY,
+				DueDate: timeNow.AddDate(0, 0, -1),
+			},
 		}
 
 		expBill := &models.Bill{
@@ -775,11 +781,14 @@ func TestBillMaintainer(t *testing.T) {
 			Return(bills, nil)
 		mocks.DB.EXPECT().
 			InsertBillRecord(gomock.Any(), gomock.Any()).
-			Return("", ErrSomeError).
-			Times(1)
+			Return("", ErrSomeError)
 		mocks.DB.EXPECT().
 			InsertBillRecord(gomock.Any(), expBill).
-			Return(TEST_ID_2, nil)
+			Return(TEST_ID_2, nil).
+			Times(2)
+		mocks.DB.EXPECT().
+			UpdateBillRecordById(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return("", ErrSomeError)
 		mocks.DB.EXPECT().
 			UpdateBillRecordById(gomock.Any(), TEST_ID, gomock.Any()).
 			Return(TEST_ID, nil)

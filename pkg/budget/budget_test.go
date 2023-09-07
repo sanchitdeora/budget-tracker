@@ -123,7 +123,63 @@ func createTestBudget(ctrl *gomock.Controller) (Service, *ServiceMocks) {
 
 }
 
-func TestGetBudgets(t *testing.T) {
+func TestGetBudgets_HappyPath(t *testing.T) {
+
+	ctrl := gomock.NewController(t)
+	service, mocks := createTestBudget(ctrl)
+
+	{	// happy path
+		mocks.DB.EXPECT().
+			GetAllBudgetRecords(gomock.Any()).
+			Return(&TEST_BUDGETS_HAPPY_PATH, nil)
+
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(&TEST_TRANSACTIONS_HAPPY_PATH, nil)
+
+		budgets, err := service.GetBudgets(context.Background())
+
+		assert.NotNil(t, budgets)
+		assert.Equal(t, models.INCOME_CATEGORY, (*budgets)[0].IncomeMap[0].Id)
+		assert.Equal(t, TEST_AMOUNT_500, (*budgets)[0].IncomeMap[0].CurrentAmount)
+		assert.Equal(t, models.UNCATEGORIZED_CATEGORY, (*budgets)[0].IncomeMap[1].Id)
+		assert.Equal(t, TEST_AMOUNT_500, (*budgets)[0].IncomeMap[1].CurrentAmount)
+
+		assert.Equal(t, models.BILLS_AND_UTILITIES_CATEGORY, (*budgets)[0].ExpenseMap[0].Id)
+		assert.Equal(t, TEST_AMOUNT_500, (*budgets)[0].ExpenseMap[0].CurrentAmount)
+		assert.Equal(t, models.UNCATEGORIZED_CATEGORY, (*budgets)[0].ExpenseMap[1].Id)
+		assert.Equal(t, TEST_AMOUNT_500, (*budgets)[0].ExpenseMap[1].CurrentAmount)
+		
+		assert.Nil(t, err)
+	}
+
+	{	// happy path with no transactions and empty income map
+		expBudgets := TEST_BUDGETS_HAPPY_PATH
+		expBudgets[0].IncomeMap = make([]models.BudgetInputMap, 0)
+
+		mocks.DB.EXPECT().
+			GetAllBudgetRecords(gomock.Any()).
+			Return(&expBudgets, nil)
+
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(&[]models.Transaction{}, nil)
+
+		budgets, err := service.GetBudgets(context.Background())
+
+		assert.NotNil(t, budgets)
+		assert.Equal(t, 0, len((*budgets)[0].IncomeMap))
+
+		assert.Equal(t, models.BILLS_AND_UTILITIES_CATEGORY, (*budgets)[0].ExpenseMap[0].Id)
+		assert.Equal(t, float32(0), (*budgets)[0].ExpenseMap[0].CurrentAmount)
+		assert.Equal(t, models.UNCATEGORIZED_CATEGORY, (*budgets)[0].ExpenseMap[1].Id)
+		assert.Equal(t, float32(0), (*budgets)[0].ExpenseMap[1].CurrentAmount)
+		
+		assert.Nil(t, err)
+	}
+}
+
+func TestGetBudgets_ReturnsError(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
 	service, mocks := createTestBudget(ctrl)
@@ -172,30 +228,6 @@ func TestGetBudgets(t *testing.T) {
 		assert.Nil(t, err)
 	}
 
-	{	// happy path
-		mocks.DB.EXPECT().
-			GetAllBudgetRecords(gomock.Any()).
-			Return(&TEST_BUDGETS_HAPPY_PATH, nil)
-
-		mocks.Transaction.EXPECT().
-			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
-			Return(&TEST_TRANSACTIONS_HAPPY_PATH, nil)
-
-		budgets, err := service.GetBudgets(context.Background())
-
-		assert.NotNil(t, budgets)
-		assert.Equal(t, models.INCOME_CATEGORY, (*budgets)[0].IncomeMap[0].Id)
-		assert.Equal(t, TEST_AMOUNT_500, (*budgets)[0].IncomeMap[0].CurrentAmount)
-		assert.Equal(t, models.UNCATEGORIZED_CATEGORY, (*budgets)[0].IncomeMap[1].Id)
-		assert.Equal(t, TEST_AMOUNT_500, (*budgets)[0].IncomeMap[1].CurrentAmount)
-
-		assert.Equal(t, models.BILLS_AND_UTILITIES_CATEGORY, (*budgets)[0].ExpenseMap[0].Id)
-		assert.Equal(t, TEST_AMOUNT_500, (*budgets)[0].ExpenseMap[0].CurrentAmount)
-		assert.Equal(t, models.UNCATEGORIZED_CATEGORY, (*budgets)[0].ExpenseMap[1].Id)
-		assert.Equal(t, TEST_AMOUNT_500, (*budgets)[0].ExpenseMap[1].CurrentAmount)
-		
-		assert.Nil(t, err)
-	}
 }
 
 func TestGetBudgetById(t *testing.T) {
@@ -671,6 +703,12 @@ func TestBudgetMaintainer(t *testing.T) {
 				Frequency: models.MONTHLY_FREQUENCY,
 				ExpirationTime: timeNow.AddDate(0, 0, -1),
 			},
+			{
+				BudgetId: TEST_ID,
+				BudgetName: TEST_NAME,
+				Frequency: models.MONTHLY_FREQUENCY,
+				ExpirationTime: timeNow.AddDate(0, 0, -1),
+			},
 		}
 
 		expBudget := &models.Budget{
@@ -691,11 +729,14 @@ func TestBudgetMaintainer(t *testing.T) {
 			AnyTimes()
 		mocks.DB.EXPECT().
 			InsertBudgetRecord(gomock.Any(), gomock.Any()).
-			Return("", ErrSomeError).
-			Times(1)
+			Return("", ErrSomeError)
 		mocks.DB.EXPECT().
 			InsertBudgetRecord(gomock.Any(), expBudget).
-			Return(TEST_ID_2, nil)
+			Return(TEST_ID_2, nil).
+			Times(2)
+		mocks.DB.EXPECT().
+			UpdateBudgetRecordById(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return("", ErrSomeError)
 		mocks.DB.EXPECT().
 			UpdateBudgetRecordById(gomock.Any(), TEST_ID, gomock.Any()).
 			Return(TEST_ID, nil)
