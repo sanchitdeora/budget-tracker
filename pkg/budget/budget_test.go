@@ -123,6 +123,9 @@ func createTestBudget(ctrl *gomock.Controller) (Service, *ServiceMocks) {
 
 }
 
+
+// TestGetBudgets
+
 func TestGetBudgets_HappyPath(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
@@ -581,6 +584,81 @@ func TestUpdateBudgetById(t *testing.T) {
 
 		assert.Equal(t, TEST_ID, id)
 		assert.Nil(t, err)
+	}
+}
+
+
+// TestUpdateBudgetIsClosed
+
+func TestUpdateBudgetIsClosed_HappyPath(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	service, mocks := createTestBudget(ctrl)
+
+	{	// happy path
+		budget := TEST_BUDGET_HAPPY_PATH
+
+		mocks.DB.EXPECT().
+			GetBudgetRecordById(gomock.Any(), TEST_ID).
+			Return(&budget, nil)
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(&TEST_TRANSACTIONS_HAPPY_PATH, nil)
+
+		budget.IsClosed = true
+
+		mocks.DB.EXPECT().
+			UpdateBudgetRecordById(gomock.Any(), TEST_ID, gomock.Any()).
+			Return(TEST_ID, nil)
+
+		id, err := service.UpdateBudgetIsClosed(context.Background(), TEST_ID, true)
+		
+		assert.Equal(t, TEST_ID, id)
+		assert.Nil(t, err)
+	}
+}
+
+func TestUpdateBudgetIsClosed_ReturnsError(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	service, mocks := createTestBudget(ctrl)
+
+	{	// validation error	when no budget id	
+		id, err := service.UpdateBudgetIsClosed(context.Background(), "", true)
+		
+		assert.Equal(t, "", id)
+		assert.Equal(t, exceptions.ErrValidationError, err)
+	}
+
+	{	// error found while fetching budget by id
+		mocks.DB.EXPECT().
+			GetBudgetRecordById(gomock.Any(), TEST_ID).
+			Return(nil, ErrSomeError)
+
+		id, err := service.UpdateBudgetIsClosed(context.Background(), TEST_ID, true)
+		
+		assert.Equal(t, "", id)
+		assert.Equal(t, ErrSomeError, err)
+	}
+
+	{	// error found while updating budget by id
+		mocks.DB.EXPECT().
+			GetBudgetRecordById(gomock.Any(), TEST_ID).
+			Return(&TEST_BUDGET_HAPPY_PATH, nil)
+		mocks.Transaction.EXPECT().
+			GetTransactionsByDate(gomock.Any(), gomock.Any(), gomock.Any()).
+			Return(&TEST_TRANSACTIONS_HAPPY_PATH, nil)
+
+		mocks.DB.EXPECT().
+			UpdateBudgetRecordById(gomock.Any(), TEST_ID, gomock.Any()).
+			Return("", ErrSomeError)
+
+		id, err := service.UpdateBudgetIsClosed(context.Background(), TEST_ID, true)
+		
+		assert.Equal(t, "", id)
+		assert.Equal(t, ErrSomeError, err)
 	}
 }
 

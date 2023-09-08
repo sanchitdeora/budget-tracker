@@ -20,6 +20,7 @@ type Service interface {
 	GetBudgetById(ctx context.Context, id string) (*models.Budget, error)
 	CreateBudgetByUser(ctx context.Context, budget *models.Budget) (string, error)
 	UpdateBudgetById(ctx context.Context, id string, budget *models.Budget) (string, error)
+	UpdateBudgetIsClosed(ctx context.Context, id string, isClosed bool) (string, error)
 	DeleteBudgetById(ctx context.Context, id string) (string, error)
 	
 	// Maintain recurring budgets
@@ -166,6 +167,21 @@ func (s *serviceImpl) UpdateBudgetById(ctx context.Context, id string, budget *m
 	}
 
 	log.Println("updating a new budget:", budget, ctx)
+	return s.DB.UpdateBudgetRecordById(ctx, id, budget)
+}
+
+func (s *serviceImpl) UpdateBudgetIsClosed(ctx context.Context, id string, isClosed bool) (string, error) {
+	if id == "" {
+		log.Println("missing Budget Id", ctx)
+		return "", exceptions.ErrValidationError
+	}
+
+	budget, err := s.GetBudgetById(ctx, id)
+	if err != nil {
+		return "", err
+	}
+
+	budget.IsClosed = isClosed
 	return s.DB.UpdateBudgetRecordById(ctx, id, budget)
 }
 

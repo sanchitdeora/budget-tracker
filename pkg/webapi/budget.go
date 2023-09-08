@@ -2,6 +2,7 @@ package webapi
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sanchitdeora/budget-tracker/models"
@@ -72,6 +73,28 @@ func (service *ApiService) UpdateBudgetById(c *gin.Context) {
 	}
 	
 	budgetId, err = service.BudgetService.UpdateBudgetById(c, budgetId, &budget)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "Success",
+		"body":    budgetId,
+	})
+
+}
+
+func (service *ApiService) UpdateBudgetIsClosed(c *gin.Context) {
+
+	budgetId := c.Param("id")
+	isClosed, err := strconv.ParseBool(c.Param("isClosed"))
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	budgetId, err = service.BudgetService.UpdateBudgetIsClosed(c, budgetId, isClosed)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
