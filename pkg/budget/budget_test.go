@@ -656,7 +656,7 @@ func TestUpdateBudgetIsClosed_ReturnsError(t *testing.T) {
 			Return("", ErrSomeError)
 
 		id, err := service.UpdateBudgetIsClosed(context.Background(), TEST_ID, true)
-		
+
 		assert.Equal(t, "", id)
 		assert.Equal(t, ErrSomeError, err)
 	}

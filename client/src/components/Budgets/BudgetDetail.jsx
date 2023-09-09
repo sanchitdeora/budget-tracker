@@ -4,6 +4,9 @@ import List from '@mui/material/List';
 import LinearProgress from '@mui/material/LinearProgress';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -26,6 +29,7 @@ class BudgetDetail extends React.Component {
             transactions: [],
             isEditDialogOpen: false,
             isAddGoalAmountDialogOpen: false,
+            is_closed: this.props.budget.is_closed,
         };
 
         this.getTransactionByDate(this.props.budget)
@@ -84,6 +88,13 @@ class BudgetDetail extends React.Component {
             isAddGoalAmountDialogOpen: true
         });
     }
+        
+    handleGoalAmountChange = (event) => {
+        console.log('Handle Goal Amount in budgetDetail: ', event.target.value);
+        this.setState({
+            current_goal_amount: parseFloat(event.target.value)
+        });
+    }
     
     handleAddGoalAmountClose = () => {
         console.log('Close add Goal Amount in budgetDetail');
@@ -92,14 +103,14 @@ class BudgetDetail extends React.Component {
             isAddGoalAmountDialogOpen: false
         });
     };
-    
-    handleGoalAmountChange = (event) => {
-        console.log('Handle Goal Amount in budgetDetail: ', event.target.value);
+
+    handleBudgetClosed = (isClosed) => {
+        console.log('Handle Budget Closed in budgetDetail: ', isClosed);
         this.setState({
-            current_goal_amount: parseFloat(event.target.value)
+            is_closed: isClosed
         });
     }
-    
+
     submitEditMethod = () => {
         this.props.submitMethod()
         this.handleEditClose()
@@ -110,6 +121,7 @@ class BudgetDetail extends React.Component {
         var goal_map = this.props.budget.goal_map
 
         var objIndex = goal_map.findIndex(x => x.id === this.state.goal_id)
+        console.log("Found index: ", this.state.current_goal_amount)
         goal_map[objIndex].current_amount += this.state.current_goal_amount
         console.log("Found: ", goal_map)
 
@@ -119,7 +131,6 @@ class BudgetDetail extends React.Component {
             'expense_map': this.props.budget.expense_map,
             'goal_map': this.props.budget.goal_map,
             'frequency': this.props.budget.frequency,
-            'savings': parseFloat(this.props.budget.savings),
             'creation_time': this.props.budget.creation_time,
         }
         console.log('The budgets edit form was submitted with the following data:', budgetBody);
@@ -130,7 +141,23 @@ class BudgetDetail extends React.Component {
     async putBudgetRequest(budgetBody) {
         let res = await axios.put('/api/budget/'+this.props.budget.budget_id, budgetBody);
         console.log("Put budgets response", res);
-        // this.props.getAllBudgets();
+    }
+
+    submitBudgetClosedMethod = (isClosed) => {
+        this.setState({
+            is_closed: isClosed
+        })
+
+        console.log('Submit put budget in budgetDetail: ', this.props.budget.budget_id);
+        console.log('The budgets closed put form was submitted with the following data:', this.props.budget.budget_id, isClosed);
+        this.putBudgetClosedRequest(isClosed)
+
+        // this.handleAddGoalAmountClose()
+    }
+
+    async putBudgetClosedRequest(isClosed) {
+        let res = await axios.put('/api/budget/'+this.props.budget.budget_id+'/closed/'+isClosed);
+        console.log("Put budget closed response", res);
     }
 
     // utils
@@ -192,10 +219,14 @@ class BudgetDetail extends React.Component {
                             <IconButton style={{padding: '2%'}} onClick={this.props.handleBudgetClose}>
                                 <ArrowBackIosNewIcon />
                             </IconButton>
-                            
+
                             <h2>{this.props.budget.budget_name}</h2>
 
-                            <IconButton style={{marginRight: '2%', padding: '2%'}} onClick={this.handleEditBudgetOpen.bind(this, this.props.budget.budget_id)}>
+                            <IconButton 
+                                style={{marginRight: '2%', padding: '2%'}} 
+                                onClick={this.handleEditBudgetOpen.bind(this, this.props.budget.budget_id)}
+                                disabled={this.props.budget.is_closed}
+                            >
                                 <ModeEditIcon />
                             </IconButton>
                             <ReusableBudgetDialog
@@ -216,9 +247,19 @@ class BudgetDetail extends React.Component {
                             alignItems='center'
                         >
                             <div className='budget-detail-other-box'>{this.getTimeRange(this.props.budget.creation_time, this.props.budget.expiration_time)}</div>
+
+                            <div><span>Close budget: </span>
+                            <span>{this.state.is_closed? 
+                                <IconButton style={{marginRight: '2%', padding: '2%'}} onClick={this.submitBudgetClosedMethod.bind(this, false)}>
+                                    <CheckCircleIcon />
+                                </IconButton>
+                                :
+                                <IconButton style={{marginRight: '2%', padding: '2%'}} onClick={this.submitBudgetClosedMethod.bind(this, true)}>
+                                    <RadioButtonUncheckedIcon />
+                                </IconButton>
+                            }</span></div>
                             <div className='budget-detail-other-box'>Frequency: {capitalizeFirstLowercaseRest(this.props.budget.frequency)}</div>
                         </Box>
-
 
                         {this.renderBudgetMaps('Income', this.props.budget.income_map, false)}
                         {this.renderBudgetMaps('Expense', this.props.budget.expense_map, false)}
@@ -251,7 +292,10 @@ class BudgetDetail extends React.Component {
                                 />
                                 {goalFlag ?
                                 <div>
-                                    <Button size='large' onClick={this.handleAddGoalAmountOpen.bind(this, dataMap[key].id)}>
+                                    <Button size='large' 
+                                        onClick={this.handleAddGoalAmountOpen.bind(this, dataMap[key].id)}
+                                        disabled={this.props.budget.is_closed}
+                                    >
                                         Add Amount
                                     </Button>
                                     {this.renderAddGoalAmount(dataMap[key])}

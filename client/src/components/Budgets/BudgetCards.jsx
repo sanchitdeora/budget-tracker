@@ -3,6 +3,9 @@ import axios from 'axios';
 import { Button, Card, CardContent, CardActions, Typography, CardHeader, IconButton } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
 
 import './BudgetCards.scss';
 import BudgetDetail from "./BudgetDetail";
@@ -20,14 +23,14 @@ class BudgetCards extends React.Component {
 
             filteredBudgets: [],
             filterCategories: [],
-                        
+            is_closed_budget_displayed: false,
+
             budget_id: '',
             budget_name: '',
             income_map: [],
             expense_map: [],
             goal_map: [],
             frequency: '',
-            savings: 0,
             creation_time: new Date(),
 
             isBudgetOpen: false,
@@ -48,7 +51,7 @@ class BudgetCards extends React.Component {
         {
             this.setState({
                 allBudgets: res.data.body,
-                filteredBudgets: res.data.body
+                filteredBudgets: res.data.body.filter(item => !item.is_closed)
             });
         } else {
             this.setState({
@@ -57,7 +60,7 @@ class BudgetCards extends React.Component {
         }
 
         this.setState({
-            filterCategories: ['All', ...new Set(this.state.allBudgets.map(item => this.getFilterDate(item.creation_time)))]
+            filterCategories: ['All', ...new Set(this.state.filteredBudgets.map(item => this.getFilterDate(item.creation_time)))]
         });
     }
 
@@ -71,7 +74,6 @@ class BudgetCards extends React.Component {
             'expense_map': this.state.expense_map,
             'goal_map': this.state.goal_map,
             'frequency': this.state.frequency,
-            'savings': parseFloat(this.state.savings),
             'creation_time': new Date(this.state.creation_time + "T00:00:00-05:00"),
         }
         console.log('The create budgets form was submitted with the following data:', budgetBody);
@@ -102,7 +104,6 @@ class BudgetCards extends React.Component {
             'expense_map': this.state.expense_map,
             'goal_map': this.state.goal_map,
             'frequency': this.state.frequency,
-            'savings': parseFloat(this.state.savings),
             'creation_time': new Date(this.state.creation_time + "T00:00:00-05:00"),
         }
         console.log('The budgets edit form was submitted with the following data:', budgetBody);
@@ -180,20 +181,54 @@ class BudgetCards extends React.Component {
         return getFullMonthName(stringDate) + " " + getYear(stringDate)
     }
 
-    filterBudgets = (filterCategory) =>{
+    filterBudgetsByDate = (filterCategory) =>{
 
         if(filterCategory === 'All') {
+            var filteredBudgets
+            if (this.state.is_closed_budget_displayed) {
+                filteredBudgets = this.filterIsClosed(this.state.allBudgets)
+            } else {
+                filteredBudgets = this.filterIsOpen(this.state.allBudgets)
+            }
             this.setState({
-                filteredBudgets: this.state.allBudgets,
+                filteredBudgets: filteredBudgets,
             });
             return;
         }
-    
+
         const filteredData = this.state.allBudgets.filter(item => this.getFilterDate(item.creation_time) === filterCategory);
         this.setState({
             filteredBudgets: filteredData,
         });
-      }
+    }
+
+    filterBudgetsClosed = (e) => {
+        console.log('budget open: ', e)
+        let filteredBudgets
+        if (e.target.value === 'closed') {
+            filteredBudgets = this.filterIsClosed(this.state.allBudgets)
+            this.setState({
+                filteredBudgets: filteredBudgets,
+                filterCategories: ['All', ...new Set(filteredBudgets.map(item => this.getFilterDate(item.creation_time)))],
+                is_closed_budget_displayed: true,
+            })
+        } else if (e.target.value === 'open') {
+            filteredBudgets = this.filterIsOpen(this.state.allBudgets)
+            this.setState({
+                filteredBudgets: filteredBudgets,
+                filterCategories: ['All', ...new Set(filteredBudgets.map(item => this.getFilterDate(item.creation_time)))],
+                is_closed_budget_displayed: false,
+            })
+        }
+    }
+
+    filterIsClosed = (budgets) => {
+        return budgets.filter(item => item.is_closed)
+    }
+
+    filterIsOpen = (budgets) => {
+        return budgets.filter(item => !item.is_closed)
+    }
 
     // state handlers
 
@@ -226,7 +261,6 @@ class BudgetCards extends React.Component {
             expense_map: [],
             goal_map: [],
             frequency: '',
-            savings: 0,
             creation_time: new Date(),
         })
     }
@@ -247,11 +281,33 @@ class BudgetCards extends React.Component {
 
     // render functions
 
-    renderFilterBoxes() {
+    renderFilterDateBoxes() {
         console.log('filter categories: ', this.state.filterCategories)
         console.log('filter budgets: ', this.state.filteredBudgets)
         return(
-            <FilterButton button={this.state.filterCategories} filter={this.filterBudgets} />
+            <FilterButton button={this.state.filterCategories} filter={this.filterBudgetsByDate} />
+        )
+
+    }
+
+    renderFilterClosedBoxes() {
+        console.log('filter categories: ', this.state.filterCategories)
+        console.log('filter budgets: ', this.state.filteredBudgets)
+        return(
+            <div>
+                <InputLabel id="demo-simple-select-label">Filter Budgets</InputLabel>
+                <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    name="filter-closed"
+                    value={this.state.is_closed_budget_displayed?"closed":"open"}
+                    label=""
+                    onChange={this.filterBudgetsClosed}
+                >
+                    <MenuItem value={"open"}>Open</MenuItem>
+                    <MenuItem value={"closed"}>Closed</MenuItem>
+                </Select>
+            </div>
         )
 
     }
@@ -293,7 +349,9 @@ class BudgetCards extends React.Component {
                     </Button>
                 </div>
 
-                {this.renderFilterBoxes()}
+                {this.renderFilterDateBoxes()}
+
+                {this.renderFilterClosedBoxes()}
 
                 {this.state.filteredBudgets.length ? <p></p> : <h3>Create a New Budget</h3>}
                 <div className='budget-cards'>

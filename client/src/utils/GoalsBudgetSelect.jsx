@@ -66,8 +66,13 @@ export default function GoalsBudgetSelect({handleBudgetIds, currentGoal, allBudg
     console.log('allBudgets', allBudgets);
     console.log('finding for id: ', budgetIds);
 
+    let budget
     budgetIds.forEach(id => {
-      budgetNames.push(allBudgets.find(item => item.budget_id === id))
+      budget = allBudgets.find(item => item.budget_id === id)
+      if (budget !== undefined) {
+        // console.log("val to find budget with budget id in map:" , budget)
+        budgetNames.push(allBudgets.find(item => item.budget_id === id))
+      }
     });
 
     console.log('budget found ',  budgetNames.map(obj => obj.budget_name));

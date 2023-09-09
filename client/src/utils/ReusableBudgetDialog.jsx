@@ -125,18 +125,6 @@ class ReusableBudgetDialog extends React.Component {
 
                     <br></br>
                     <div className='budget-input-group'>
-                        <label htmlFor='savings'>Savings</label><br></br>
-                        <input
-                            defaultValue={this.props.currentBudget.savings}                            
-                            type='number'
-                            name='savings'
-                            className='budget-input-box'
-                            placeholder='Savings'
-                            onChange={this.props.handleInputChange}
-                        />
-                    </div>
-                    <br></br>
-                    <div className='budget-input-group'>
                         <label htmlFor='frequency'>Frequency</label><br></br>
                         <select
                             name='frequency'

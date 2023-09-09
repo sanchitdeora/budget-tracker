@@ -31,7 +31,7 @@ class GoalCards extends React.Component {
             isCreateDialogOpen: false,
             isEditDialogOpen: false,
 
-            allBudgets: []
+            allActiveBudgets: []
         };
         console.log("states for goal card", this.state);
 
@@ -47,11 +47,11 @@ class GoalCards extends React.Component {
         if (res.data.body != null)
         {
             this.setState({
-                allBudgets: res.data.body,
+                allActiveBudgets: res.data.body,
             });
         } else {
             this.setState({
-                allBudgets: [],
+                allActiveBudgets: [],
             });
         }
     }
@@ -256,7 +256,7 @@ class GoalCards extends React.Component {
                 <ReusableGoalDialog
                     title={'Add New Goal'}
                     currentGoal={{}}
-                    allBudgets={this.state.allBudgets}
+                    allBudgets={this.state.allActiveBudgets.filter(item => !item.is_closed)}
                     isDialogOpen={this.state.isCreateDialogOpen}
                     handleChange={this.handleChange}
                     handleClose={this.handleCreateGoalClose}
@@ -270,7 +270,7 @@ class GoalCards extends React.Component {
         return (
             <GoalDetail 
                 goal={this.state.allGoals.find(item => item.goal_id === this.state.goal_id)}
-                allBudgets={this.state.allBudgets}
+                allBudgets={this.state.allActiveBudgets.filter(item => !item.is_closed)}
                 handleGoalClose={this.handleGoalClose.bind(this)}
                 handleChange={this.handleChange}
                 handleBudgetIds={this.handleBudgetIds}
