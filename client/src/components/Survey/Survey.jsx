@@ -1,7 +1,7 @@
 import React from 'react';
 import "./Survey.scss";
 import axios from 'axios';
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { EMAIL, IS_SURVEY_COMPLETE } from '../../utils/GlobalConstants'
 
 
@@ -45,7 +45,7 @@ class Survey extends React.Component {
     render() {
         if (this.state.isSurveyComplete) {
             return(
-                <Redirect to='/home' />
+                <Navigate to='/home' />
             )
         } else {
             return (

@@ -9,7 +9,7 @@ import Select from '@mui/material/Select';
 
 import './BudgetCards.scss';
 import BudgetDetail from "./BudgetDetail";
-import ReusableBudgetDialog from '../../utils/ReusableBudgetDialog';
+import ReusableBudgetDialog from './ReusableBudgetDialog';
 import { getFullMonthName, getYear } from "../../utils/StringUtils";
 import { EXPENSES, GOALS, INCOMES } from "./BudgetConstants";
 import FilterButton from "../../utils/FilterButton";

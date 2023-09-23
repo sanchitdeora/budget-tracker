@@ -9,7 +9,7 @@ import Grid from '@mui/material/Grid';
 import LinearProgress from '@mui/material/LinearProgress';
 import './GoalDetail.scss';
 import { IconButton } from '@mui/material';
-import ReusableGoalDialog from '../../utils/ReusableGoalDialog';
+import ReusableGoalDialog from './ReusableGoalDialog';
 import ArrowBackIosNew from '@mui/icons-material/ArrowBackIosNew';
 import axios from 'axios';
 import { List } from '@material-ui/core';
@@ -148,7 +148,7 @@ class GoalDetail extends React.Component {
             <div className='goals-inner-container'>
 
                 <div className='goals-box'>
-                    {this.props.goal ? <p></p> : <h3>Add redirect back or error</h3>}
+                    {this.props.goal ? <p></p> : <h3>Add navigate back or error</h3>}
                     <div className='goal'>
                     <Box
                             className='goal-detail-header-box'

@@ -3,7 +3,7 @@ import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Typogra
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from "axios";
-import ReusableGoalDialog from "../../utils/ReusableGoalDialog";
+import ReusableGoalDialog from "./ReusableGoalDialog";
 import FilterButton from "../../utils/FilterButton";
 import { getFullMonthName, getYear, transformDateFormatToMmDdYyyy } from "../../utils/StringUtils";
 import './GoalCards.scss';

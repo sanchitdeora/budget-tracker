@@ -1,0 +1,8 @@
+@import "./styles/global";
+
+.root-container {
+  height: 100vh;
+  caret-color: transparent;
+  background-color: $primary-bg-color;
+  position: relative;
+}

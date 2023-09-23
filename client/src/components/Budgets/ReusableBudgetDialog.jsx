@@ -4,10 +4,10 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import BudgetMapInput from './BudgetMapInput';
-import { CATEGORY_MAP, FREQUENCY_MAP } from './GlobalConstants';
+import { CATEGORY_MAP, FREQUENCY_MAP } from '../../utils/GlobalConstants';
 import axios from 'axios';
-import { EXPENSES, GOALS, INCOMES } from '../components/Budgets/BudgetConstants';
-import { transformDateFormatToYyyyMmDd } from './StringUtils';
+import { EXPENSES, GOALS, INCOMES } from './BudgetConstants';
+import { transformDateFormatToYyyyMmDd } from '../../utils/StringUtils';
 
 class ReusableBudgetDialog extends React.Component {
     constructor(props) {

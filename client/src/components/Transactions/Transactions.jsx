@@ -11,7 +11,7 @@ import Box from '@mui/material/Box';
 import { capitalizeFirstLowercaseRest, transformDateFormatToMmDdYyyy } from '../../utils/StringUtils';
 import './Transactions.scss';
 import { IconButton } from '@mui/material';
-import ReusableTransactionDialog from '../../utils/ReusableTransactionDialog';
+import ReusableTransactionDialog from './ReusableTransactionDialog';
 import axios from 'axios';
 
 

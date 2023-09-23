@@ -14,7 +14,7 @@ import { FormControl, TextField, DialogActions, DialogContent, DialogTitle, Dial
 
 import './BudgetDetail.scss';
 import { IconButton, Button } from '@mui/material';
-import ReusableBudgetDialog from '../../utils/ReusableBudgetDialog';
+import ReusableBudgetDialog from './ReusableBudgetDialog';
 import { capitalizeFirstLowercaseRest, transformDateFormatToMmmDdYyyy } from '../../utils/StringUtils';
 import axios from 'axios';
 
@@ -207,7 +207,7 @@ class BudgetDetail extends React.Component {
             <div className='budgets-inner-container'>
 
                 <div className='budgets-box'>
-                    {this.props.budget ? <p></p> : <h3>Add redirect back or error</h3>}
+                    {this.props.budget ? <p></p> : <h3>Add navigate back or error</h3>}
                     <div className='budget'>                            
                         <Box
                             className='budget-detail-header-box'

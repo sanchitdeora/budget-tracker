@@ -14,7 +14,7 @@ import Box from '@mui/material/Box';
 import { capitalizeFirstLowercaseRest, transformDateFormatToMmDdYyyy } from '../../utils/StringUtils';
 import './Bills.scss';
 import { IconButton } from '@mui/material';
-import ReusableBillDialog from '../../utils/ReusableBillDialog';
+import ReusableBillDialog from './ReusableBillDialog';
 import axios from 'axios';
 
 

@@ -3,8 +3,8 @@ import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
-import { CATEGORY_MAP } from './GlobalConstants';
-import { transformDateFormatToYyyyMmDd } from './StringUtils';
+import { CATEGORY_MAP } from '../../utils/GlobalConstants';
+import { transformDateFormatToYyyyMmDd } from '../../utils/StringUtils';
 
 class ReusableTransactionDialog extends React.Component {
     constructor(props) {

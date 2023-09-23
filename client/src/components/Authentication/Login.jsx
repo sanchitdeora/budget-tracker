@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { TOKEN, EMAIL, IS_SURVEY_COMPLETE } from '../../utils/GlobalConstants'
 
 class Login extends React.Component {
@@ -50,11 +50,11 @@ class Login extends React.Component {
         if (sessionStorage.getItem(TOKEN) != null) {
             if (sessionStorage.getItem(IS_SURVEY_COMPLETE) === "true") {
                 return(
-                    <Redirect to='/home' />
+                    <Navigate to='/home' />
                 )
             } else {
                 return(
-                    <Redirect to='/survey' />
+                    <Navigate to='/survey' />
                 )
             }
             

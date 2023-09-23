@@ -1,5 +1,6 @@
 export const TOKEN = "token"
 export const EMAIL = "email"
+export const ACTIVE_PAGE = "activePage"
 export const IS_SURVEY_COMPLETE = "IsSurveyComplete"
 
 export const FREQUENCY_MAP = [

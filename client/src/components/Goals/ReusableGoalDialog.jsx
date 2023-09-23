@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormControl, TextField, DialogActions, DialogContent, DialogTitle, Dialog, InputAdornment, FormGroup } from '@mui/material';
-import GoalsBudgetSelect from './GoalsBudgetSelect'
-import { transformDateFormatToYyyyMmDd } from './StringUtils';
+import GoalsBudgetSelect from '../../utils/GoalsBudgetSelect'
+import { transformDateFormatToYyyyMmDd } from '../../utils/StringUtils';
 
 class ReusableGoalDialog extends React.Component {
     constructor(props) {

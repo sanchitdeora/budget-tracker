@@ -1,7 +1,7 @@
 import './App.scss';
 import React from 'react';
-import { TOKEN } from './utils/GlobalConstants'
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import { TOKEN, ACTIVE_PAGE } from './utils/GlobalConstants'
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./components/Home/Home.jsx"
 import Ping from "./components/Ping/Ping"
 import NavBar from './components/NavBar/NavBar.jsx';
@@ -12,7 +12,8 @@ import Transactions from './components/Transactions/Transactions';
 import Bills from './components/Bills/Bills';
 import BudgetCards from './components/Budgets/BudgetCards';
 import GoalCards from './components/Goals/GoalCards';
-import GoalDetail from './components/Goals/GoalDetail';
+import { menuItems } from './utils/menuItems';
+
 
 // const TOKEN = "token"
 
@@ -23,6 +24,7 @@ class App extends React.Component {
         this.state = {
             isLoggedIn: token !== null,
             token: sessionStorage.getItem(TOKEN),
+            navBarActive: menuItems[0],
         };
     };
 
@@ -37,78 +39,66 @@ class App extends React.Component {
         // console.log(this.state)	
     }
 
+    setNavBarActive = (item) => {
+        console.log("setting menu item to active: ", item)
+        this.setState({ navBarActive: item })
+    }
+
+    getNavBarActive = () => {
+        console.log("getting menu item to active: ", this.state.navBarActive)
+       return this.state.navBarActive;
+    }
+
     render() {
         return (
-            <div className="root-container">
-                    <Router>
-                        <NavBar isLoggedIn={this.state.isLoggedIn} />
-                        <div className="app-container">
-                        <Switch>
-                            
-                            <PrivateRoute component={Home} path="/home" exact />
+            <div className='app-container'>
+                <Router>
+                    <NavBar isLoggedIn={this.state.isLoggedIn} getActive={this.getNavBarActive} setActive={this.setNavBarActive} />
+                        <div className="inner-container">
+                        <Routes>
+                            {/* <PrivateRoute component={Home} path="/home" exact /> */}
 
-                            <Route exact path='/ping'>
-                                <Ping />
-                            </Route>
-                            
-                            <Route exact path='/authenticate'>
-                                <Authenticate setLoginState={this.setLoginState} setToken={this.setToken} />
-                            </Route>
-                            
-                            <Route exact path='/logout'>
-                                <Logout setLoginState={this.setLoginState} setToken={this.setToken} />
-                            </Route>
+                            <Route path="/ping" element={<Ping />} />
+                            <Route exact path='/authenticate' element={<Authenticate setLoginState={this.setLoginState} setToken={this.setToken} />} />
+                            <Route exact path='/logout' element={<Logout setLoginState={this.setLoginState} setToken={this.setToken} />} />
 
-                            <Route exact path='/survey'>
-                                <Survey />
-                            </Route>
+                            <Route exact path='/transactions' element={<Transactions setNavBarActive={this.setNavBarActive} />} />
+                            <Route exact path='/bills' element={<Bills setNavBarActive={this.setNavBarActive} />} />
+                            <Route exact path='/budgets' element={<BudgetCards setNavBarActive={this.setNavBarActive} />} />
+                            <Route exact path='/goals' element={<GoalCards setNavBarActive={this.setNavBarActive} />} />
 
-                            <Route exact path='/transactions'>
-                                <Transactions />
+                            <Route exact path="/" element={<Home />}>
+                                {/* {
+                                this.state.isLoggedIn ? 
+                                <Navigate to="/home" /> : 
+                                <Navigate to="/authenticate" />
+                                }  */}
                             </Route>
 
-                            <Route exact path='/bills'>
-                                <Bills />
-                            </Route>
-
-                            <Route exact path='/budgets'>
-                                <BudgetCards />
-                            </Route>
-
-                            <Route exact path='/goals1'>
-                                <GoalDetail />
-                            </Route>
-
-                            <Route exact path='/goals'>
-                                <GoalCards />
-                            </Route>
-
-                            <Route exact path="/">
-                                  {
-                                  this.state.isLoggedIn ? 
-                                  <Redirect to="/home" /> : 
-                                  <Redirect to="/authenticate" />
-                                } 
-                            </Route>
-                        </Switch></div>
-                    </Router>
-                
+                            {/* <Route exact path='/survey' element={<Survey />}> */}
+                                {/* <Survey /> */}
+                            {/* </Route> */}
+                        </Routes>
+                    </div>
+                </Router>
             </div>
         );
     }
 }
 
-const PrivateRoute = ({component: Component, ...rest}) => {
-    return (
+// const PrivateRoute = ({component: Component, ...rest}) => {
+//     return (
 
-        // Show the component only when the user is logged in
-        // Otherwise, redirect the user to /authenticate page
-        <Route {...rest} render={props => (
-            (sessionStorage.getItem(TOKEN) !== null) ?
-                <Component {...props} />
-            : <Redirect to="/authenticate" />
-        )} />
-    );
-};
+//         // Show the component only when the user is logged in
+//         // Otherwise, navigate the user to /authenticate page
+//         <Route {...rest} render={props => (
+//             (sessionStorage.getItem(TOKEN) !== null) ?
+//                 <Component {...props} />
+//             : <Navigate to="/authenticate" />
+//         )} />
+//     );
+// };
+
+//https://huemint.com/website-2/#palette=050505-2dfb86-1f80ff-fe1616
 
 export default App;

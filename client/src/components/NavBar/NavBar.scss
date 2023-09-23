@@ -1,33 +1,87 @@
-.navbar-container {
-  background-color: #00897b;
-  width: auto;
+@import "../../styles/global";
+
+.navbar {
+  padding: 2rem 1.5rem;
+  width: 275px;
+  height: 100%;
+  background: $primary-bg-color2;
+  // border: 3px solid #000000;
+  // backdrop-filter: blur(4.5px);
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
 }
 
-.navbar-list {
-  margin: 0.5em 0 3em 0;
-  padding: 0;
-  list-style: none;
-  background-color: #00897b;
+.user-con{
+  height: 100px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  img{
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #fcf6f9;
+      border: 2px solid #FFFFFF;
+      padding: .2rem;
+      box-shadow: 0px 1px 17px rgba(0, 0, 0, 0.06);
+  }
+  h2{
+      text-transform: uppercase;
+      color: $primary-color;
+      font-size: clamp(1.5rem, 1.5vw, 1.8rem);
+      letter-spacing: 0.05rem;
+
+  }
+  p{
+      color: $primary-color;
+  }
 }
 
-.navbar-list a {
-  float: left;
-  overflow: hidden;
-  padding: 8px 15px;
-  text-decoration: none;
-  font-weight: bold;
-  font-family: "Open Sans", sans-serif;
-  color: white;
-  border-right: 1px solid black;
+.menu-items{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  li{
+      display: grid;
+      grid-template-columns: 40px auto;
+      align-items: center;
+      margin: .6rem 0;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .4s ease-in-out;
+      // color: $primary-color3;
+      padding-left: 1rem;
+      position: relative;
+      i{
+          color: $primary-color3;
+          font-size: 1.4rem;
+          transition: all .4s ease-in-out;
+      }
+      a{
+          position: relative;
+          color: $primary-color3;
+          display: contents;
+      }
+  }
 }
 
-.navbar-list a:hover {
-  opacity: 0.7;
-}
-
-.accountControl {
-  float: right !important;
-  right: 15px;
-  border-left: 1px solid black;
-  border-right: 0 !important;
+.active{
+  color: $primary-color !important;
+  i,a{
+      color: $primary-color !important;
+  }
+  &::before{
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: $primary-color;
+      border-radius: 0 10px 10px 0;
+  }
 }

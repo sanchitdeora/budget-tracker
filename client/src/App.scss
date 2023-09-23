@@ -1,16 +1,38 @@
-.root-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  background-color: #f6fcfb;
-}
+
+@import "./styles/global";
 
 .app-container {
+  padding: 2rem;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  width: 100%;
-  align-items: center;
-  padding: 24px;
+  gap: 0.75rem;
 }
+
+.inner-container {
+  flex: 1;
+    background: $primary-bg-color3;
+    // border: 3px solid #050505;
+    // backdrop-filter: blur(4.5px);
+    border-radius: 15px;
+    overflow-x: hidden;
+    &::-webkit-scrollbar{
+      width: 0;
+    }
+}
+
+// .root-container {
+//   width: 100%;
+//   height: 100%;
+//   display: flex;
+//   justify-content: center;
+//   flex-direction: column;
+//   background-color: $primary-bg-color;
+// }
+
+// .app-container {
+//   display: flex;
+//   flex-direction: column;
+//   width: 100%;
+//   align-items: center;
+//   padding: 24px;
+// }

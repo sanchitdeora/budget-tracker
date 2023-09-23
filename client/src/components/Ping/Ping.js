@@ -1,5 +1,4 @@
 import React from 'react';
-// import axios, { AxiosResponse } from 'axios';
 
 
 class Ping extends React.Component {
