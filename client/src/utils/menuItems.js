@@ -1,34 +1,41 @@
-import {dashboard, expenses, transactions, trend} from '../utils/Icons'
+import {home, expenses, transactions, bill, goal} from '../utils/Icons'
+import { BILLS, BUDGETS, GOALS, HOME, TRANSACTIONS } from './GlobalConstants'
+
+
 
 export const menuItems = [
     {
-        id: 1,
-        title: 'Home',
-        icon: dashboard,
+        id: 0,
+        title: HOME,
+        icon: home,
         link: '/home'
     },
     {
-        id: 2,
-        title: "Transactions",
+        id: 1,
+        title: TRANSACTIONS,
         icon: transactions,
-        link: "/transactions",
+        link: '/transactions',
+    },
+    {
+        id: 2,
+        title: BILLS,
+        icon: bill,
+        link: '/bills',
     },
     {
         id: 3,
-        title: "Bills",
-        icon: trend,
-        link: "/bills",
+        title: BUDGETS,
+        icon: expenses,
+        link: '/budgets',
     },
     {
         id: 4,
-        title: "Budgets",
-        icon: expenses,
-        link: "/budgets",
-    },
-    {
-        id: 5,
-        title: "Goals",
-        icon: trend,
-        link: "/goals",
+        title: GOALS,
+        icon: goal,
+        link: '/goals',
     },
 ]
+
+export function getMenuItemsByTitle(title) {
+    return menuItems.find(item => item.title === title)
+}

@@ -1,3 +1,5 @@
+import { CATEGORY_MAP } from "./GlobalConstants";
+
 export function capitalizeFirstLowercaseRest(str) {
     var splitStr = str.toLowerCase().split(' ');
     for (var i = 0; i < splitStr.length; i++) {
@@ -13,6 +15,11 @@ export function transformSnakeCaseToText(str) {
         resultStr = resultStr + " " + capitalizeFirstLowercaseRest(element)
     });
     return resultStr
+}
+
+// frequency/category map utils
+export function findCategoryById(id) {
+    return CATEGORY_MAP.find(x => x.id === id).value
 }
 
 

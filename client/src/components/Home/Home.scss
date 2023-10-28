@@ -1,0 +1,10 @@
+@import "../../styles/variables";
+
+.MuiPaper-root {
+    background-color: $primary-bg-color !important;
+    color: $primary-color2 !important;
+    margin: 0 !important;
+}
+.MuiMenuItem-root {
+    font-family: 'Quicksand', sans-serif !important;
+}

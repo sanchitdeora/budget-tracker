@@ -1,42 +1,102 @@
-.transactions-inner-container {
-  width: 40%;
+@import "../../styles/variables";
+
+.transactions-container {
+  display: grid;
+  grid-template-rows: 10% 10% 80%;
+  // grid-template-columns: 0.75fr 1.25fr;
+  grid-template-columns: 5fr 7fr;
+  grid-column-gap: 1.5rem;
+
+  width: 100%;
   transition: visibility 0.2s ease-out;
-}
-.inner-container.show {
-  visibility: visible;
+  height: 100%;
+  padding: 1rem;
 }
 
-.header {
+.transaction-header {
+  padding: 1rem;
   text-align: center;
-  padding: 5px;
-  margin-bottom: 17px;
-  font-family: Ozxgen, sans-serif;
-  font-size: 22px;
-  border-bottom: 2px solid #00897b;
+  grid-area: 1/1/1/3;
 }
+
+.filter-container {
+  grid-area: 2/1/2/3;
+}
+
+.date-range {
+  display: flex;
+  height: 5rem;
+  width: 100%;
+  z-index: 9;
+  // margin: 30px;
+  background: $primary-color;
+  // margin-left: 50%;
+  .button {
+    height: auto;
+  }
+
+}
+
+.transaction-chart {
+  padding: 1rem;
+  background-color: $primary-bg-color2;
+  border: 1px solid $primary-color3;
+  border-radius: 20px;
+  // width: 100%;
+  button {
+    color: $primary-color2;
+  }
+}
+
+.transaction-box {
+  background-color: $primary-color2;
+  border-radius: 20px;
+  width: -5%;
+
+  overflow-y: auto;
+  &::-webkit-scrollbar{
+    width: 0;
+  }
+}
+
+.transaction {
+  padding: 1rem;
+  background-color: $primary-bg-color2;
+
+  color: $primary-color;
+  border: 1px solid $primary-color3;
+  margin: 1rem;
+  border-radius: 25px;
+  // i, p {
+  //   color: $primary-color3;
+  // }
+  button {
+    color: $primary-color;
+  }
+  li {    
+    font-family: 'Quicksand', sans-serif !important;
+    letter-spacing: 0.05rem;
+  }
+}
+
+.secondary-transaction-detail {
+  font-size: smaller;
+  color: $primary-color3
+}
+
 
 .transaction-category-box {
   width: 75%;
 }
 
-.transactions-box {
-  width: 100%;
+.transaction-create-button {
+  margin: 0 1rem -1rem 0;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.transaction {
-  width: 100%;
-  padding-left: 15px;
-  padding-right: 15px;
-  font-family: Ozxgen, sans-serif;
-}
-
-.create-button {
-  margin: 10px;
-  float: right;
+  justify-content: end;
+  padding: -1rem;
+  button {
+    color: $primary-bg-color;
+  }
 }
 
 .transaction-dialog {
@@ -117,4 +177,150 @@ input[type="radio"] {
 .close-transaction-submit-btn:focus {
   background-color: #d32f2f;
   color: white;
+}
+
+
+// datepicker css
+.DateRangePickerInput {
+  background: $primary-bg-color2;
+  border-color: $primary-color2;
+  border-radius: 5px;
+  padding: 0rem 1rem 0rem 1rem;
+}
+
+.DateRangePickerInput_arrow_svg, .DateInput_fangShape, .DateInput_fangStroke   {
+  margin: 0.2rem;
+  fill: $primary-color;
+  stroke: none;
+}
+
+.DateInput, .DateInput_input, .DateInput_input__focused, #your_unique_start_date_id{
+  background: $primary-bg-color2;
+  border: none;
+  color: $primary-color2;
+  font-family: "Quicksand", sans-serif;
+  font-size:medium;
+}
+
+.DateInput_screenReaderMessage {
+  visibility: hidden;
+}
+
+.DateRangePicker_picker {
+  border: 1px solid $primary-color2;
+  border-radius: 10px;
+  background: $primary-bg-color;
+}
+
+.DayPicker , .CalendarMonthGrid, .DayPicker_transitionContainer, .CalendarMonth {
+  border-radius: 10px;
+  background: $primary-bg-color;
+}
+
+.DayPickerNavigation_button__default {
+  background: none;
+  border: none;
+}
+
+.DayPickerNavigation_svg__horizontal  {
+  fill: $primary-color;
+  
+}
+
+.CalendarMonth_caption {
+  color: $primary-color2;
+}
+
+.DayPicker_weekHeader_li  {
+  color: $primary-color2;
+}
+
+.CalendarDay__default {
+  background: none;
+  border: none;
+  color: $primary-color2;
+}
+
+.CalendarDay__default:hover {
+  color: $color-dark;
+  border: none;
+  background: $primary-color;
+}
+
+.CalendarDay__blocked_out_of_range {
+  background: none;
+  border: none;
+  color: $primary-color3;
+}
+
+.CalendarDay__selected_span {
+  background: $primary-color2; //background
+  color: $color-dark;
+  font-weight: bolder; //text
+  // border: 1px solid lightcoral; //default styles include a border
+}
+
+// Will edit selected date or the endpoints of a range of dates
+.CalendarDay__selected {
+  background: $primary-color; //background
+  color: $color-dark;
+  font-weight: bolder; //text
+}
+
+// Will edit when hovered over. _span style also has this property
+.CalendarDay__selected:hover {
+  background: $primary-color;
+  color: black;
+}
+
+// Will edit when the second date (end date) in a range of dates
+// is not yet selected. Edits the dates between your mouse and said date
+.CalendarDay__hovered_span:hover,
+.CalendarDay__hovered_span {
+  background: $primary-color2;
+  color: $color-dark;
+  font-weight: bolder; //text
+}
+
+.DayPickerKeyboardShortcuts_buttonReset {
+  visibility: hidden;
+}
+
+// multiselect css
+
+.multiselect-form {
+  #demo-multiple-chip-label {
+    color: $primary-color2;
+    font-family: 'Quicksand', sans-serif !important;
+    padding: 0 !important;
+  }
+  #demo-multiple-chip {
+    padding: 0.7rem 0.7rem !important;
+  }
+}
+
+#select-multiple-chip {
+  border: 1px solid $primary-color2;
+}
+
+.MuiFormControl-root {
+  width: 90% !important;
+  margin: 0 0 0 1rem !important;
+  padding: 0 !important;
+}
+
+.MuiSelect-nativeInput {
+  height: 0%;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: $primary-color2 !important;
+  border-width: 1px !important;
+}
+
+.ms-chip {
+  font-family: 'Quicksand', sans-serif !important;
+  font-weight: bolder;
+  background-color: $primary-color2 !important;
+  color: $color-dark !important;
 }

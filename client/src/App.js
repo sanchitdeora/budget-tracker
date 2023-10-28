@@ -24,7 +24,7 @@ class App extends React.Component {
         this.state = {
             isLoggedIn: token !== null,
             token: sessionStorage.getItem(TOKEN),
-            navBarActive: menuItems[0],
+            navBarActive: null,
         };
     };
 
@@ -40,12 +40,12 @@ class App extends React.Component {
     }
 
     setNavBarActive = (item) => {
-        console.log("setting menu item to active: ", item)
+        // console.log("setting menu item to active: ", item)
         this.setState({ navBarActive: item })
     }
 
     getNavBarActive = () => {
-        console.log("getting menu item to active: ", this.state.navBarActive)
+        // console.log("getting menu item to active: ", this.state.navBarActive)
        return this.state.navBarActive;
     }
 
@@ -67,13 +67,14 @@ class App extends React.Component {
                             <Route exact path='/budgets' element={<BudgetCards setNavBarActive={this.setNavBarActive} />} />
                             <Route exact path='/goals' element={<GoalCards setNavBarActive={this.setNavBarActive} />} />
 
-                            <Route exact path="/" element={<Home />}>
+                            <Route exact path="/home" element={<Home setNavBarActive={this.setNavBarActive} />} />
+                            <Route exact path="/" element={<Home setNavBarActive={this.setNavBarActive} />} />
                                 {/* {
                                 this.state.isLoggedIn ? 
                                 <Navigate to="/home" /> : 
                                 <Navigate to="/authenticate" />
-                                }  */}
-                            </Route>
+                                }  
+                            </Route> */}
 
                             {/* <Route exact path='/survey' element={<Survey />}> */}
                                 {/* <Survey /> */}

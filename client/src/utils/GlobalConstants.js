@@ -1,7 +1,13 @@
-export const TOKEN = "token"
-export const EMAIL = "email"
-export const ACTIVE_PAGE = "activePage"
-export const IS_SURVEY_COMPLETE = "IsSurveyComplete"
+export const TOKEN = 'token'
+export const EMAIL = 'email'
+export const ACTIVE_PAGE = 'activePage'
+export const IS_SURVEY_COMPLETE = 'IsSurveyComplete'
+
+export const HOME = 'Home'
+export const TRANSACTIONS = 'Transactions'
+export const BILLS = 'Bills'
+export const BUDGETS = 'Budgets'
+export const GOALS = 'Goals'
 
 export const FREQUENCY_MAP = [
     {'id': 'once', 'value': 'Once'},

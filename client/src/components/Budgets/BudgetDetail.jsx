@@ -427,14 +427,6 @@ class BudgetDetail extends React.Component {
                                     primary={(amount[3] > 0 ? ' ' : '-')+ '$ ' + Math.abs(amount[3])}
                                 />
                             </div>
-                            {/* <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Box sx={{ width: '100%', mr: 1 }}>
-                                    <LinearProgress variant="determinate" color="primary" value={((amount[3] / this.props.budget.savings) * 100) > 0 ? ((amount[3] / this.props.budget.savings) * 100) : 0}/>
-                                </Box>
-                                <Box sx={{ minWidth: 35 }}>
-                                    <Typography variant="body2" color="text.secondary">{`${this.getProgressPercentage(amount[3],this.props.budget.savings)}%`}</Typography>
-                                </Box>
-                            </Box> */}
                         </List>
                     </div>
                 <br></br>
@@ -478,12 +470,6 @@ class BudgetDetail extends React.Component {
                                             secondary={data.date.substring(0, 10)}
                                             />
                                         </div>
-                                        {/* <Box
-                                            display={'flex'}
-                                            justifyContent={'flex-end'}
-                                            marginRight='5%'
-                                            >
-                                        </Box> */}
                                         <Divider variant='fullWidth' component='li' />
                                 </div>
                             ))}

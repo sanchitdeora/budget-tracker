@@ -1,19 +1,46 @@
 import React from 'react';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
+
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ListItemText from '@mui/material/ListItemText';
-import Typography from '@mui/material/Typography';
+
 import Box from '@mui/material/Box';
-import { capitalizeFirstLowercaseRest, transformDateFormatToMmDdYyyy } from '../../utils/StringUtils';
+import Grid from '@mui/material/Grid';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+
+import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer, Legend } from 'recharts';
+import { DateRangePicker } from 'react-dates';
+
+import Chip from '@mui/material/Chip';
+
+import { capitalizeFirstLowercaseRest, findCategoryById, transformDateFormatToMmDdYyyy } from '../../utils/StringUtils';
 import './Transactions.scss';
 import { IconButton } from '@mui/material';
 import ReusableTransactionDialog from './ReusableTransactionDialog';
 import axios from 'axios';
+import { getMenuItemsByTitle } from '../../utils/menuItems';
+import { CATEGORY_MAP, TRANSACTIONS } from '../../utils/GlobalConstants';
+import { getTxChartData } from './TransactionPieChart';
+import moment from 'moment';
 
+const RADIAN = Math.PI / 180;
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    // console.log("all chart params: ", cx, cy, midAngle, innerRadius, outerRadius, percent, index, radius, x, y)
+
+    return (
+        <text x={x} y={y} fill="#2dfb86" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+            {`${(percent * 100).toFixed(0)}%`}
+        </text>
+    );
+};
 
 class Transactions extends React.Component {
     constructor(props) {
@@ -30,9 +57,33 @@ class Transactions extends React.Component {
             note: '',
             isCreateDialogOpen: false,
             isEditDialogOpen: false,
+
+            chartData: [],
+
+            filterByCategories: [],
+            filterByDate: {
+                isActive: false,
+                startDate: null,
+                endDate: null,
+            },
+            filteredTransactions: [],
         };
+        this.props.setNavBarActive(getMenuItemsByTitle(TRANSACTIONS))
         this.getAllTransactions()
     };
+
+    // handlers
+
+    setChartData = (data) => {
+        this.setState({chartData: getTxChartData(data)});
+    }
+
+    handleDateRangeChange = (input) => {
+        console.log("change here:", input, this.state.filterByDate.startDate, this.state.filterByDate.endDate);
+        this.setState({focusedInput: input})
+        this.calculateFilteredTransactions()
+    }
+
 
     cleanTransactionState = () => {
         this.setState({
@@ -45,19 +96,6 @@ class Transactions extends React.Component {
             account: '',
             note: '',
         })
-    }
-
-    getEmptyTransaction = () => {
-        return {
-            transaction_id: '',
-            title: '',
-            category: '',
-            amount: 0,
-            date: new Date(),
-            type: false,
-            account: '',
-            note: '',
-        }
     }
 
     handleChange = (event) => {
@@ -79,6 +117,53 @@ class Transactions extends React.Component {
         });
     }
 
+    handleFilterCategoryChange = (event) => {
+        const {
+          target: { value },
+        } = event;
+        console.log("updating filter by category: ", value)
+        this.setState({ filterByCategories: value});
+        this.calculateFilteredTransactions(null, value);
+    };
+
+
+    // utils
+
+    calculateFilteredTransactions = (filteredTx, fCategory, fDateObj) => {
+        if (filteredTx === undefined || filteredTx === null || filteredTx.length === 0)
+            filteredTx = this.state.allTransactions
+        if (fCategory === undefined || fCategory === null) {
+            fCategory = this.state.filterByCategories
+        }
+        if (fDateObj === undefined || fDateObj === null) {
+            fDateObj = this.state.filterByDate
+        }
+        console.log("Calculating Filter transactions", filteredTx, fCategory, fDateObj);
+
+        if (fCategory.length > 0) {
+            filteredTx = filteredTx.filter(x => fCategory.includes(findCategoryById(x.category)))
+        }
+        if (fDateObj.isActive) {
+            var startDate = fDateObj.startDate === null ? moment(0) : fDateObj.startDate
+            var endDate = fDateObj.endDate === null ? moment() : fDateObj.endDate
+            console.log("Filter transactions for date======================", fDateObj, startDate, endDate)
+            filteredTx = filteredTx.filter(
+                // function(x) {
+                //     console.log("inside tx", x, x.date, )
+                    
+                // }
+                
+                x => startDate.isBefore(moment(x.date)) && endDate.isAfter(moment(x.date))
+            )
+        }
+        this.setState({
+            filteredTransactions: filteredTx,
+        })
+
+        this.setChartData(filteredTx);
+    }
+
+
     // get transaction
 
     async getAllTransactions() {
@@ -91,14 +176,18 @@ class Transactions extends React.Component {
 
             this.setState({
                 allTransactions: sortedTransactions,
+                filteredTransactions: sortedTransactions,
             });
+            this.calculateFilteredTransactions(sortedTransactions);
         } else {
             this.setState({
                 allTransactions: [],
             });
         }
+
+        console.log("data here: ", getTxChartData(res.data.body))
     }
-    
+
 
     // create transaction
 
@@ -221,7 +310,6 @@ class Transactions extends React.Component {
             <ReusableTransactionDialog
                 title={'Add Transaction'}
                 isDialogOpen={this.state.isCreateDialogOpen}
-                // currentTransaction={this.getEmptyTransaction}
                 currentTransaction={{}}
                 handleChange={this.handleChange}
                 handleClose={this.handleCreateClose}
@@ -232,71 +320,156 @@ class Transactions extends React.Component {
 
     render() {
         return (
-            <div className='transactions-inner-container'>
-                <div className='header'>
+            <div className='transactions-container'>
+                <h2 className='transaction-header'>
                     Transactions
-                </div>
-                <div className='transactions-box'>
-                    <div className='transaction-category-box'>
-                        <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                            {this.state.allTransactions.length ? <p></p> : <p>Oops! No Transactions entered</p>}
-                            {this.state.allTransactions.map(data => (
-                                <div className='transaction'>
-                                    <ListItem key={data.transaction_id} id={data.transaction_id} alignItems='flex-start'>
-                                        <ListItemText
-                                            style={{width: '65%'}}
-                                            primary={capitalizeFirstLowercaseRest(data.title)}
-                                            secondary={<React.Fragment>
-                                                <Typography
-                                                    sx={{ display: 'inline' }}
-                                                    component='span'
-                                                    variant='body2'
-                                                    color='text.primary'
-                                                    >
-                                                    <i>{data.note}</i>
-                                                </Typography>
-
-                                            </React.Fragment>}
-                                        />
-                                        <ListItemText
-                                            primary={(data.type ? '' : '-')+ '$' + data.amount}
-                                            secondary={data.date.substring(0, 10)}
-                                        />
-                                    </ListItem>
-                                    <Box
-                                        display={'flex'}
-                                        justifyContent={'flex-end'}
-                                        marginRight='5%'
+                </h2>
+                <div className='filter-container'>
+                    <Grid container spacing={0}>
+                        <Grid item xs={5}>
+                            <DateRangePicker
+                                startDate={this.state.filterByDate.startDate} // momentPropTypes.momentObj or null,
+                                startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+                                endDate={this.state.filterByDate.endDate} // momentPropTypes.momentObj or null,
+                                endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+                                onDatesChange={({ startDate, endDate }) => this.setState({ filterByDate: {isActive: true, startDate: startDate, endDate: endDate} })} // PropTypes.func.isRequired,
+                                focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+                                onFocusChange={focusedInput => this.handleDateRangeChange(focusedInput)} // PropTypes.func.isRequired,
+                                isOutsideRange={day => (moment().diff(day) < 0)}
+                            />
+                        </Grid>
+                        <Grid item xs={7}>
+                            <FormControl sx={{ m: 1, width: 300 }} className='multiselect-form'>
+                                <InputLabel id="demo-multiple-chip-label">Filter </InputLabel>
+                                <Select
+                                    className='ms-select'
+                                    labelId="demo-multiple-chip-label"
+                                    id="demo-multiple-chip"
+                                    multiple
+                                    value={this.state.filterByCategories}
+                                    onChange={this.handleFilterCategoryChange}
+                                    input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                                    renderValue={(selected) => (
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                        {selected.map((value) => (
+                                            <Chip key={value} label={value} className='ms-chip' />
+                                        ))}
+                                        </Box>
+                                    )}
+                                    MenuProps={{ PaperProps: {
+                                        style: {
+                                          maxHeight: 48 * 4.5 + 8,
+                                          width: 250,
+                                        },
+                                      }}}
                                     >
+                                    {CATEGORY_MAP.map((category) => (
+                                        <MenuItem
+                                            key={category.id}
+                                            value={category.value}
+                                            >
+                                            {category.value}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                </div>
+                <div className='transaction-chart'>
+                    Pie Chart by Categories
+                    {this.renderBasicPie()}
+                </div>
+                <div className='transaction-box'>
+                    <div className='transaction-create-button'>
+                        <IconButton size='large' onClick={this.handleCreateTransactionOpen}>
+                            <AddCircleIcon />
+                        </IconButton>
+                    </div>
+                    <List sx={{ width: '100%' }}>
+                        {this.state.filteredTransactions.length ? <p></p> : <p>Oops! No Transactions entered</p>}
+                        {this.state.filteredTransactions.map(data => (
+                            <div className='transaction'>
+                                <Grid container spacing={0}>
+                                    <Grid item xs={7}>
+                                        {capitalizeFirstLowercaseRest(data.title)}
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        {(data.type ? '' : '-')+ '$' + data.amount}
+                                    </Grid>
+                                    <Grid item xs={1}>
                                         <IconButton 
+                                            size='small'
                                             onClick={this.handleEditTransactionOpen.bind(this, data.transaction_id)}>
                                             <ModeEditIcon />
                                         </IconButton>
-
-                                        <div className='fun'>{this.state.transaction_id}</div>
-
-                                        {this.state.transaction_id === data.transaction_id ? this.renderEditTransactionDialogBox() : ""}
-                                        <IconButton 
+                                    </Grid>
+                                    <Grid className='secondary-transaction-detail' item xs={7}>
+                                        <i>{data.note}</i>
+                                    </Grid>
+                                    <Grid className='secondary-transaction-detail' item xs={4}>
+                                        {data.date.substring(0, 10)}
+                                    </Grid>
+                                    <Grid item xs={1}>
+                                        <IconButton className='delete-button'
+                                            size='small'
                                             onClick={this.handleDeleteTransactionOpen.bind(this, data.transaction_id)}>
                                                 <DeleteIcon />
                                         </IconButton>
-                                    </Box>
-                                    <Divider variant='middle' component='li' />
-                                </div>
-                            ))}
-                        </List>
-                    </div>
+                                    </Grid>
+                                </Grid>
+                            </div>
+                        ))}
+                    </List>
                 </div>
-                <div className='create-button'>
-                    <IconButton size='large' onClick={this.handleCreateTransactionOpen}>
-                        <AddCircleIcon />
-                    </IconButton>
-                </div>
-                
+
                 {this.renderCreateTransactionDialogBox()}
             </div>
         );
     }
+
+    renderBasicPie() {
+        return (
+            <ResponsiveContainer>
+            <PieChart width={800} height={800}>
+            <Legend
+                height={'15%'}
+                iconType="circle"
+                layout="vertical"
+                verticalAlign="middle"
+                iconSize={10}
+                padding={5}
+                // formatter={renderColorfulLegendText}
+            />
+              <Pie
+                data={this.state.chartData}
+                cx="50%"
+                cy="20%"
+                labelLine={false}
+                label={renderCustomizedLabel}
+                outerRadius={'50%'}
+                innerRadius={'35%'}
+                fill="#ffffff"
+                dataKey="value"
+                stroke='none'
+              >
+                {this.state.chartData.map(item => (
+                  <Cell style={{outline: 'none'}} key={`cell-${item.category}`} />
+                ))}
+              </Pie>
+            <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        );
+    }
 }
+
+// const renderColorfulLegendText = (value: string, entry: any) => {
+//     return (
+//       <span style={{ color: "#596579", fontWeight: 500, padding: "10px" }}>
+//         {value}
+//       </span>
+//     );
+//   };
 
 export default Transactions;
