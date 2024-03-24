@@ -1,0 +1,31 @@
+@import "../styles/variables";
+
+.filter-buttons-container{
+    width: 100%;
+    margin: 0.5rem;
+    text-align: center;
+}
+
+.filter-buttons{
+    margin: 0.5rem;
+    padding: .5rem 2rem;
+    background-color: $primary-color2;
+    border: none;
+    border-radius: 20px;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: bolder;
+    color: $primary-bg-color;
+    transition: all 0.2s cubic-bezier(1,-0.16,.6,1.35);
+}
+
+.filter-buttons:hover{
+    background-color: $primary-color;
+    cursor: pointer;
+}
+
+.filter-buttons:active, .filter-buttons:focus{
+    outline: none;
+    border: none;
+    background-color: $primary-color;
+}

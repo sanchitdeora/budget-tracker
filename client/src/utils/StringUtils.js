@@ -1,4 +1,4 @@
-import { CATEGORY_MAP } from "./GlobalConstants";
+import { CATEGORY_MAP, FREQUENCY_MAP } from "./GlobalConstants";
 
 export function capitalizeFirstLowercaseRest(str) {
     var splitStr = str.toLowerCase().split(' ');
@@ -22,8 +22,12 @@ export function findCategoryById(id) {
     return CATEGORY_MAP.find(x => x.id === id).value
 }
 
+export function findFrequencyById(id) {
+    return FREQUENCY_MAP.find(x => x.id === id).value
+}
 
-// time utils
+
+// date/time utils
 
 function splitDate(str) {
     var splitStr = str.split('-')
@@ -51,7 +55,6 @@ export function transformDateFormatToMmmDdYyyy(str) {
     date[1] = date[1][0] === '0' ? date[1].substring(1, 2) : date[1]
     
     return getShortMonthName(str) + " " + date[1] + ", " + date[2]
-
 }
 
 export function getFullMonthName(stringDate) {
@@ -66,4 +69,9 @@ export function getShortMonthName(stringDate) {
 
 export function getYear(stringDate) {
     return new Date(stringDate).getFullYear();
+}
+
+export function getRemainingDays(stringDate) {
+    let remainingDays = Math.round((new Date(stringDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+    return remainingDays > 0 ? remainingDays : 0; 
 }

@@ -1,51 +1,91 @@
-.bills-inner-container {
-  width: 40%;
+@import "../../styles/variables";
+
+.bills-container {
+  display: grid;
+  grid-template-rows: 10% 10% 80%;
+  // grid-template-columns: 0.75fr 1.25fr;
+  grid-template-columns: 7fr 5fr;
+  grid-column-gap: 1.5rem;
+
+  width: 100%;
   transition: visibility 0.2s ease-out;
-}
-.inner-container.show {
-  visibility: visible;
-}
-
-.header {
-  text-align: center;
-  padding: 5px;
-  margin-bottom: 17px;
-  font-family: Ozxgen, sans-serif;
-  font-size: 22px;
-  border-bottom: 2px solid #00897b;
+  height: 100%;
+  padding: 1rem;
 }
 
-.bills-category-box {
-  width: 75%;
+.bills-filter-by-category {
+  grid-area: 2/1/3/2;
+}
+
+.bills-filter-by-date {
+  grid-area: 2/2/3/3;
+}
+
+// .inner-container.show {
+//   visibility: visible;
+// }
+
+.bills-chart {
+  padding: 1rem;
+  background-color: $primary-bg-color2;
+  border: 1px solid $primary-color3;
+  border-radius: 20px;
+  // width: 100%;
+  button {
+    color: $primary-color2;
+  }
+}
+
+.bills-create-button {
+  margin: 0 1rem -1rem 0;
+  display: flex;
+  justify-content: end;
+  padding: -1rem;
+  button {
+    color: $primary-bg-color;
+  }
 }
 
 .bills-box {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  background-color: $primary-color2;
+  border-radius: 20px;
+
+  overflow-y: auto;
+  &::-webkit-scrollbar{
+    width: 0;
+  }
 }
 
 .bill {
-  width: 100%;
-  padding-left: 15px;
-  padding-right: 15px;
-  font-family: Ozxgen, sans-serif;
+  padding: 1rem;
+  background-color: $primary-bg-color2;
+
+  color: $primary-color;
+  border: 1px solid $primary-color3;
+  margin: 1rem;
+  border-radius: 25px;
+  button {
+    color: $primary-color;
+  }
+  li {    
+    font-family: 'Quicksand', sans-serif !important;
+    letter-spacing: 0.05rem;
+  }
 }
 
-.create-button {
-  margin: 10px;
-  float: right;
+.secondary-bill-detail {
+  font-size: smaller;
+  color: $primary-color3
 }
 
-.bill-dialog {
-  width: 100%;
+.tertiary-bill-detail {
+  font-size: smaller;
+  color: $primary-color2
 }
 
-.bill-inner-container {
-  width: 75%;
-}
+// .bill-dialog {
+//   width: 100%;
+// }
 
 .bill-input-group {
   font-size: 20px;

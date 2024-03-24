@@ -7,8 +7,6 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
-import ListItemText from '@mui/material/ListItemText';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { FormControl, TextField, DialogActions, DialogContent, DialogTitle, Dialog, InputAdornment, FormGroup } from '@mui/material';
 
@@ -204,73 +202,70 @@ class BudgetDetail extends React.Component {
 
     render() {
         return (
-            <div className='budgets-inner-container'>
+            <div className='budget-detail-container'>
+                <IconButton style={{padding: '2%'}} onClick={this.props.handleBudgetClose}>
+                    <ArrowBackIosNewIcon />
+                </IconButton>
 
-                <div className='budgets-box'>
-                    {this.props.budget ? <p></p> : <h3>Add navigate back or error</h3>}
-                    <div className='budget'>                            
-                        <Box
-                            className='budget-detail-header-box'
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            marginLeft='auto'
-                            alignItems='center'
-                            >
-                            <IconButton style={{padding: '2%'}} onClick={this.props.handleBudgetClose}>
-                                <ArrowBackIosNewIcon />
-                            </IconButton>
+                {this.props.budget ? <h2 className='header budget-detail-header'>{this.props.budget.budget_name}</h2> : <h3>Add navigate back or error</h3>}
 
-                            <h2>{this.props.budget.budget_name}</h2>
+                <IconButton 
+                        style={{marginRight: '2%', padding: '2%'}} 
+                        onClick={this.handleEditBudgetOpen.bind(this, this.props.budget.budget_id)}
+                        disabled={this.props.budget.is_closed}
+                >
+                        <ModeEditIcon />
+                </IconButton>
+                <ReusableBudgetDialog
+                    title={'Edit Budget'}
+                    isDialogOpen={this.state.isEditDialogOpen}
+                    handleInputChange={this.props.handleInputChange}
+                    handleClose={this.handleEditClose}
+                    currentBudget={this.props.budget}
+                    submitMethod={this.submitEditMethod}
+                />
 
-                            <IconButton 
-                                style={{marginRight: '2%', padding: '2%'}} 
-                                onClick={this.handleEditBudgetOpen.bind(this, this.props.budget.budget_id)}
-                                disabled={this.props.budget.is_closed}
-                            >
-                                <ModeEditIcon />
-                            </IconButton>
-                            <ReusableBudgetDialog
-                                title={'Edit Budget'}
-                                isDialogOpen={this.state.isEditDialogOpen}
-                                handleInputChange={this.props.handleInputChange}
-                                handleClose={this.handleEditClose}
-                                currentBudget={this.props.budget}
-                                submitMethod={this.submitEditMethod}
-                            />
-                        </Box>
-                        <Divider variant='middle' />
-                        <Box
-                            marginTop={'3%'}
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            marginLeft='auto'
-                            alignItems='center'
-                        >
-                            <div className='budget-detail-other-box'>{this.getTimeRange(this.props.budget.creation_time, this.props.budget.expiration_time)}</div>
+                <div className='budget-detail-other-box'>{this.getTimeRange(this.props.budget.creation_time, this.props.budget.expiration_time)}</div>
 
-                            <div><span>Close budget: </span>
-                            <span>{this.state.is_closed? 
-                                <IconButton style={{marginRight: '2%', padding: '2%'}} onClick={this.submitBudgetClosedMethod.bind(this, false)}>
-                                    <CheckCircleIcon />
-                                </IconButton>
-                                :
-                                <IconButton style={{marginRight: '2%', padding: '2%'}} onClick={this.submitBudgetClosedMethod.bind(this, true)}>
-                                    <RadioButtonUncheckedIcon />
-                                </IconButton>
-                            }</span></div>
-                            <div className='budget-detail-other-box'>Frequency: {capitalizeFirstLowercaseRest(this.props.budget.frequency)}</div>
-                        </Box>
+                <div className='budget-detail-other-box budget-detail-close-budget-box'>
+                    Close budget: 
+                    <span>{this.state.is_closed? 
+                        <IconButton style={{marginRight: '2%', padding: '2%'}} onClick={this.submitBudgetClosedMethod.bind(this, false)}>
+                            <CheckCircleIcon />
+                        </IconButton>
+                        :
+                        <IconButton style={{marginRight: '2%', padding: '2%'}} onClick={this.submitBudgetClosedMethod.bind(this, true)}>
+                            <RadioButtonUncheckedIcon />
+                        </IconButton>
+                    }</span>
+                </div>
+                <div className='budget-detail-other-box'>Frequency: {capitalizeFirstLowercaseRest(this.props.budget.frequency)}</div>
 
-                        {this.renderBudgetMaps('Income', this.props.budget.income_map, false)}
-                        {this.renderBudgetMaps('Expense', this.props.budget.expense_map, false)}
-                        {this.renderBudgetMaps('Goals', this.props.budget.goal_map, true)}
+                <div className='budget'>
+                    <div className='budget-left-panel'>
+                        <div className='budget-detail-map' id='income'>
+                            {this.renderBudgetMaps('Income', this.props.budget.income_map, false)}
+                        </div>
+                        <div className='budget-detail-map budget-detail-goals'>
+                            {this.renderBudgetMaps('Goals', this.props.budget.goal_map, true)}
+                        </div>
+                        <div className='budget-detail-map budget-detail-savings'>                    
+                            {/* update savings */}
+                            {this.renderTotalSavings()}
+                        </div>
+                    </div>
 
-                        {/* update savings */}
-                        {this.renderTotalSavings()}
-
-                        {this.renderTransactionDetails('Transactions', this.state.transactions)}
+                    <div className='budget-right-panel'>
+                        <div className='budget-detail-map' id='expense'>
+                            {this.renderBudgetMaps('Expense', this.props.budget.expense_map, false)}
+                        </div>
+                        <div className='budget-detail-transactions'>
+                            {this.renderTransactionDetails('Transactions', this.state.transactions)}
+                        </div>
                     </div>
                 </div>
+                
+
             </div>
         );
     }
@@ -285,11 +280,8 @@ class BudgetDetail extends React.Component {
 
                     {Object.keys(dataMap).map(key => (
                         <div className='budgets-category-box' key={key} >
-                            <div className='budgets-list-item-text-container' style={{display: 'flex'}}>
-                                <ListItemText
-                                    style={{width: '80%'}}
-                                    primary={dataMap[key].name}
-                                />
+                            <div className='budgets-category-item'>
+                                {dataMap[key].name}
                                 {goalFlag ?
                                 <div>
                                     <Button size='large' 
@@ -302,24 +294,31 @@ class BudgetDetail extends React.Component {
                                 </div>
                                 :""}
                             </div>
-                            <div className='budgets-list-item-text-container' style={{display: 'flex', marginTop: '0px'}}>
-                                <ListItemText
-                                    style={{width: '90%'}}
-                                    primary={'$ ' + (dataMap[key].current_amount ? dataMap[key].current_amount : 0)}
-                                />
-                                <ListItemText
-                                    style={{textAlign: 'right'}}
-                                    primary={'$ ' + dataMap[key].amount}
-                                />
+                            <div className='budgets-category-item'>
+                                <div>
+                                    {'$ ' + (dataMap[key].current_amount ? dataMap[key].current_amount : 0)}
+                                </div>
+                                <div>
+                                    {'$ ' + dataMap[key].amount}
+                                </div>
                             </div>
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                            
+                            <div className='budgets-category-item'>
+                                <Box sx={{ width: '100%', mr: 1.5, mt: 1.2 }}>
+                                    <LinearProgress variant="determinate" color="primary" value={this.getProgressPercentage(dataMap[key].current_amount, dataMap[key].amount)}/>
+                                </Box>
+                                <Box sx={{ minWidth: 35 }} id='map-percentage'>
+                                    {`${this.getProgressPercentage(dataMap[key].current_amount, dataMap[key].amount)}%`}
+                                </Box>
+                            </div>
+                            {/* <Box sx={{ display: 'flex', alignItems: 'center' }}>
                                 <Box sx={{ width: '100%', mr: 1 }}>
                                     <LinearProgress variant="determinate" color="primary" value={this.getProgressPercentage(dataMap[key].current_amount, dataMap[key].amount)}/>
                                 </Box>
                                 <Box sx={{ minWidth: 35 }}>
                                     <Typography variant="body2" color="text.secondary">{`${this.getProgressPercentage(dataMap[key].current_amount, dataMap[key].amount)}%`}</Typography>
                                 </Box>
-                            </Box>
+                            </Box> */}
                         </div>
                     ))}
 
@@ -383,49 +382,41 @@ class BudgetDetail extends React.Component {
             <div>
                 <div className='budget-detail-map-box'>
                     <h3>{`Savings`}</h3>
-                    <div className='savings'>
+                    <div className='budgets-category-box'>
                         <List sx={{ width: '100%' }}>
-                            <div className='budgets-list-item-text-container' style={{display: 'flex', marginTop: '0px', paddingTop: '5px', paddingBottom: '5px'}}>
-                                <ListItemText
-                                    style={{width: '90%'}}
-                                    primary={capitalizeFirstLowercaseRest(`Total Incomes`)}
-                                />
-                                <ListItemText
-                                    style={{textAlign: 'right'}}
-                                    primary={'$ ' + amount[0]}
-                                />
+                            <div className='budgets-category-item'>
+                                <div>
+                                    {capitalizeFirstLowercaseRest(`Total Incomes`)}
+                                </div>
+                                <div>
+                                    {'$ ' + amount[0]}
+                                </div>
                             </div>
-                            <Divider variant='middle'/>
-                            <div className='budgets-list-item-text-container' style={{display: 'flex', marginTop: '0px', paddingTop: '5px', paddingBottom: '5px'}}>
-                                <ListItemText
-                                    style={{width: '90%'}}
-                                    primary={capitalizeFirstLowercaseRest(`Total Expenses`)}
-                                />
-                                <ListItemText
-                                    style={{textAlign: 'right'}}
-                                    primary={'$ ' + amount[1]}
-                                />
+                            <Divider variant='middle' textAlign='center'/>
+                            <div className='budgets-category-item'>
+                                <div>
+                                    {capitalizeFirstLowercaseRest(`Total Expenses`)}
+                                </div>
+                                <div>
+                                    {'$ ' + amount[1]}
+                                </div>
                             </div>
-                            <div className='budgets-list-item-text-container' style={{display: 'flex', marginTop: '0px', paddingTop: '5px', paddingBottom: '5px'}}>
-                                <ListItemText
-                                    style={{width: '90%'}}
-                                    primary={capitalizeFirstLowercaseRest(`Total Goals`)}
-                                />
-                                <ListItemText
-                                    style={{textAlign: 'right'}}
-                                    primary={'$ ' + amount[2]}
-                                />
+                            <div className='budgets-category-item'>
+                                <div>
+                                    {capitalizeFirstLowercaseRest(`Total Goals`)}
+                                </div>
+                                <div>
+                                    {'$ ' + amount[2]}
+                                </div>
                             </div>
                             <Divider variant='fullWidth'/>
-                            <div className='budgets-list-item-text-container' style={{display: 'flex', marginTop: '0px', paddingTop: '8px', paddingBottom: '8px'}}>
-                                <ListItemText
-                                    style={{width: '90%'}}
-                                    primary={capitalizeFirstLowercaseRest(`Total Savings`)}
-                                />
-                                <ListItemText
-                                    style={{textAlign: 'right'}}
-                                    primary={(amount[3] > 0 ? ' ' : '-')+ '$ ' + Math.abs(amount[3])}
-                                />
+                            <div className='budgets-category-item'>
+                                <div>
+                                    {capitalizeFirstLowercaseRest(`Total Savings`)}
+                                </div>
+                                <div>
+                                    {(amount[3] >= 0 ? ' ' : '-')+ '$ ' + Math.abs(amount[3])}
+                                </div>
                             </div>
                         </List>
                     </div>
@@ -443,32 +434,28 @@ class BudgetDetail extends React.Component {
                 <div className='budget-detail-map-box'>
                 {/* <Divider variant='middle' /> */}
                     <h3>{title}</h3>
-                    <div className='transactions'>
+                    <div className='budget-detail-transactions-container'>
                         <List sx={{ width: '100%' }}>
                             {transactionMap.length ? <p></p> : <p>Oops! No Transactions entered</p>}
                             {transactionMap.map(data => (
                                 <div>
-                                    <div className='transaction-detail' style={{display: 'flex', marginTop: '0px', paddingTop: '5px', paddingBottom: '5px'}}>
-                                        <ListItemText
-                                            style={{width: '80%'}}
-                                            primary={capitalizeFirstLowercaseRest(data.title)}
-                                            secondary={<React.Fragment>
-                                                <Typography
-                                                    sx={{ display: 'inline' }}
-                                                    component='span'
-                                                    variant='body2'
-                                                    color='text.primary'
-                                                    >
-                                                    <i>{data.note}</i>
-                                                </Typography>
-
-                                            </React.Fragment>}
-                                        />
-                                        <ListItemText
-                                            style={{textAlign: 'right'}}
-                                            primary={(data.type ? ' ' : '-')+ '$ ' + data.amount}
-                                            secondary={data.date.substring(0, 10)}
-                                            />
+                                    <div className='budgets-category-item budget-detail-transaction'>
+                                        <div className='budget-detail-transaction-info'>
+                                            <div>
+                                            </div>
+                                                {capitalizeFirstLowercaseRest(data.title)}
+                                            <div id='secondary'>
+                                                {data.note} 
+                                            </div>
+                                        </div>
+                                        <div className='budget-detail-transaction-info'>
+                                            <div>
+                                                {(data.type ? ' ' : '-')+ '$ ' + data.amount}
+                                            </div>
+                                            <div id='secondary'>
+                                                {data.date.substring(0, 10)}
+                                            </div>
+                                        </div>
                                         </div>
                                         <Divider variant='fullWidth' component='li' />
                                 </div>

@@ -1,18 +1,18 @@
 import React from "react"; 
 import axios from 'axios';
-import { Button, Card, CardContent, CardActions, Typography, CardHeader, IconButton } from '@mui/material';
+import { Card, CardContent, CardActions, IconButton } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 
 import './BudgetCards.scss';
+import '../../utils/FilterButton.scss';
 import BudgetDetail from "./BudgetDetail";
 import ReusableBudgetDialog from './ReusableBudgetDialog';
 import { getFullMonthName, getYear } from "../../utils/StringUtils";
 import { EXPENSES, GOALS, INCOMES } from "./BudgetConstants";
 import FilterButton from "../../utils/FilterButton";
+import { BUDGETS } from '../../utils/GlobalConstants';
+import { getMenuItemsByTitle } from '../../utils/menuItems';
 
 class BudgetCards extends React.Component {
     constructor(props) {
@@ -38,6 +38,7 @@ class BudgetCards extends React.Component {
             isEditDialogOpen: false,
         };
         console.log("states for budget card", this.state);
+        this.props.setNavBarActive(getMenuItemsByTitle(BUDGETS))
         this.getAllBudgets()
     };
 
@@ -47,11 +48,12 @@ class BudgetCards extends React.Component {
     async getAllBudgets() {
         let res = await axios.get('/api/budgets');
         console.log('get all budget: ', res.data.body)
-        if (res.data.body != null)
-        {
+        var filteredBudgets = [];
+        if (res.data.body != null) {
+            filteredBudgets = res.data.body.filter(item => !item.is_closed); 
             this.setState({
                 allBudgets: res.data.body,
-                filteredBudgets: res.data.body.filter(item => !item.is_closed)
+                filteredBudgets: filteredBudgets
             });
         } else {
             this.setState({
@@ -59,8 +61,9 @@ class BudgetCards extends React.Component {
             });
         }
 
+        console.log("Start Filtering by Date", filteredBudgets)
         this.setState({
-            filterCategories: ['All', ...new Set(this.state.filteredBudgets.map(item => this.getFilterDate(item.creation_time)))]
+            filterCategories: ['All', ...new Set(filteredBudgets.map(item => this.getFilterDate(item.creation_time)))]
         });
     }
 
@@ -178,6 +181,7 @@ class BudgetCards extends React.Component {
     }
 
     getFilterDate = (stringDate) => {
+        console.log("Creation time for budget: ", stringDate)
         return getFullMonthName(stringDate) + " " + getYear(stringDate)
     }
 
@@ -285,9 +289,8 @@ class BudgetCards extends React.Component {
         console.log('filter categories: ', this.state.filterCategories)
         console.log('filter budgets: ', this.state.filteredBudgets)
         return(
-            <FilterButton button={this.state.filterCategories} filter={this.filterBudgetsByDate} />
+            <FilterButton key="filter" button={this.state.filterCategories} filter={this.filterBudgetsByDate} />
         )
-
     }
 
     renderFilterClosedBoxes() {
@@ -295,18 +298,17 @@ class BudgetCards extends React.Component {
         console.log('filter budgets: ', this.state.filteredBudgets)
         return(
             <div>
-                <InputLabel id="demo-simple-select-label">Filter Budgets</InputLabel>
-                <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
+                <label id="filter-closed">Filter Budgets</label>
+                <br></br>
+                <select
                     name="filter-closed"
                     value={this.state.is_closed_budget_displayed?"closed":"open"}
                     label=""
                     onChange={this.filterBudgetsClosed}
                 >
-                    <MenuItem value={"open"}>Open</MenuItem>
-                    <MenuItem value={"closed"}>Closed</MenuItem>
-                </Select>
+                    <option defaultValue value={"open"}>Open</option>
+                    <option value={"closed"}>Closed</option>
+                </select>
             </div>
         )
 
@@ -339,55 +341,56 @@ class BudgetCards extends React.Component {
 
     renderBudgetCards() {
         return (
-            <div>
-                <div className='header'>
-                        Budget
+            <div className="budget-cards-container">
+                <h2 className='header'>
+                        {BUDGETS}
+                </h2>
+                <div className='budget-filter-by-date'>
+                    {this.renderFilterDateBoxes()}
                 </div>
-                <div className='create-budget-card-button'>
-                    <Button size='large' style={{color: '#00897b'}} onClick={this.handleCreateBudgetOpen} startIcon={<AddCircleIcon />} >
-                        <strong>Create a new Budget</strong>
-                    </Button>
+                <div className='budget-filter-by-close'>
+                    {this.renderFilterClosedBoxes()}
                 </div>
-
-                {this.renderFilterDateBoxes()}
-
-                {this.renderFilterClosedBoxes()}
-
-                {this.state.filteredBudgets.length ? <p></p> : <h3>Create a New Budget</h3>}
+                
                 <div className='budget-cards'>
-                    {this.state.filteredBudgets?.map(data => (
-                        <div className="budget-cards-box">
-                            <div className="item-container">
-                                <Card sx={{ minWidth: 275 }}>
-                                    <div onClick={() => this.handleBudgetOpen(data.budget_id)}>
-                                        <CardHeader title={data.budget_name} />
-                                        <CardContent style={{verticalAlign: 'middle'}}>
-                                            <Typography sx={{ mb: 0.5 }} component="div">
-                                                Total Income: {this.totalAmountFromMap(data.income_map)}
-                                            </Typography>
-                                            <Typography sx={{ mb: 0.5 }} component="div">
-                                                Target Expense: {this.totalAmountFromMap(data.expense_map)}
-                                            </Typography>
-                                            <Typography sx={{ mb: 0.5 }} component="div">
-                                                Target Savings for Goals: {this.totalAmountFromMap(data.goal_map)}
-                                            </Typography>
-                                            <Typography sx={{ mb: 0.5 }} component="div">
-                                                Target Savings: {"$" + data.savings}
-                                            </Typography>
-                                        </CardContent>
-                                    </div>
-                                    <CardActions                                 
-                                        style={{display: 'flex', flexDirection: 'row-reverse', marginRight: '5%'}}
-                                        // justifyContent={'space-between'}
-                                    >
-                                        <IconButton edge='end'onClick={this.handleDeleteBudget.bind(this, data.budget_id)}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </CardActions>
-                                </Card>
-                            </div>
-                        </div>
-                    ))}
+                    {this.state.filteredBudgets.length ? <p></p> : <h3>Create a New Budget</h3>}
+                    <div className='create-budget-card-button'>
+                        <IconButton size='large' onClick={this.handleCreateBudgetOpen}>
+                            <AddCircleIcon />
+                        </IconButton>
+                    </div>
+                    <div className="budget-cards-box">
+                        {this.state.filteredBudgets?.map(data => (
+                            <Card className="budget-item">
+                                <div onClick={() => this.handleBudgetOpen(data.budget_id)}>
+                                    <h4> {data.budget_name}</h4>
+                                    <CardContent style={{verticalAlign: 'middle'}}>
+                                        <div>
+                                            Total Income: {this.totalAmountFromMap(data.income_map)}
+                                        </div>
+                                        <div>
+                                            Target Expense: {this.totalAmountFromMap(data.expense_map)}
+                                        </div>
+                                        <div>
+                                            Target for Goals: {this.totalAmountFromMap(data.goal_map)}
+                                        </div>
+                                        <div>
+                                            Target Savings: {"$" + data.savings}
+                                        </div>
+                                    </CardContent>
+                                </div>
+                                <CardActions                                 
+                                    style={{display: 'flex', flexDirection: 'row-reverse', marginRight: '5%'}}
+                                    // justifyContent={'space-between'}
+                                >
+                                    <IconButton className='delete-button' edge='end' 
+                                        onClick={this.handleDeleteBudget.bind(this, data.budget_id)}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </CardActions>
+                            </Card>
+                        ))}
+                    </div>
                 </div>
             </div>
         )
@@ -395,7 +398,7 @@ class BudgetCards extends React.Component {
 
     render() {
         return (
-            <div className='budget-cards-inner-container'>
+            <div className="budget-cards-outer-container">
                 {this.state.isBudgetOpen ? this.renderOpenBudgetDialog() : this.renderBudgetCards()}
                 {this.renderCreateBudgetDialogBox()}
              </div>

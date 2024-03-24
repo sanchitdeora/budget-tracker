@@ -5,15 +5,17 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import { CATEGORY_MAP } from '../../utils/GlobalConstants';
 import { transformDateFormatToYyyyMmDd } from '../../utils/StringUtils';
+import { FormControl, FormControlLabel, FormGroup, FormLabel, InputAdornment, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, TextField } from '@mui/material';
 
 class ReusableTransactionDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            transactionType: props.currentTransaction.type !== undefined ? props.currentTransaction.type : false,
+            transactionType: props.currentTransaction !== undefined && props.currentTransaction.type !== undefined ? props.currentTransaction.type : false,
         };
 
-        console.log("heereee: ", props.currentTransaction.type !== undefined ? props.currentTransaction.type : false)
+        console.log("heereee: ", props.currentTransaction !== undefined && props.currentTransaction.type !== undefined ? props.currentTransaction.type : false)
+        console.log("heereee1: ", props.currentTransaction)
     };
 
     handleChangeCurrentTransaction = (event) => {
@@ -29,94 +31,105 @@ class ReusableTransactionDialog extends React.Component {
                 className='transaction-dialog'
                 open={this.props.isDialogOpen}
                 fullWidth={true}
+                hideBackdrop={false}
                 onClose={this.props.handleClose}
             >
                 <DialogTitle textAlign={'center'}>{this.props.title}</DialogTitle>
                 <DialogContent>
-                    <div className='transaction-input-group'>
-                        
-                        <label htmlFor='title'>Title</label><br></br>
-                        <input
-                            defaultValue={this.props.currentTransaction.title}
-                            type='text'
-                            name='title'
-                            className='transaction-input-box'
-                            placeholder='Title'
-                            onChange={this.props.handleChange}
-                        />
-                    </div>
-                    <br></br>
-                    <div className='transaction-input-group'>
-                        <label htmlFor='category'>Category</label><br></br>
-                        <select 
-                            name='category'
-                            className='transaction-input-box'
-                            defaultValue={this.props.currentTransaction.category}
-                            onChange={this.props.handleChange}
-                        >
-                            {CATEGORY_MAP.map(freq => (
-                                <option value={freq.id}>{freq.value}</option>
-                            ))} 
-                        </select>
-                    </div>
-                    <br></br>
-                    <div className='transaction-input-group'>
-                        <label htmlFor='amount'>Amount</label><br></br>
-                        <input
-                            defaultValue={this.props.currentTransaction.amount}
-                            type='number'
-                            name='amount'
-                            className='transaction-input-box'
-                            placeholder='Amount'
-                            onChange={this.props.handleChange}
-                        />
-                    </div>
-                    <br></br>
-                    <div className='transaction-input-group'>
-                    <label htmlFor='Debit'>
-                        <input
-                            type='radio'
-                            name='type'
-                            value='debit'
-                            placeholder='Debit'
-                            checked={this.state.transactionType === false}
-                            onChange={this.handleChangeCurrentTransaction}
-                        /> Debit
-                    </label>
-                    <label htmlFor='Credit'>
-                        <input
-                            type='radio'
-                            name='type'
-                            value='credit'
-                            placeholder='Credit'
-                            checked={this.state.transactionType === true}
-                            onChange={this.handleChangeCurrentTransaction}
-                            /> Credit
-                    </label>
-                    </div>
-                    <br></br>
-                    <div className='transaction-input-group'>
-                        <label htmlFor='date'>Date</label><br></br>
-                        <input
-                            defaultValue={transformDateFormatToYyyyMmDd(this.props.currentTransaction.date)}
-                            type='date'
-                            name='date'
-                            className='transaction-input-box'
-                            onChange={this.props.handleChange}
-                        />
-                    </div>
-                    <br></br>
-                    <div className='transaction-input-group'>
-                        <label htmlFor='Note'>Note</label><br></br>
-                        <textarea
-                            defaultValue={this.props.currentTransaction.note}
-                            type='text'
-                            name='note'
-                            className='transaction-input-box'
-                            placeholder='Note'
-                            onChange={this.props.handleChange}
-                        />
-                    </div>
+                    <FormGroup>
+                        <br></br>
+                        <FormControl className='transaction-input-group' sx={{ width: 300 }}>
+                            <TextField 
+                                defaultValue={this.props.currentTransaction.title}
+                                name='title'
+                                label='Title'
+                                // color='primary'
+                                className='transaction-input-box'
+                                onChange={this.props.handleChange}
+                                variant="outlined" 
+                            />
+                        </FormControl>
+                        <br></br>
+                        <FormControl className='transaction-input-group' sx={{ width: 300 }}>
+                            <InputLabel id="transaction-input-label">Category</InputLabel>
+                            <Select
+                                labelId="transaction-input-label"
+                                id="demo-simple-select"
+                                className='transaction-input-box'
+                                defaultValue={this.props.currentTransaction.category}
+                                // value={this.props.currentTransaction.category}
+                                label="Category"
+                                onChange={this.props.handleChange}
+                                variant="outlined" 
+                            >
+                                {CATEGORY_MAP.map(category => (
+                                    <MenuItem value={category.id}> {category.value} </MenuItem>
+                                ))} 
+                            </Select>
+                        </FormControl>
+                        <br></br>
+                        <FormControl className='transaction-input-group' sx={{ width: 300 }}>
+                            <TextField 
+                                defaultValue={this.props.currentTransaction.amount}
+                                name='amount'
+                                type='number'
+                                label='Amount'
+                                InputProps={{
+                                    startAdornment: 
+                                    <InputAdornment disableTypography position="start">
+                                        $</InputAdornment>,
+                                    inputMode: 'numeric', pattern: '[0-9]*' 
+                                }}
+                                className='transaction-input-box'
+                                onChange={this.props.handleChange}
+                                variant="outlined" 
+                            />
+                        </FormControl>
+                        <br></br>
+                        <FormControl className='transaction-input-group' sx={{ width: 300 }}>
+                            <FormLabel id="transaction-input-label">Transaction Type</FormLabel>
+                            <RadioGroup
+                                row
+                                defaultValue={this.props.currentTransaction.type}
+                                name="row-radio-buttons-group"
+                                // className='transaction-input-box'
+                                variant="outlined" 
+                                />
+                                <FormControlLabel value="debit" label="Debit" control={<Radio  
+                                    checked={this.state.transactionType === false} 
+                                    onChange={this.handleChangeCurrentTransaction}
+                                    />} />
+                                <FormControlLabel value="credit" label="Credit" control={<Radio  
+                                    checked={this.state.transactionType === true}
+                                    onChange={this.handleChangeCurrentTransaction}
+                                />} />
+                        </FormControl>
+                        <br></br>
+                        <div className='transaction-input-group'>
+                            <InputLabel id="transaction-input-label">Date</InputLabel>
+                            <input
+                                defaultValue={transformDateFormatToYyyyMmDd(this.props.currentTransaction.date)}
+                                type='date'
+                                name='date'
+                                className='transaction-input-box'
+                                onChange={this.props.handleChange}
+                            />
+                        </div>
+                        <br></br>
+                        <FormControl className='transaction-input-group' sx={{ width: 300 }}>
+                            <TextField 
+                                defaultValue={this.props.currentTransaction.note}
+                                name='note'
+                                label='Note'
+                                multiline
+                                maxRows={2}
+                                className='transaction-input-box'
+                                onChange={this.props.handleChange}
+                                variant="outlined" 
+                            />
+                        </FormControl>
+                        <br></br>
+                    </FormGroup>
                 </DialogContent>
                 <DialogActions>
                     <button

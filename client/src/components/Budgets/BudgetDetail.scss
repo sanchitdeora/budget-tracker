@@ -1,74 +1,177 @@
-.budgets-inner-container {
-  transition: visibility 0.2s ease-out;
-}
-.inner-container.show {
-  visibility: visible;
+@import "../../styles/variables";
+
+.budget-detail-container {
+    display: grid;  
+    grid-template-rows: 10% 10% 80%;
+    grid-template-columns: 3fr 1fr 8fr 3fr;
+    grid-column-gap: 1.5rem;
+    grid-row-gap: 0.5rem;
+
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    transition: visibility 0.2s ease-out;
+
+    button {
+        color: $primary-color;
+    }
+
+    overflow: hidden;
+}  
+
+.budget-detail-header {
+    grid-area: 1/2/1/4;
+    vertical-align: middle;
 }
 
-.header {
-  text-align: center;
-  padding: 5px;
-  margin-bottom: 17px;
-  font-family: Ozxgen, sans-serif;
-  font-size: 30px;
-  border-bottom: 2px solid #00897b;
+.budget-detail-close-budget-box{
+    grid-area: 2/2/2/4;
 }
 
-.budgets-title-box {
-  text-align: center;
+.budget-detail-other-box {
+    padding: 8px;
+    // background-color: $primary-bg-color2;
+    color: $primary-color2;
+    font-weight: bolder;
+    border: 1px solid $primary-color2;
+    border-radius: 0.5rem;
 }
 
-.budgets-box {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.budget-detail-header-box {
-  text-align: center;
-  padding: 5px;
-  // margin-bottom: 17px;
-  font-family: Ozxgen, sans-serif;
-  font-size: 20px;
-  // border-bottom: 2px solid #00897b;
-}
+// budget
 
 .budget {
-  width: 100%;
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-bottom: 50px;
-  font-family: Ozxgen, sans-serif;
-  margin-bottom: 25px;
-  background-color: #e0f2f1;
+    grid-area: 3/1/3/5;
+    
+    width: 100%;
+    height: 100%;
+    padding: 1rem 0;
+
+    overflow: hidden;
+    // background-color: #e0f2f1;
+
+    // inner grid
+    display: grid;
+    grid-template-columns: 3fr 6fr;
+    grid-column-gap: 1rem;
+}
+
+.budget-left-panel {
+    overflow-y: scroll;
+    &::-webkit-scrollbar{
+        width: 0;
+    }
+}
+
+.budget-right-panel {
+    overflow-y: scroll;
+    &::-webkit-scrollbar{
+        width: 0;
+    }
+}
+
+.budget-detail-map#expense {
+    grid-area: 1/2/3/4;
+    overflow-y: hidden;
+}
+.budget-detail-map#goals {
+    grid-area: 2/1/2/2;
+}
+
+// budget-detail-inner-map-boxes 
+
+.budget-detail-map-box {
+    padding: 0.5rem;
+    border: 1px solid $primary-color2;
+    border-radius: 0.5rem;
+    h3{
+        padding-left: 0.5rem;
+    }
+
+    overflow-y: hidden;
 }
 
 .budgets-category-box {
-  width: 90%;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+    width: 90%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1rem;
 }
 
-.savings {
-  width: 90%;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.budgets-category-item {
+    padding-top: 0.3rem;
+    display: flex;
+    justify-content: space-between;
+    #map-percentage {
+        font-size: small;
+        color: $primary-color;
+    }
+    button{
+        background-color: $primary-color2;
+        color: $primary-bg-color;
+    }
+    button:hover {
+        background: none;
+        color: $primary-color2;
+    }
 }
 
-.transactions {
-  width: 90%;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.MuiLinearProgress-root {
+    background: none !important;
 }
 
-.budgets-list-item-text-container {
-  margin-top: 15px;
+.MuiLinearProgress-bar {
+    background-color: $primary-color !important;
 }
+
+
+.budget-detail-savings {
+    grid-area: 3/1/3/2;
+    hr {
+        margin: 1rem 0;
+        background-color: $primary-color;
+        text-align: center;
+    }
+}
+
+
+.budget-detail-transactions {
+    grid-area: 3/2/4/4;
+    overflow-y: hidden;
+}
+
+.budget-detail-transactions-container {
+    // width: 90%;
+    display: block;
+    padding: 1rem;
+    background-color: $primary-bg-color2;
+
+    color: $primary-color;
+    // border: 1px solid $primary-color3;
+    margin: 0 1rem;
+    border-radius: 25px;
+}
+
+.budget-detail-transaction {
+    padding: 1rem;
+    color: $primary-bg-color;
+    font-weight: bolder;
+
+    background-color: $primary-color;
+    border: 1px solid $primary-color3;
+    margin: 1rem;
+    border-radius: 25px;
+}
+
+.budget-detail-transaction-info {
+    #secondary {
+        font-size: smaller;
+        color: $primary-bg-color2
+    }
+}
+
+
+// needs review
 
 .create-budget-button {
   float: right; 
@@ -165,21 +268,4 @@
 .close-budget-submit-btn:focus {
   background-color: #d32f2f;
   color: white;
-}
-
-
-.budget-detail-other-box {
-  padding: 8px;
-  background-color: #00897b;
-  color: #ffffff;
-  border-radius: 5px;
-  margin: 1%;
-}
-
-.budget-detail-map-box {
-  padding: 1% 2%;
-  color: #00897b;
-  background-color: #f6fcfb;
-  border-radius: 5px;
-  margin: 1%;
 }

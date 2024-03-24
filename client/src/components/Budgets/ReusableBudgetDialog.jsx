@@ -12,8 +12,9 @@ import { transformDateFormatToYyyyMmDd } from '../../utils/StringUtils';
 class ReusableBudgetDialog extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {allGoals:[]};
-
+        this.state = {
+            allGoals: []
+        }
         console.log("props for budget dialog", this.props);
         console.log("states for budget dialog", this.state);
         this.getAllGoals()

@@ -1,72 +1,75 @@
-.goal-cards-inner-container {
-    width: 60%;
+@import "../../styles/variables";
+
+.goal-cards-outer-container {
+    height: 100%;
+}
+
+.goal-cards-container {
+    display: grid;
+    grid-template-rows: 10% 15% 75%;
+    grid-template-columns: 5fr 5fr;
+    grid-column-gap: 1.5rem;
+  
+    width: 100%;
     transition: visibility 0.2s ease-out;
-  }
+    height: 100%;
+    padding: 1rem;
+}
+
+// goal filters by date
+
+.goal-filter-by-date{
+    grid-area: 2/1/3/3;
+}
+
+
+// goal cards
 
 .goal-cards{
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 3rem;
-    padding-bottom: 6rem;
-    // background-color: #19202E;
-    padding: 1rem 1rem;
+    grid-area: 3/1/3/3;
+    overflow-y: auto;
+    &::-webkit-scrollbar{
+        width: 0;
+    }
+
+    margin: 1rem;
+    border: 1px solid;
+    border-radius: 20px;
+    background-color: $primary-color2 !important;
+    padding: 1rem;
 }
 
 .create-goal-card-button {
+    grid-column: 1 / 3;
+    grid-row: 1;
     display: flex;
+    width: 100%;
     vertical-align: middle;
     margin-right: 0;
     justify-content: flex-end;
-  }
-  
-
-.item-container{
-    overflow: hidden;
-    background-color: #19202E;
+    button {
+        color: $primary-bg-color;
+    }
 }
 
-.item-container:hover{
+.goal-item:hover{
     cursor: pointer;
-    opacity: 80%;
+    background-color: $primary-color !important;
+    color: $primary-bg-color !important;
+    h4{
+        color: $primary-bg-color;
+    }
+    button{
+        color: $primary-bg-color !important;
+    }
 }
 
-.goal-cards-box{
-    width: 100%;
-    padding: 0.2rem 0.2rem;
-    background-color: #00897b;
-    
-}
-
-
-.buttons{
-    width: 70%;
-    margin: 3rem auto;
-    text-align: center;
-}
-
-.btn{
-    margin-bottom: 1rem;
-    padding: .5rem 2rem;
-    background-color: #00897b;
-    border: none;
-    font-family: inherit;
-    font-size: inherit;
-    color: white;
-    transition: all 0.4s cubic-bezier(1,-0.16,.6,1.35);
-}
-
-.btn:not(:last-child){
-    margin-right: 1rem;
-}
-
-.btn:hover{
-    background-color: #0ed4ba;
-    cursor: pointer;
-}
-
-.btn:active, .btn:focus{
-    outline: none;
-    border: none;
-    background-color: #0ed4ba;
-
+.goal-item{
+    background-color: $primary-bg-color2 !important;   
+    color: $primary-color !important;
+    border-radius: 20px !important;
+    padding: 1rem !important;
+    margin: 1rem !important;
+    display: inline-block;
+    width: 31%;
 }

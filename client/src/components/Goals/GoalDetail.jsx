@@ -1,19 +1,15 @@
 /* eslint-disable array-callback-return */
 import React from 'react';
 import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Grid from '@mui/material/Grid';
 import LinearProgress from '@mui/material/LinearProgress';
 import './GoalDetail.scss';
 import { IconButton } from '@mui/material';
 import ReusableGoalDialog from './ReusableGoalDialog';
 import ArrowBackIosNew from '@mui/icons-material/ArrowBackIosNew';
-import axios from 'axios';
 import { List } from '@material-ui/core';
-import { capitalizeFirstLowercaseRest, transformDateFormatToMmDdYyyy } from '../../utils/StringUtils';
+import { capitalizeFirstLowercaseRest, transformDateFormatToMmDdYyyy, getRemainingDays } from '../../utils/StringUtils';
 
 class GoalDetail extends React.Component {
     constructor(props) {
@@ -80,6 +76,9 @@ class GoalDetail extends React.Component {
         this.handleEditClose()
     }
 
+
+    //utils
+
     fetchGoalCurrentAmountFromBudget = (budget, goalId) => {
         var goal = budget.goal_map.find(goal => goal.id === goalId)
         if (goal !== undefined && goal.current_amount > 0) {
@@ -95,43 +94,31 @@ class GoalDetail extends React.Component {
     {
         return (
             <div>
-                <div className='budget-detail-map-box'>
+                <div className='goal-detail-budget-map-container'>
                 {/* <Divider variant='middle' /> */}
                     <h3>{title}</h3>
-                    <div className='goal-budgets'>
+                    <div>
                         <List sx={{ width: '100%' }}>
                             {/* {goalBudgetMap.length ? <p></p> : <p>Oops! No Budgets found</p>} */}
                             {Object.keys(goalBudgetMap).map(key => (
-                                <div>
-                                    <div className='budget-detail' style={{display: 'flex', marginTop: '0px', paddingTop: '5px', paddingBottom: '5px'}}>
-                                        <ListItemText
-                                            style={{width: '80%'}}
-                                            primary={capitalizeFirstLowercaseRest(goalBudgetMap[key].budget_name)}
-                                            secondary={<React.Fragment>
-                                                <Typography
-                                                    sx={{ display: 'inline' }}
-                                                    component='span'
-                                                    variant='body2'
-                                                    color='text.primary'
-                                                    >
-                                                    <i>{transformDateFormatToMmDdYyyy(goalBudgetMap[key].creation_time) + " — " + transformDateFormatToMmDdYyyy(goalBudgetMap[key].expiration_time)}</i>
-                                                </Typography>
-
-                                            </React.Fragment>}
-                                        />
-                                        <ListItemText
-                                            style={{textAlign: 'right'}}
-                                            primary={'$ ' + this.fetchGoalCurrentAmountFromBudget(goalBudgetMap[key], this.props.goal.goal_id)}
-                                            secondary={goalBudgetMap[key].is_closed? "Closed" : "Open"}
-                                            />
+                                <div className='goal-budgets'>
+                                    <div className='goal-budget-detail' style={{display: 'flex', marginTop: '0px', paddingTop: '5px', paddingBottom: '5px'}}>
+                                        <div>
+                                            {capitalizeFirstLowercaseRest(goalBudgetMap[key].budget_name)}
                                         </div>
-                                        {/* <Box
-                                            display={'flex'}
-                                            justifyContent={'flex-end'}
-                                            marginRight='5%'
-                                            >
-                                        </Box> */}
-                                        <Divider variant='fullWidth' component='li' />
+                                        <div>
+                                            {'$ ' + this.fetchGoalCurrentAmountFromBudget(goalBudgetMap[key], this.props.goal.goal_id)}
+                                        </div>
+                                    </div>
+                                    <div className='goal-budget-detail' style={{display: 'flex', marginTop: '0px', paddingTop: '5px', paddingBottom: '5px'}}>
+                                        <div id='secondary'>
+                                            {transformDateFormatToMmDdYyyy(goalBudgetMap[key].creation_time) + " — " + transformDateFormatToMmDdYyyy(goalBudgetMap[key].expiration_time)}
+                                        </div>
+                                        <div id='secondary'>
+                                            {goalBudgetMap[key].is_closed? "Closed" : "Open"}
+                                        </div>
+                                    </div>
+                                    <Divider variant='fullWidth' component='li' />
                                 </div>
                             ))}
                         </List>
@@ -145,87 +132,79 @@ class GoalDetail extends React.Component {
 
     render() {
         return (
-            <div className='goals-inner-container'>
+            <div className='goal-detail-container'>
+                <IconButton style={{padding: '2%'}} onClick={this.props.handleGoalClose}>
+                    <ArrowBackIosNew />
+                </IconButton>
 
-                <div className='goals-box'>
-                    {this.props.goal ? <p></p> : <h3>Add navigate back or error</h3>}
-                    <div className='goal'>
-                    <Box
-                            className='goal-detail-header-box'
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            marginLeft='auto'
-                            alignItems='center'
-                            >
-                            <IconButton style={{padding: '2%'}} onClick={this.props.handleGoalClose}>
-                                <ArrowBackIosNew />
-                            </IconButton>
+                {this.props.goal ? <h2 className='header goal-detail-header'>{this.props.goal.goal_name}</h2> : <h3>Add navigate back or error</h3>}
 
-                            <h2>{this.props.goal.goal_name}</h2>
+                <IconButton style={{marginRight: '2%', padding: '2%'}} onClick={this.handleEditGoalOpen.bind(this, this.props.goal.goal_id)}>
+                    <ModeEditIcon />
+                </IconButton>
+                <ReusableGoalDialog
+                    title={'Edit Goal'}
+                    currentGoal={this.props.goal}
+                    allBudgets={this.props.allBudgets}
+                    isDialogOpen={this.state.isEditDialogOpen}
+                    handleChange={this.props.handleChange}
+                    handleClose={this.handleEditClose}
+                    handleBudgetIds={this.props.handleBudgetIds}
+                    submitMethod={this.submitMethod}
+                />
 
-                            <IconButton style={{marginRight: '2%', padding: '2%'}} onClick={this.handleEditGoalOpen.bind(this, this.props.goal.goal_id)}>
-                                <ModeEditIcon />
-                            </IconButton>
-                            <ReusableGoalDialog
-                                title={'Edit Goal'}
-                                currentGoal={this.props.goal}
-                                allBudgets={this.props.allBudgets}
-                                isDialogOpen={this.state.isEditDialogOpen}
-                                handleChange={this.props.handleChange}
-                                handleClose={this.handleEditClose}
-                                handleBudgetIds={this.props.handleBudgetIds}
-                                submitMethod={this.submitMethod}
-                            />
-                        </Box>
-                        <br></br>
-                        <Divider variant='middle' />
-                        <br></br>
-
-                        <Box sx={{ flexGrow: 1 }}>
-                            <Grid container spacing={2}
-                                sx={{padding: '2px 10px'}}
-                            >
-                                <Grid item xs={10}>
-                                    <ListItemText
-                                        primary={`$ ` + this.props.goal.current_amount}
-                                    />
-                                </Grid>
-                                <Grid item xs={2}>
-                                    <ListItemText
-                                        sx={{textAlign: 'right'}}
-                                        primary={`$ ` + this.props.goal.target_amount}
-                                        />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <Box sx={{ width: '100%', mr: 1 }}>
-                                            <LinearProgress variant="determinate" color="primary" value={Math.round(this.props.goal.current_amount/this.props.goal.target_amount * 100)}/>
-                                        </Box>
-                                        <Box sx={{ minWidth: 35 }}>
-                                            <Typography variant="body2" color="text.secondary">{`${(Math.round(this.props.goal.current_amount/this.props.goal.target_amount * 100))}%`}</Typography>
-                                        </Box>
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={10}>
-                                    <ListItemText
-                                        primary={`Target Date: `}
-                                        secondary={`Filter Closed`}
-                                    />
-                                </Grid>
-                                <Grid item xs={2}>
-                                    <ListItemText
-                                        sx={{textAlign: 'right'}}
-                                        primary={this.props.goal.target_date.substring(0, 10)}
-                                    />
-                                </Grid>
-                                <Grid item xs={10}>
-                                    <div></div>
-                                </Grid>
-                            </Grid>
-                            {this.renderBudgetDetails("Goal Budgets", this.state.goal_budget_map)}
-                        </Box>
+                {/* <div className='goal'> */}
+                    <div className='goal-left-panel'>
+                        
+                        <div className='goal-detail-info-cards goal-detail-info-cards-dark'>
+                            <h3>Target Amount</h3>
+                            <br/>
+                            {`$ ` + this.props.goal.target_amount}
+                        </div>
+                        
+                        <div className='goal-detail-info-cards'>
+                            <h3>Remaining Amount</h3>
+                            <br/>
+                            {`$ ` + (this.props.goal.target_amount - this.props.goal.current_amount)}
+                        </div>
                     </div>
-                </div>
+
+                    <div className='goal-center-panel'>
+                        <div className='goal-detail-item-box'>
+                            <div className='goal-detail-item'>
+                                <div>
+                                    {`$ ` + this.props.goal.current_amount}
+                                </div>
+                                <div>
+                                    {`$ ` + this.props.goal.target_amount}
+                                </div>
+                            </div>
+                            <div className='goal-detail-item'>
+                                <Box sx={{ width: '100%', mr: 1.5, mt: 1.2 }}>
+                                    <LinearProgress variant="determinate" color="primary" value={Math.round(this.props.goal.current_amount/this.props.goal.target_amount * 100)}/>
+                                </Box>
+                                <Box sx={{ minWidth: 35 }} id='complete-percentage'>
+                                    {`${(Math.round(this.props.goal.current_amount/this.props.goal.target_amount * 100))}%`}
+                                </Box>
+                            </div>
+                        </div>
+                        <div className='goal-detail-budgets goal-detail-info-cards-dark'>
+                            {this.renderBudgetDetails("Goal Budgets", this.state.goal_budget_map)}
+                        </div>
+                    </div>
+                    
+                    <div className='goal-right-panel'>
+                        <div className='goal-detail-info-cards goal-detail-info-cards-dark'>
+                            <h3>Target Date</h3>
+                            <br/>
+                            {transformDateFormatToMmDdYyyy(this.props.goal.target_date.substring(0, 10))}
+                        </div>
+                        <div className='goal-detail-info-cards'>
+                            <h3>Days Remaining</h3>
+                            <br/>
+                            {getRemainingDays(this.props.goal.target_date)}
+                        </div>
+                    </div>
             </div>
         );
     }

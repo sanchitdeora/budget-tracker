@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Typography } from "@mui/material";
+import { Card, CardActions, CardContent, IconButton } from "@mui/material";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from "axios";
@@ -7,7 +7,12 @@ import ReusableGoalDialog from "./ReusableGoalDialog";
 import FilterButton from "../../utils/FilterButton";
 import { getFullMonthName, getYear, transformDateFormatToMmDdYyyy } from "../../utils/StringUtils";
 import './GoalCards.scss';
+import '../../utils/FilterButton.scss';
+
 import GoalDetail from "./GoalDetail";
+import { GOALS } from '../../utils/GlobalConstants';
+import { getMenuItemsByTitle } from '../../utils/menuItems';
+
 
 
 class GoalCards extends React.Component {
@@ -34,6 +39,7 @@ class GoalCards extends React.Component {
             allActiveBudgets: []
         };
         console.log("states for goal card", this.state);
+        this.props.setNavBarActive(getMenuItemsByTitle(GOALS))
 
         this.getAllGoals();
         this.getAllBudgets();
@@ -62,11 +68,12 @@ class GoalCards extends React.Component {
     async getAllGoals() {
         let res = await axios.get('/api/goals');
         console.log('get all goals: ', res.data.body)
-        if (res.data.body != null)
-        {
+        var filteredGoals = [];
+        if (res.data.body != null) {
+            filteredGoals = res.data.body
             this.setState({
                 allGoals: res.data.body,
-                filteredGoals: res.data.body,
+                filteredGoals: filteredGoals,
             });
         } else {
             this.setState({
@@ -75,7 +82,7 @@ class GoalCards extends React.Component {
         }
 
         this.setState({
-            filterCategories: ['All', ...new Set(this.state.allGoals.map(item => this.getFilterDate(item.target_date)))]
+            filterCategories: ['All', ...new Set(filteredGoals.map(item => this.getFilterDate(item.target_date)))]
         });
     }
 
@@ -282,50 +289,50 @@ class GoalCards extends React.Component {
 
     renderGoalCards() {
         return (
-            <div>
-                <div className='header'>
-                        Goal
-                </div>
-                <div className='create-goal-card-button'>
-                    <Button size='large' style={{color: '#00897b'}} onClick={this.handleCreateGoalOpen} startIcon={<AddCircleIcon />} >
-                        <strong>Create a new Goal</strong>
-                    </Button>
+            <div className="goal-cards-container">
+                <h2 className='header'>
+                    {GOALS}
+                </h2>
+
+                <div className='goal-filter-by-date'>
+                    {this.renderFilterBoxes()}
                 </div>
 
-                {this.renderFilterBoxes()}
-
-                {this.state.filteredGoals.length ? <p></p> : <h3>Create a New Goal</h3>}
                 <div className='goal-cards'>
-                    {this.state.filteredGoals?.map(data => (
-                        <div className="goal-cards-box">
-                            <div className="item-container">
-                                <Card sx={{ minWidth: 275 }}>
-                                    <div onClick={() => this.handleGoalDetailsOpen(data.goal_id)}>
-                                        <CardHeader title={data.goal_name} />
-                                        <CardContent style={{verticalAlign: 'middle'}}>
-                                            <Typography sx={{ mb: 0.5 }} component="div">
-                                                Current Amount: {data.current_amount}
-                                            </Typography>
-                                            <Typography sx={{ mb: 0.5 }} component="div">
-                                                Target Amount: {data.target_amount}
-                                            </Typography>
-                                            <Typography sx={{ mb: 0.5 }} component="div">
-                                                Target Date: {data.target_date}
-                                            </Typography>
-                                        </CardContent>
-                                    </div>
-                                    <CardActions                                 
-                                        style={{display: 'flex', flexDirection: 'row-reverse', marginRight: '5%'}}
-                                        // justifyContent={'space-between'}
-                                    >
-                                        <IconButton edge='end'onClick={this.handleDeleteGoal.bind(this, data.goal_id)}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                    </CardActions>
-                                </Card>
-                            </div>
-                        </div>
-                    ))}
+                    {this.state.filteredGoals.length ? <p></p> : <h3>Create a New Goal</h3>}
+                    <div className='create-goal-card-button'>
+                        <IconButton size='large' onClick={this.handleCreateGoalOpen}>
+                            <AddCircleIcon />
+                        </IconButton>
+                    </div>
+                    <div className="goal-cards-box">
+                        {this.state.filteredGoals?.map(data => (
+                            <Card className="goal-item">
+                                <div onClick={() => this.handleGoalDetailsOpen(data.goal_id)}>
+                                    <h4> {data.goal_name}</h4>
+                                    <CardContent style={{verticalAlign: 'middle'}}>
+                                        <div>
+                                            Current Amount: {data.current_amount}
+                                        </div>
+                                        <div>
+                                            Target Amount: {data.target_amount}
+                                        </div>
+                                        <div>
+                                            Target Date: {data.target_date}
+                                        </div>
+                                    </CardContent>
+                                </div>
+                                <CardActions                                 
+                                    style={{display: 'flex', flexDirection: 'row-reverse', marginRight: '5%'}}
+                                    // justifyContent={'space-between'}
+                                >
+                                    <IconButton edge='end'onClick={this.handleDeleteGoal.bind(this, data.goal_id)}>
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </CardActions>
+                            </Card>
+                        ))}
+                    </div>
                 </div>
             </div>
         )
@@ -333,7 +340,7 @@ class GoalCards extends React.Component {
 
     render() {
         return (
-            <div className='goal-cards-inner-container'>
+            <div className='goal-cards-outer-container'>
                 {this.state.isGoalDetailsOpen ? this.renderOpenGoalDialog() : this.renderGoalCards()}
                 {this.renderCreateGoalDialogBox()}
              </div>

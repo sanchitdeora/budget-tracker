@@ -5,6 +5,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
+import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -12,21 +13,20 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import Chip from '@mui/material/Chip';
 
 import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { DateRangePicker } from 'react-dates';
+import { getTxChartData } from './TransactionPieChart';
 
-import Chip from '@mui/material/Chip';
-
-import { capitalizeFirstLowercaseRest, findCategoryById, transformDateFormatToMmDdYyyy } from '../../utils/StringUtils';
-import './Transactions.scss';
-import { IconButton } from '@mui/material';
 import ReusableTransactionDialog from './ReusableTransactionDialog';
-import axios from 'axios';
+import { capitalizeFirstLowercaseRest, findCategoryById, transformDateFormatToMmDdYyyy } from '../../utils/StringUtils';
 import { getMenuItemsByTitle } from '../../utils/menuItems';
 import { CATEGORY_MAP, TRANSACTIONS } from '../../utils/GlobalConstants';
-import { getTxChartData } from './TransactionPieChart';
+
+import axios from 'axios';
 import moment from 'moment';
+import './Transactions.scss';
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
@@ -77,14 +77,7 @@ class Transactions extends React.Component {
     setChartData = (data) => {
         this.setState({chartData: getTxChartData(data)});
     }
-
-    handleDateRangeChange = (input) => {
-        console.log("change here:", input, this.state.filterByDate.startDate, this.state.filterByDate.endDate);
-        this.setState({focusedInput: input})
-        this.calculateFilteredTransactions()
-    }
-
-
+    
     cleanTransactionState = () => {
         this.setState({
             transaction_id: '',
@@ -97,7 +90,7 @@ class Transactions extends React.Component {
             note: '',
         })
     }
-
+    
     handleChange = (event) => {
         let value = event.target.value;
         let name = event.target.name;
@@ -117,50 +110,27 @@ class Transactions extends React.Component {
         });
     }
 
+    handleFilterDateRangeChange = (input) => {
+        console.log("change here:", input, this.state.filterByDate.startDate, this.state.filterByDate.endDate);
+        this.setState({focusedInput: input})
+        this.calculateFilteredTransactions()
+    }
+
     handleFilterCategoryChange = (event) => {
         const {
-          target: { value },
+            target: { value },
         } = event;
         console.log("updating filter by category: ", value)
         this.setState({ filterByCategories: value});
         this.calculateFilteredTransactions(null, value);
     };
 
-
-    // utils
-
-    calculateFilteredTransactions = (filteredTx, fCategory, fDateObj) => {
-        if (filteredTx === undefined || filteredTx === null || filteredTx.length === 0)
-            filteredTx = this.state.allTransactions
-        if (fCategory === undefined || fCategory === null) {
-            fCategory = this.state.filterByCategories
+    getSelectedTransaction = () => {
+        let transaction = this.state.allTransactions.find(item => item.transaction_id === this.state.transaction_id);
+        if (transaction === undefined) {
+            transaction = {}
         }
-        if (fDateObj === undefined || fDateObj === null) {
-            fDateObj = this.state.filterByDate
-        }
-        console.log("Calculating Filter transactions", filteredTx, fCategory, fDateObj);
-
-        if (fCategory.length > 0) {
-            filteredTx = filteredTx.filter(x => fCategory.includes(findCategoryById(x.category)))
-        }
-        if (fDateObj.isActive) {
-            var startDate = fDateObj.startDate === null ? moment(0) : fDateObj.startDate
-            var endDate = fDateObj.endDate === null ? moment() : fDateObj.endDate
-            console.log("Filter transactions for date======================", fDateObj, startDate, endDate)
-            filteredTx = filteredTx.filter(
-                // function(x) {
-                //     console.log("inside tx", x, x.date, )
-                    
-                // }
-                
-                x => startDate.isBefore(moment(x.date)) && endDate.isAfter(moment(x.date))
-            )
-        }
-        this.setState({
-            filteredTransactions: filteredTx,
-        })
-
-        this.setChartData(filteredTx);
+        return transaction;
     }
 
 
@@ -257,7 +227,7 @@ class Transactions extends React.Component {
             'account': this.state.account,
             'note': this.state.note,
         }
-        console.log('The transaction edit form was submitted with the following data:', transactionBody);
+        console.log('The edit transaction form was submitted with the following data:', transactionBody);
         this.putTransactionRequest(transactionBody)
         this.handleEditClose()
     }
@@ -289,15 +259,118 @@ class Transactions extends React.Component {
     }
 
 
+    // utils
+
+    calculateFilteredTransactions = (filteredTx, fCategory, fDateObj) => {
+        if (filteredTx === undefined || filteredTx === null || filteredTx.length === 0)
+            filteredTx = this.state.allTransactions
+        if (fCategory === undefined || fCategory === null) {
+            fCategory = this.state.filterByCategories
+        }
+        if (fDateObj === undefined || fDateObj === null) {
+            fDateObj = this.state.filterByDate
+        }
+        console.log("Calculating Filter transactions", filteredTx, fCategory, fDateObj);
+
+        if (fCategory.length > 0) {
+            filteredTx = filteredTx.filter(x => fCategory.includes(findCategoryById(x.category)))
+        }
+        if (fDateObj.isActive) {
+            var startDate = fDateObj.startDate === null ? moment(0) : fDateObj.startDate
+            var endDate = fDateObj.endDate === null ? moment() : fDateObj.endDate
+            console.log("Filter transactions for date======================", fDateObj, startDate, endDate)
+            filteredTx = filteredTx.filter(
+                x => startDate.isBefore(moment(x.date)) && endDate.isAfter(moment(x.date))
+            )
+        }
+        this.setState({
+            filteredTransactions: filteredTx,
+        })
+
+        this.setChartData(filteredTx);
+    }
+
+
     // render functions
 
+render() {
+        return (
+            <div className='transactions-container'>
+                <h2 className='header'>
+                    {TRANSACTIONS}
+                </h2>
+                <div className='transactions-filter-by-date'>
+                    {this.renderFilterByDates()}
+                </div>                    
+                <div className='transactions-filter-by-category'>
+                    {this.renderFilterByCategory()}
+                </div>
+                <div className='transactions-chart'>
+                    Pie Chart by Categories
+                    {this.renderBasicPie()}
+                </div>
+                <div className='transactions-box'>
+                    
+                    <div className='transaction-create-button'>
+                        <IconButton size='large' onClick={this.handleCreateTransactionOpen}>
+                            <AddCircleIcon />
+                        </IconButton>
+                    </div>
+                    {this.renderCreateTransactionDialogBox()}
+                    <List sx={{ width: '100%' }}>
+                        {this.state.filteredTransactions.length ? <p></p> : <p>Oops! No Transactions entered</p>}
+                        {this.state.filteredTransactions.map(data => (
+                            this.renderSingleTransaction(data)
+                        ))}
+                    </List>
+                </div>
+
+            </div>
+        );
+    }
+
+    renderSingleTransaction(transaction) {
+        return (
+            <div className='transaction'>
+                <Grid container spacing={0}>
+                    <Grid item xs={7}>
+                        {capitalizeFirstLowercaseRest(transaction.title)}
+                    </Grid>
+                    <Grid item xs={4}>
+                        {(transaction.type ? '' : '-')+ '$' + transaction.amount}
+                    </Grid>
+                    <Grid item xs={1}>
+                        <IconButton 
+                            size='small'
+                            onClick={this.handleEditTransactionOpen.bind(this, transaction.transaction_id)}>
+                            <ModeEditIcon />
+                        </IconButton>
+                        {this.renderEditTransactionDialogBox()}
+                    </Grid>
+                    <Grid className='secondary-transaction-detail' item xs={7}>
+                        <i>{transaction.note}</i>
+                    </Grid>
+                    <Grid className='secondary-transaction-detail' item xs={4}>
+                        {transaction.date.substring(0, 10)}
+                    </Grid>
+                    <Grid item xs={1}>
+                        <IconButton className='delete-button'
+                            size='small'
+                            onClick={this.handleDeleteTransactionOpen.bind(this, transaction.transaction_id)}>
+                                <DeleteIcon />
+                        </IconButton>
+                    </Grid>
+                </Grid>
+            </div>
+        )
+    }
+    
     renderEditTransactionDialogBox = () => {
         return (
             <ReusableTransactionDialog
                 title={'Edit Transaction'}
                 isDialogOpen={this.state.isEditDialogOpen}
-                currentTransaction={this.state.allTransactions.find(item => item.transaction_id === this.state.transaction_id)}
-                // currentTransaction={{}}
+                currentTransaction={this.getSelectedTransaction()}
                 handleChange={this.handleChange}
                 handleClose={this.handleEditClose}
                 submitMethod={this.submitEditTransaction}
@@ -318,114 +391,59 @@ class Transactions extends React.Component {
         )
     }
 
-    render() {
+    renderFilterByDates() {
         return (
-            <div className='transactions-container'>
-                <h2 className='transaction-header'>
-                    Transactions
-                </h2>
-                <div className='filter-container'>
-                    <Grid container spacing={0}>
-                        <Grid item xs={5}>
-                            <DateRangePicker
-                                startDate={this.state.filterByDate.startDate} // momentPropTypes.momentObj or null,
-                                startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
-                                endDate={this.state.filterByDate.endDate} // momentPropTypes.momentObj or null,
-                                endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
-                                onDatesChange={({ startDate, endDate }) => this.setState({ filterByDate: {isActive: true, startDate: startDate, endDate: endDate} })} // PropTypes.func.isRequired,
-                                focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
-                                onFocusChange={focusedInput => this.handleDateRangeChange(focusedInput)} // PropTypes.func.isRequired,
-                                isOutsideRange={day => (moment().diff(day) < 0)}
-                            />
-                        </Grid>
-                        <Grid item xs={7}>
-                            <FormControl sx={{ m: 1, width: 300 }} className='multiselect-form'>
-                                <InputLabel id="demo-multiple-chip-label">Filter </InputLabel>
-                                <Select
-                                    className='ms-select'
-                                    labelId="demo-multiple-chip-label"
-                                    id="demo-multiple-chip"
-                                    multiple
-                                    value={this.state.filterByCategories}
-                                    onChange={this.handleFilterCategoryChange}
-                                    input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                                    renderValue={(selected) => (
-                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                        {selected.map((value) => (
-                                            <Chip key={value} label={value} className='ms-chip' />
-                                        ))}
-                                        </Box>
-                                    )}
-                                    MenuProps={{ PaperProps: {
-                                        style: {
-                                          maxHeight: 48 * 4.5 + 8,
-                                          width: 250,
-                                        },
-                                      }}}
-                                    >
-                                    {CATEGORY_MAP.map((category) => (
-                                        <MenuItem
-                                            key={category.id}
-                                            value={category.value}
-                                            >
-                                            {category.value}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                    </Grid>
-                </div>
-                <div className='transaction-chart'>
-                    Pie Chart by Categories
-                    {this.renderBasicPie()}
-                </div>
-                <div className='transaction-box'>
-                    <div className='transaction-create-button'>
-                        <IconButton size='large' onClick={this.handleCreateTransactionOpen}>
-                            <AddCircleIcon />
-                        </IconButton>
-                    </div>
-                    <List sx={{ width: '100%' }}>
-                        {this.state.filteredTransactions.length ? <p></p> : <p>Oops! No Transactions entered</p>}
-                        {this.state.filteredTransactions.map(data => (
-                            <div className='transaction'>
-                                <Grid container spacing={0}>
-                                    <Grid item xs={7}>
-                                        {capitalizeFirstLowercaseRest(data.title)}
-                                    </Grid>
-                                    <Grid item xs={4}>
-                                        {(data.type ? '' : '-')+ '$' + data.amount}
-                                    </Grid>
-                                    <Grid item xs={1}>
-                                        <IconButton 
-                                            size='small'
-                                            onClick={this.handleEditTransactionOpen.bind(this, data.transaction_id)}>
-                                            <ModeEditIcon />
-                                        </IconButton>
-                                    </Grid>
-                                    <Grid className='secondary-transaction-detail' item xs={7}>
-                                        <i>{data.note}</i>
-                                    </Grid>
-                                    <Grid className='secondary-transaction-detail' item xs={4}>
-                                        {data.date.substring(0, 10)}
-                                    </Grid>
-                                    <Grid item xs={1}>
-                                        <IconButton className='delete-button'
-                                            size='small'
-                                            onClick={this.handleDeleteTransactionOpen.bind(this, data.transaction_id)}>
-                                                <DeleteIcon />
-                                        </IconButton>
-                                    </Grid>
-                                </Grid>
-                            </div>
-                        ))}
-                    </List>
-                </div>
+            <DateRangePicker
+                startDate={this.state.filterByDate.startDate} // momentPropTypes.momentObj or null,
+                startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+                endDate={this.state.filterByDate.endDate} // momentPropTypes.momentObj or null,
+                endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+                onDatesChange={({ startDate, endDate }) => this.setState({ filterByDate: {isActive: true, startDate: startDate, endDate: endDate} })} // PropTypes.func.isRequired,
+                focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+                onFocusChange={focusedInput => this.handleFilterDateRangeChange(focusedInput)} // PropTypes.func.isRequired,
+                isOutsideRange={day => (moment().diff(day) < 0)}
+            />
+        )
+    }
 
-                {this.renderCreateTransactionDialogBox()}
-            </div>
-        );
+    renderFilterByCategory() {
+        return (
+            <FormControl sx={{ m: 1, minWidth: 300 }} className='multiselect-form'>
+                <InputLabel id="demo-multiple-chip-label">Filter </InputLabel>
+                <Select
+                    className='ms-select'
+                    labelId="demo-multiple-chip-label"
+                    id="demo-multiple-chip"
+                    multiple
+                    autoWidth
+                    value={this.state.filterByCategories}
+                    onChange={this.handleFilterCategoryChange}
+                    input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                    renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {selected.map((value) => (
+                            <Chip key={value} label={value} className='ms-chip' />
+                        ))}
+                        </Box>
+                    )}
+                    MenuProps={{ PaperProps: {
+                        style: {
+                            maxHeight: 48 * 4.5 + 8,
+                            width: 250,
+                        },
+                        }}}
+                    >
+                    {CATEGORY_MAP.map((category) => (
+                        <MenuItem
+                            key={category.id}
+                            value={category.value}
+                            >
+                            {category.value}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+        )
     }
 
     renderBasicPie() {
