@@ -74,84 +74,6 @@
   }
 }
 
-// .transaction-dialog {
-//   width: 100%;
-// }
-
-.transaction-inner-container {
-  width: 75%;
-}
-
-input[type="radio"] {
-  transform: scale(1.2);
-  margin-left: 3%;
-  margin-right: 5px;
-}
-
-.transaction-input-group {
-  font-size: 20px;
-  padding-top: 5px;
-}
-
-.MuiFormLabel-root{
-  #transaction-input-label {
-    color: $primary-color3;
-  }
-}
-
-.transaction-input-box {
-  border-radius: 3px;
-  transition: border 0.4s ease-out;
-  padding: 13px;
-  margin: 2px 0px 5px 0px;
-  font-size: 19px;
-  color: #3e3e42;
-  background: rgba(15, 15, 15, 0.01);
-
-}
-
-.transaction-input-box::placeholder {
-  font-family: Oxygen, sans-serif;
-  font-size: 15px;
-  color: rgba(236, 0, 0, 0.4);
-}
-
-.transaction-submit-btn {
-  align-self: center;
-  padding: 10px 30px;
-  font-size: 15px;
-  border-radius: 3px;
-  background-color: rgba(15, 15, 15, 0.03);
-  margin-top: 20px;
-  border: 2px solid #00897b;
-  color: #00897b;
-  transition: background-color 0.3s ease-out;
-  cursor: pointer;
-}
-.transaction-submit-btn:hover,
-.transaction-submit-btn:focus {
-  background-color: #00897b;
-  color: white;
-}
-
-.close-transaction-submit-btn {
-  align-self: center;
-  padding: 10px 30px;
-  font-size: 15px;
-  border-radius: 3px;
-  background-color: rgba(15, 15, 15, 0.03);
-  margin-top: 20px;
-  border: 2px solid #d32f2f;
-  color: #d32f2f;
-  transition: background-color 0.3s ease-out;
-  cursor: pointer;
-}
-.close-transaction-submit-btn:hover,
-.close-transaction-submit-btn:focus {
-  background-color: #d32f2f;
-  color: white;
-}
-
 
 // datepicker css
 .DateRangePickerInput {
@@ -258,6 +180,7 @@ input[type="radio"] {
 .DayPickerKeyboardShortcuts_buttonReset {
   visibility: hidden;
 }
+
 
 // multiselect css
 

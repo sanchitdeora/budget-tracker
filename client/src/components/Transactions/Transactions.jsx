@@ -92,21 +92,36 @@ class Transactions extends React.Component {
     }
     
     handleChange = (event) => {
+        if (event.target === undefined) {
+            // console.log('event: ' + event)
+            this.handleDateChange(event.toISOString())
+            return;
+        }
+
         let value = event.target.value;
         let name = event.target.name;
         if (name === 'type') {
             value = value === 'credit' ? true : false  
-            // console.log('Name: ' + name + ' value: ' + value)
+            console.log('Name: ' + name + ' value: ' + value)
             this.setState({
                 [name]: value,
             });
         }
-        if (name === 'due_date') {
+        if (name === 'date') {
+            console.log("Onchange | name: "+name+" value: ", value);
             value = transformDateFormatToMmDdYyyy(value);
-            // console.log("Onchange | name: "+name+" value: ", value);
         }
         this.setState({
             [name]: value,
+        });
+    }
+
+    handleDateChange = (date) => {
+        let value = transformDateFormatToMmDdYyyy(date)
+        console.log("Onchange | value: ", value);
+
+        this.setState({
+            'date': value,
         });
     }
 
@@ -310,7 +325,6 @@ render() {
                     {this.renderBasicPie()}
                 </div>
                 <div className='transactions-box'>
-                    
                     <div className='transaction-create-button'>
                         <IconButton size='large' onClick={this.handleCreateTransactionOpen}>
                             <AddCircleIcon />
@@ -324,7 +338,7 @@ render() {
                         ))}
                     </List>
                 </div>
-
+                {this.renderEditTransactionDialogBox()}
             </div>
         );
     }
@@ -345,7 +359,6 @@ render() {
                             onClick={this.handleEditTransactionOpen.bind(this, transaction.transaction_id)}>
                             <ModeEditIcon />
                         </IconButton>
-                        {this.renderEditTransactionDialogBox()}
                     </Grid>
                     <Grid className='secondary-transaction-detail' item xs={7}>
                         <i>{transaction.note}</i>

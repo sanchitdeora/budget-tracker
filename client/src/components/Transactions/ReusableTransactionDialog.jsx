@@ -1,24 +1,28 @@
 import React from 'react';
 import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import { CATEGORY_MAP } from '../../utils/GlobalConstants';
+import { FormControl, FormControlLabel, FormGroup, FormLabel, InputAdornment, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
+import dayjs from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { transformDateFormatToYyyyMmDd } from '../../utils/StringUtils';
-import { FormControl, FormControlLabel, FormGroup, FormLabel, InputAdornment, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, TextField } from '@mui/material';
+import '../../utils/Dialog.scss';
 
 class ReusableTransactionDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             transactionType: props.currentTransaction !== undefined && props.currentTransaction.type !== undefined ? props.currentTransaction.type : false,
+            transactionCategory: Object.keys(props.currentTransaction).length > 0 ? props.currentTransaction.category : '',
         };
 
         console.log("heereee: ", props.currentTransaction !== undefined && props.currentTransaction.type !== undefined ? props.currentTransaction.type : false)
         console.log("heereee1: ", props.currentTransaction)
     };
 
-    handleChangeCurrentTransaction = (event) => {
+    handleChangeTransactionType = (event) => {
+        event.target.name = "type"
         console.log('Name: ' + event.target.name + ' value: ' + event.target.value)
         let val = event.target.value === 'credit' ? true : false 
         this.setState({transactionType: val});
@@ -34,8 +38,8 @@ class ReusableTransactionDialog extends React.Component {
                 hideBackdrop={false}
                 onClose={this.props.handleClose}
             >
-                <DialogTitle textAlign={'center'}>{this.props.title}</DialogTitle>
-                <DialogContent>
+                <h3 className='header dialog-header'>{this.props.title}</h3>
+                <DialogContent className='dialog-body'>
                     <FormGroup>
                         <br></br>
                         <FormControl className='transaction-input-group' sx={{ width: 300 }}>
@@ -44,9 +48,8 @@ class ReusableTransactionDialog extends React.Component {
                                 name='title'
                                 label='Title'
                                 // color='primary'
-                                className='transaction-input-box'
                                 onChange={this.props.handleChange}
-                                variant="outlined" 
+                                variant="outlined"
                             />
                         </FormControl>
                         <br></br>
@@ -55,15 +58,14 @@ class ReusableTransactionDialog extends React.Component {
                             <Select
                                 labelId="transaction-input-label"
                                 id="demo-simple-select"
-                                className='transaction-input-box'
-                                defaultValue={this.props.currentTransaction.category}
+                                defaultValue={this.state.transactionCategory}
                                 // value={this.props.currentTransaction.category}
                                 label="Category"
                                 onChange={this.props.handleChange}
                                 variant="outlined" 
                             >
                                 {CATEGORY_MAP.map(category => (
-                                    <MenuItem value={category.id}> {category.value} </MenuItem>
+                                    <MenuItem key={category.id} value={category.id}> {category.value} </MenuItem>
                                 ))} 
                             </Select>
                         </FormControl>
@@ -80,7 +82,6 @@ class ReusableTransactionDialog extends React.Component {
                                         $</InputAdornment>,
                                     inputMode: 'numeric', pattern: '[0-9]*' 
                                 }}
-                                className='transaction-input-box'
                                 onChange={this.props.handleChange}
                                 variant="outlined" 
                             />
@@ -91,29 +92,27 @@ class ReusableTransactionDialog extends React.Component {
                             <RadioGroup
                                 row
                                 defaultValue={this.props.currentTransaction.type}
-                                name="row-radio-buttons-group"
-                                // className='transaction-input-box'
+                                name="type"
                                 variant="outlined" 
                                 />
-                                <FormControlLabel value="debit" label="Debit" control={<Radio  
+                                <FormControlLabel id="transaction-input-label" value="debit" label="Debit" control={<Radio  
                                     checked={this.state.transactionType === false} 
-                                    onChange={this.handleChangeCurrentTransaction}
+                                    onChange={this.handleChangeTransactionType}
                                     />} />
-                                <FormControlLabel value="credit" label="Credit" control={<Radio  
+                                <FormControlLabel id="transaction-input-label" value="credit" label="Credit" control={<Radio  
                                     checked={this.state.transactionType === true}
-                                    onChange={this.handleChangeCurrentTransaction}
+                                    onChange={this.handleChangeTransactionType}
                                 />} />
                         </FormControl>
                         <br></br>
                         <div className='transaction-input-group'>
-                            <InputLabel id="transaction-input-label">Date</InputLabel>
-                            <input
-                                defaultValue={transformDateFormatToYyyyMmDd(this.props.currentTransaction.date)}
-                                type='date'
+                            <DatePicker label="Date"
+                                defaultValue={dayjs(transformDateFormatToYyyyMmDd(this.props.currentTransaction.date))}
+                                orientation='landscape'
+                                className='transaction-input-date'
                                 name='date'
-                                className='transaction-input-box'
                                 onChange={this.props.handleChange}
-                            />
+                                />
                         </div>
                         <br></br>
                         <FormControl className='transaction-input-group' sx={{ width: 300 }}>
@@ -123,7 +122,7 @@ class ReusableTransactionDialog extends React.Component {
                                 label='Note'
                                 multiline
                                 maxRows={2}
-                                className='transaction-input-box'
+                                // className='transaction-input-box'
                                 onChange={this.props.handleChange}
                                 variant="outlined" 
                             />
@@ -131,15 +130,15 @@ class ReusableTransactionDialog extends React.Component {
                         <br></br>
                     </FormGroup>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className='dialog-footer'>
                     <button
                         type='submit'
-                        className='transaction-submit-btn'
+                        className='dialog-submit-btn'
                         onClick={this.props.submitMethod}>Submit
                     </button>						
                     <button
                         type='submit'
-                        className='close-transaction-submit-btn'
+                        className='close-dialog-submit-btn'
                         onClick={this.props.handleClose}>Close
                     </button>
                 </DialogActions>

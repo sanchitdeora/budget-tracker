@@ -13,6 +13,8 @@ import Bills from './components/Bills/Bills';
 import BudgetCards from './components/Budgets/BudgetCards';
 import GoalCards from './components/Goals/GoalCards';
 import { menuItems } from './utils/menuItems';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 
 // const TOKEN = "token"
@@ -52,36 +54,38 @@ class App extends React.Component {
     render() {
         return (
             <div className='app-container'>
-                <Router>
-                    <NavBar isLoggedIn={this.state.isLoggedIn} getActive={this.getNavBarActive} setActive={this.setNavBarActive} />
-                        <div className="inner-container">
-                        <Routes>
-                            {/* <PrivateRoute component={Home} path="/home" exact /> */}
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <Router>
+                        <NavBar isLoggedIn={this.state.isLoggedIn} getActive={this.getNavBarActive} setActive={this.setNavBarActive} />
+                            <div className="inner-container">
+                            <Routes>
+                                {/* <PrivateRoute component={Home} path="/home" exact /> */}
 
-                            <Route path="/ping" element={<Ping />} />
-                            <Route exact path='/authenticate' element={<Authenticate setLoginState={this.setLoginState} setToken={this.setToken} />} />
-                            <Route exact path='/logout' element={<Logout setLoginState={this.setLoginState} setToken={this.setToken} />} />
+                                <Route path="/ping" element={<Ping />} />
+                                <Route exact path='/authenticate' element={<Authenticate setLoginState={this.setLoginState} setToken={this.setToken} />} />
+                                <Route exact path='/logout' element={<Logout setLoginState={this.setLoginState} setToken={this.setToken} />} />
 
-                            <Route exact path='/transactions' element={<Transactions setNavBarActive={this.setNavBarActive} />} />
-                            <Route exact path='/bills' element={<Bills setNavBarActive={this.setNavBarActive} />} />
-                            <Route exact path='/budgets' element={<BudgetCards setNavBarActive={this.setNavBarActive} />} />
-                            <Route exact path='/goals' element={<GoalCards setNavBarActive={this.setNavBarActive} />} />
+                                <Route exact path='/transactions' element={<Transactions setNavBarActive={this.setNavBarActive} />} />
+                                <Route exact path='/bills' element={<Bills setNavBarActive={this.setNavBarActive} />} />
+                                <Route exact path='/budgets' element={<BudgetCards setNavBarActive={this.setNavBarActive} />} />
+                                <Route exact path='/goals' element={<GoalCards setNavBarActive={this.setNavBarActive} />} />
 
-                            <Route exact path="/home" element={<Home setNavBarActive={this.setNavBarActive} />} />
-                            <Route exact path="/" element={<Home setNavBarActive={this.setNavBarActive} />} />
-                                {/* {
-                                this.state.isLoggedIn ? 
-                                <Navigate to="/home" /> : 
-                                <Navigate to="/authenticate" />
-                                }  
-                            </Route> */}
+                                <Route exact path="/home" element={<Home setNavBarActive={this.setNavBarActive} />} />
+                                <Route exact path="/" element={<Home setNavBarActive={this.setNavBarActive} />} />
+                                    {/* {
+                                    this.state.isLoggedIn ? 
+                                    <Navigate to="/home" /> : 
+                                    <Navigate to="/authenticate" />
+                                    }  
+                                </Route> */}
 
-                            {/* <Route exact path='/survey' element={<Survey />}> */}
-                                {/* <Survey /> */}
-                            {/* </Route> */}
-                        </Routes>
-                    </div>
-                </Router>
+                                {/* <Route exact path='/survey' element={<Survey />}> */}
+                                    {/* <Survey /> */}
+                                {/* </Route> */}
+                            </Routes>
+                        </div>
+                    </Router>
+                </LocalizationProvider>
             </div>
         );
     }

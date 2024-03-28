@@ -1,0 +1,144 @@
+@import "../styles/variables";
+
+// dialog box css
+
+.transaction-dialog {
+    width: 100%;
+    color: $primary-color;
+}
+  
+.dialog-header {
+    background-color: $primary-bg-color;
+
+    border: 1px solid $primary-color2;
+    border-bottom: none;
+}
+.dialog-body {
+    background-color: $primary-bg-color;
+
+    border: 1px solid $primary-color2;
+    border-bottom: none;
+    border-top: none;
+}
+.dialog-footer {
+    background-color: $primary-bg-color;
+
+    border: 1px solid $primary-color2;
+    border-top: none;
+}
+
+.transaction-input-date {
+    transition: border 0.4s ease-out;
+    padding: 13px;
+    margin: 2px 0px 5px 0px;
+    font-size: 19px;
+    color: $primary-color2 !important;
+    background: $primary-bg-color2;
+    border: 1px solid $primary-color2;
+
+
+    font-family: 'Quicksand', sans-serif !important;
+    letter-spacing: 0.05rem !important;
+    font-size: clamp(1rem, 1.5vw, 1rem) !important;
+    button {
+        color: $primary-color2;
+    }
+}
+
+.MuiFormLabel-root {
+    color: $primary-color !important;
+    font-family: 'Quicksand', sans-serif !important;
+    letter-spacing: 0.05rem !important;
+    font-size: clamp(1rem, 1.5vw, 1rem) !important;
+}
+
+
+
+.MuiInputBase-root, .MuiInputBase-input, .MuiInputAdornment-root, .MuiTypography-root, #transaction-input-label {
+    color: $primary-color2 !important;
+    font-family: 'Quicksand', sans-serif !important;
+    letter-spacing: 0.05rem !important;
+    font-size: clamp(1rem, 1.5vw, 1rem) !important;
+    border-radius: 1rem !important;
+
+    button {
+        color: $primary-color2 !important;
+    }
+}
+
+.PrivateSwitchBase-root, .MuiPickersArrowSwitcher-button {
+    color: $primary-color2 !important;
+}
+  
+.MuiPaper-root {
+    background-color: $primary-bg-color2 !important;
+    color: $primary-color2 !important;
+
+    border: 1px solid $primary-color2;
+    border-radius: 1rem !important;
+
+}
+  
+.MuiPickersFadeTransitionGroup-root, .MuiPickersDay-root, .MuiDayCalendar-rootMuiDateCalendar-viewTransitionContainer, .MuiDayCalendar-weekDayLabel, .MuiPickersYear-root {
+    background-color: $primary-bg-color2 !important;
+    color: $primary-color2 !important;
+
+    font-family: 'Quicksand', sans-serif !important;
+    letter-spacing: 0.05rem !important;
+    font-size: clamp(1rem, 1.5vw, 1rem) !important;
+
+    border-radius: 1rem;
+    button {
+        font-family: 'Quicksand', sans-serif !important;
+        letter-spacing: 0.05rem !important;
+        font-size: clamp(1rem, 1.5vw, 1rem) !important;
+    }
+    .Mui-selected {
+        background-color: $primary-color2 !important;
+        color: $primary-bg-color2 !important;
+        font-weight: bolder !important;
+    }
+    &::-webkit-scrollbar{
+        width: 0;
+    }
+}
+  
+
+
+// buttons
+
+.dialog-submit-btn {
+    align-self: center;
+    padding: 10px 30px;
+    font-size: 15px;
+    border-radius: 3px;
+    background-color: rgba(15, 15, 15, 0.03);
+    margin-top: 20px;
+    border: 2px solid $primary-color;
+    color: #00897b;
+    transition: background-color 0.3s ease-out;
+    cursor: pointer;
+}
+.dialog-submit-btn:hover, .dialog-submit-btn:focus {
+    background-color: #00897b;
+    color: white;
+}
+
+.close-dialog-submit-btn {
+    align-self: center;
+    padding: 10px 30px;
+    font-size: 15px;
+    border-radius: 3px;
+    background-color: rgba(15, 15, 15, 0.03);
+    margin-top: 20px;
+    border: 2px solid #d32f2f;
+    color: #d32f2f;
+    transition: background-color 0.3s ease-out;
+    cursor: pointer;
+}
+.close-dialog-submit-btn:hover, .close-dialog-submit-btn:focus {
+    background-color: #d32f2f;
+    color: white;
+}
+  
+  
