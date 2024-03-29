@@ -93,8 +93,7 @@ class GoalDetail extends React.Component {
     renderBudgetDetails = (title, goalBudgetMap) =>
     {
         return (
-            <div>
-                <div className='goal-detail-budget-map-container'>
+            <div className='goal-detail-budget-map-container'>
                 {/* <Divider variant='middle' /> */}
                     <h3>{title}</h3>
                     <div>
@@ -123,8 +122,6 @@ class GoalDetail extends React.Component {
                             ))}
                         </List>
                     </div>
-                <br></br>
-                </div>
                 <br></br>
             </div>
         )

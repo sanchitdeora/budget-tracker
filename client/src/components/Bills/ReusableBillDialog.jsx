@@ -35,7 +35,7 @@ class ReusableBillDialog extends React.Component {
     render() {
         return(
             <Dialog
-                className='bill-dialog'
+                className='dialog-container'
                 open={this.props.isDialogOpen}
                 fullWidth={true}
                 onClose={this.props.handleClose}
@@ -126,15 +126,15 @@ class ReusableBillDialog extends React.Component {
                     <br></br>
                 </FormGroup>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className='dialog-footer'>
                     <button
                         type='submit'
-                        className='bill-submit-btn'
+                        className='dialog-submit-btn'
                         onClick={this.props.submitMethod}>Submit
                     </button>						
                     <button
                         type='submit'
-                        className='close-bill-submit-btn'
+                        className='close-dialog-submit-btn'
                         onClick={this.props.handleClose}>Close
                     </button>
                 </DialogActions>

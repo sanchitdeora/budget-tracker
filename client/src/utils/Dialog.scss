@@ -2,11 +2,14 @@
 
 // dialog box css
 
-.transaction-dialog {
+.dialog-container {
     width: 100%;
     color: $primary-color;
+    &::-webkit-scrollbar{
+        width: 0;
+    }
 }
-  
+
 .dialog-header {
     background-color: $primary-bg-color;
 
@@ -27,37 +30,15 @@
     border-top: none;
 }
 
-.transaction-input-date {
-    transition: border 0.4s ease-out;
-    padding: 13px;
-    margin: 2px 0px 5px 0px;
-    font-size: 19px;
-    color: $primary-color2 !important;
-    background: $primary-bg-color2;
-    border: 1px solid $primary-color2;
-    width: auto;
 
-    font-family: 'Quicksand', sans-serif !important;
-    letter-spacing: 0.05rem !important;
-    font-size: clamp(1rem, 1.5vw, 1rem) !important;
-    button {
-        color: $primary-color2;
-    }
-}
-
-.input-date {
-    display: block;
-    width: 300px !important;
-}
+// dialog inputs and labels
 
 .MuiFormLabel-root {
-    color: $primary-color !important;
+    color: $primary-color2 !important;
     font-family: 'Quicksand', sans-serif !important;
     letter-spacing: 0.05rem !important;
     font-size: clamp(1rem, 1.5vw, 1rem) !important;
 }
-
-
 
 .MuiInputBase-root, .MuiInputBase-input, .MuiInputAdornment-root, .MuiTypography-root, #input-label {
     color: $primary-color2 !important;
@@ -71,19 +52,13 @@
     }
 }
 
-.PrivateSwitchBase-root, .MuiPickersArrowSwitcher-button {
-    color: $primary-color2 !important;
-}
-  
-.MuiPaper-root {
-    background-color: $primary-bg-color2 !important;
-    color: $primary-color2 !important;
+// dialog box date
 
-    border: 1px solid $primary-color2;
-    border-radius: 1rem !important;
-
+.input-date {
+    display: block;
+    width: 300px !important;
 }
-  
+
 .MuiPickersFadeTransitionGroup-root, .MuiPickersDay-root, .MuiDayCalendar-rootMuiDateCalendar-viewTransitionContainer, .MuiDayCalendar-weekDayLabel, .MuiPickersYear-root {
     background-color: $primary-bg-color2 !important;
     color: $primary-color2 !important;
@@ -107,7 +82,54 @@
         width: 0;
     }
 }
+
+.PrivateSwitchBase-root, .MuiPickersArrowSwitcher-button {
+    color: $primary-color2 !important;
+}
   
+.MuiPaper-root {
+    background-color: $primary-bg-color2 !important;
+    color: $primary-color2 !important;
+
+    border: 1px solid $primary-color2;
+    border-radius: 1rem !important;
+
+}
+
+// budget specific css
+
+.budget-input-map-box{
+    margin-bottom: 1rem !important;
+}
+
+.input-group-inner {
+    padding: 1rem;
+    color: $primary-bg-color !important;
+    margin: 1rem;
+    margin-bottom: 0;
+    border: 1px solid $primary-color2;
+    border-radius: 1rem;
+    button {
+        color: $primary-color3;
+    }
+}
+
+// goal-specific css
+
+.goal-budget-chips {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.goal-budget-chip {
+    background-color: $primary-color2 !important;
+    color: $primary-bg-color2 !important;
+    margin: 2px !important;
+    font-family: 'Quicksand', sans-serif !important;
+    letter-spacing: 0.05rem !important;
+    font-size: clamp(0.5rem, 1vw, 1rem) !important;
+    font-weight: bolder;
+}
 
 
 // buttons

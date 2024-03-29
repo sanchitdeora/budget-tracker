@@ -1,13 +1,16 @@
 import React from 'react';
 import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import BudgetMapInput from './BudgetMapInput';
 import { CATEGORY_MAP, FREQUENCY_MAP } from '../../utils/GlobalConstants';
 import axios from 'axios';
-import { EXPENSES, GOALS, INCOMES } from './BudgetConstants';
+import { FormControl, FormGroup, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import dayjs from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { transformDateFormatToYyyyMmDd } from '../../utils/StringUtils';
+import '../../utils/Dialog.scss';
+import { EXPENSES, GOALS, INCOMES } from './BudgetConstants';
 
 class ReusableBudgetDialog extends React.Component {
     constructor(props) {
@@ -59,95 +62,101 @@ class ReusableBudgetDialog extends React.Component {
         this.props.handleInputChange(event, {type: GOALS, data: amountMap});
 
     }
+    
+    getTransactionFrequency = () => {
+        let frequency = Object.keys(this.props.currentBudget).length > 0 ? this.props.currentBudget.frequency : '';
+        console.log("For Edit transaction: ", frequency);
+        
+        return frequency;
+    }
 
     render() {
         return(
             <Dialog
-                className='budget-dialog'
+                className='dialog-container'
                 open={this.props.isDialogOpen}
                 fullWidth={true}
                 onClose={this.props.handleClose}
             >
-                <DialogTitle textAlign={'center'}>{this.props.title}</DialogTitle>
-                <DialogContent>
-                    <div className='budget-input-group'>
-                        
-                        <label htmlFor='budget_name'>Name</label><br></br>
-                        <input
-                            defaultValue={this.props.currentBudget.budget_name}
-                            type='text'
-                            name='budget_name'
-                            className='budget-input-box'
-                            placeholder='Name'
-                            onChange={this.props.handleInputChange}
+                <h3 className='header dialog-header'>{this.props.title}</h3>
+                <DialogContent className='dialog-body'>
+                    <FormGroup>
+                        <br></br>
+                        <FormControl className='input-group' sx={{ width: 300 }}>
+                            <TextField 
+                                defaultValue={this.props.currentBudget.budget_name}
+                                name='budget_name'
+                                label='Name'
+                                // color='primary'
+                                onChange={this.props.handleInputChange}
+                                variant="outlined"
                             />
-                    </div>
-                    <br></br>
-                    <div className='budget-input-group'>
-                        <BudgetMapInput
-                            name={INCOMES}
-                            optionsList={CATEGORY_MAP}
-                            handleChange={this.handleIncomeChange}
-                            currentDataMap={this.props.currentBudget.income_map ? this.props.currentBudget.income_map : []}
-                        />
-                    </div>
+                        </FormControl>
+                        <br></br>
+                        <div className='budget-input-map-group'>
+                            <BudgetMapInput
+                                name={INCOMES}
+                                optionsList={CATEGORY_MAP}
+                                handleChange={this.handleIncomeChange}
+                                currentDataMap={this.props.currentBudget.income_map ? this.props.currentBudget.income_map : []}
+                            />
+                        </div>
 
-                    <br></br>
-                    <div className='budget-input-group'>
-                        <BudgetMapInput 
-                            name={EXPENSES}
-                            optionsList={CATEGORY_MAP}
-                            handleChange={this.handleExpenseChange}
-                            currentDataMap={this.props.currentBudget.expense_map ? this.props.currentBudget.expense_map : []}
-                        />
-                    </div>
+                        <br></br>
+                        <div className='budget-input-map-group'>
+                            <BudgetMapInput 
+                                name={EXPENSES}
+                                optionsList={CATEGORY_MAP}
+                                handleChange={this.handleExpenseChange}
+                                currentDataMap={this.props.currentBudget.expense_map ? this.props.currentBudget.expense_map : []}
+                            />
+                        </div>
 
-                    <br></br>
-                    <div className='budget-input-group'>
-                        <BudgetMapInput 
-                            name={GOALS}
-                            optionsList={this.state.allGoals}
-                            handleChange={this.handleGoalChange}
-                            currentDataMap={this.props.currentBudget.goal_map ? this.props.currentBudget.goal_map : []}
-                        />
-                    </div>
-
-                    <br></br>
-                    <div className='budget-input-group'>
-                        <label htmlFor='date'>Date</label><br></br>
-                        <input
-                            defaultValue={transformDateFormatToYyyyMmDd(this.props.currentBudget.creation_date)}
-                            type='date'
-                            name='creation_time'
-                            className='budget-input-box'
-                            onChange={this.props.handleInputChange}
-                        />
-                    </div>
-
-                    <br></br>
-                    <div className='budget-input-group'>
-                        <label htmlFor='frequency'>Frequency</label><br></br>
-                        <select
-                            name='frequency'
-                            className='budget-input-box'
-                            defaultValue={this.props.currentBudget.frequency}
-                            onChange={this.props.handleInputChange}
-                        >
-                            {FREQUENCY_MAP.map(freq => (
-                                <option value={freq.id}>{freq.value}</option>
-                            ))} 
-                        </select>
-                    </div>
+                        <br></br>
+                        <div className='budget-input-map-group'>
+                            <BudgetMapInput 
+                                name={GOALS}
+                                optionsList={this.state.allGoals}
+                                handleChange={this.handleGoalChange}
+                                currentDataMap={this.props.currentBudget.goal_map ? this.props.currentBudget.goal_map : []}
+                            />
+                        </div>
+                        <br></br>
+                        <div className='input-group'>
+                            <DatePicker label="Date"
+                                defaultValue={dayjs(transformDateFormatToYyyyMmDd(this.props.currentBudget.creation_time))}
+                                className='input-date'
+                                name='creation_time'
+                                onChange={this.props.handleInputChange}
+                                />
+                        </div>
+                        <br></br>
+                        <FormControl className='input-group' sx={{ width: 300 }}>
+                            <InputLabel id="input-label">Frequency</InputLabel>
+                            <Select
+                                name='frequency'
+                                labelId="input-label"
+                                defaultValue={this.getTransactionFrequency}
+                                label="Frequency"
+                                onChange={this.props.handleInputChange}
+                                variant="outlined" 
+                                >
+                                {FREQUENCY_MAP.map(frequency => (
+                                    <MenuItem key={frequency.id} value={frequency.id}> {frequency.value} </MenuItem>
+                                ))} 
+                            </Select>
+                        </FormControl>
+                    </FormGroup>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className='dialog-footer'>
                     <button
                         type='submit'
-                        className='budget-submit-btn'
+                        className='dialog-submit-btn'
                         onClick={this.props.submitMethod}>Submit
                     </button>						
                     <button
                         type='submit'
-                        className='close-budget-submit-btn'
+                        className='close-dialog-submit-btn'
                         onClick={this.props.handleClose}>Close
                     </button>
                 </DialogActions>

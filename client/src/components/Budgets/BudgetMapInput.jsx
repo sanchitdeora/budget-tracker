@@ -1,12 +1,15 @@
 /* eslint-disable array-callback-return */
-import { IconButton, Grid } from "@mui/material";
+import { IconButton, Grid, FormLabel } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import React from "react";
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import InputAdornment from '@mui/material/InputAdornment';
+import '../../utils/Dialog.scss';
 
 class BudgetMapInput extends React.Component {
     constructor(props) {
@@ -86,58 +89,53 @@ class BudgetMapInput extends React.Component {
 
     render() {
         return (
-            <div className="budget-map-input-group">
-                <div>
-                    {this.state.amountMap.map((item) => (
-                        <div>
-                            <Grid container spacing={3}>
-                                <Grid item xs={4} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                                    <label htmlFor={item.name}>{item.name}</label>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <div className="currency-wrap">
-                                        <span className="currency-code">$</span>
-                                        <input
-                                            value={item.amount}
-                                            type='number'
-                                            name={item.name}
-                                            className='budget-input-box'
-                                            id={item.id}
-                                            onChange={this.addAmount}
-                                            style={{paddingLeft: "25px"}}
-                                        />
-                                    </div>
-                                </Grid>
-                                <Grid item xs={2} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                                    <IconButton id={item.id} onClick={this.removeItem.bind(this, item)}><DeleteIcon /></IconButton>
-                                </Grid>
-                            </Grid>
-                            <br></br>
-                        </div>
-                    ))}
-                </div>
-                <div className='budget-input-group'>
-                    <FormControl className='goal-input-group' sx={{ width: 300 }}>
-                        <InputLabel id="demo-multiple-name-label">{this.props.name}</InputLabel>
-                        <Select
-                        labelId="demo-multiple-name-label"
-                        id={"demo-multiple-name"}
+            <div className="input-group">
+                <FormControl className='input-group' sx={{ width: 300 }}>
+                    <InputLabel id="input-label">{this.props.name}</InputLabel>
+                    <Select
+                        labelId="input-label"
                         name={this.props.name}
                         value=''
                         onChange={this.addValue}
+                        variant="outlined"
                         input={<OutlinedInput label={this.props.name} />}
-                        >
-                            {this.props.optionsList.map((category) => (
-                            <MenuItem
-                                key={category.id}
-                                id={category.id}
-                                value={category.id}
-                            >
-                                {category.value}
-                            </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    >
+                        {this.props.optionsList.map(option => (
+                            <MenuItem key={option.id} value={option.id} id={option.id}> {option.value} </MenuItem>
+                        ))} 
+                    </Select>
+                </FormControl>
+                <div className="input-group-inner">
+                    {this.state.amountMap.map((item) => (
+                        <Grid container spacing={2}>
+                            <Grid item xs={3} style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                                <FormLabel htmlFor={item.name}>{item.name}</FormLabel>
+                            </Grid>
+                            <Grid item xs={7}>
+                                <FormControl className='input-group' sx={{ width: 300 }}>
+                                <TextField 
+                                    value={item.amount}
+                                    type='number'
+                                    name={item.name}
+                                    label='Amount'
+                                    id={item.id}
+                                    className='budget-input-map-box'
+                                    InputProps={{
+                                        startAdornment: 
+                                        <InputAdornment disableTypography position="start">
+                                            $</InputAdornment>,
+                                        inputMode: 'numeric', pattern: '[0-9]*' 
+                                    }}
+                                    onChange={this.addAmount}
+                                    variant="outlined" 
+                                />
+                            </FormControl>
+                            </Grid>
+                            <Grid item xs={2} style={{display: 'flex', alignItems: 'right', justifyContent: 'right'}}>
+                                <IconButton id={item.id} onClick={this.removeItem.bind(this, item)}><DeleteIcon /></IconButton>
+                            </Grid>
+                        </Grid>
+                    ))}
                 </div>
             </div>
         );
