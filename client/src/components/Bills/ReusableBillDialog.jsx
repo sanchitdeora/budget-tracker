@@ -1,15 +1,36 @@
 import React from 'react';
 import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
+import { FormControl, FormGroup, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
+import { transformDateFormatToYyyyMmDd } from '../../utils/StringUtils';
+import { CATEGORY_MAP, FREQUENCY_MAP } from '../../utils/GlobalConstants';
 
 class ReusableBillDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            billCategory: Object.keys(props.currentBill).length > 0 ? props.currentBill.category : '',
         };
+
+        console.log("props for reusable bill", this.props);
     };
+
+    getBillCategory = () => {
+        let category = Object.keys(this.props.currentBill).length > 0 ? this.props.currentBill.category : '';
+        console.log("For Edit bill category: ", category);
+        
+        return category;
+    }
+
+    getBillFrequency = () => {
+        let frequency = Object.keys(this.props.currentBill).length > 0 ? this.props.currentBill.frequency : '';
+        console.log("For Edit bill frequency: ", frequency);
+        
+        return frequency;
+    }
 
     render() {
         return(
@@ -19,88 +40,91 @@ class ReusableBillDialog extends React.Component {
                 fullWidth={true}
                 onClose={this.props.handleClose}
             >
-                <DialogTitle textAlign={'center'}>{this.props.title}</DialogTitle>
-                <DialogContent>
-                    <div className='bill-input-group'>
-                        
-                        <label htmlFor='title'>Title</label><br></br>
-                        <input
-                            type='text'
+                <h3 className='header dialog-header'>{this.props.title}</h3>
+                <DialogContent className='dialog-body'>
+                <FormGroup>
+                    <br></br>
+                    <FormControl className='input-group' sx={{ width: 300 }}>
+                        <TextField 
+                            defaultValue={this.props.currentBill.title}
                             name='title'
-                            className='bill-input-box'
-                            placeholder='Title'
+                            label='Title'
+                            // color='primary'
                             onChange={this.props.handleChange}
-                            />
-                    </div>
-                    <br></br>
-                    <div className='bill-input-group'>
-                        <label htmlFor='category'>Category</label><br></br>
-                        <select 
-                            name='category'
-                            className='bill-input-box'
-                            defaultValue={'DEFAULT'}
-                            onChange={this.props.handleChange}
-                        >
-                            <option value='DEFAULT' disabled>None</option>
-                            <option value='bills_and_utilities'>Bills & Utilities</option>
-                            <option value='education'>Education</option>
-                            <option value='entertainment'>Entertainment</option>
-                            <option value='loans'>Loans</option>
-                            <option value='Medical'>Medical</option>
-                            <option value='Rent'>Rent</option>
-                            <option value='uncategorized'>Others</option>
-                        </select>
-                    </div>
-                    <br></br>
-                    <div className='bill-input-group'>
-                        <label htmlFor='amount'>Amount Due</label><br></br>
-                        <input
-                            type='number'
-                            name='amount_due'
-                            className='bill-input-box'
-                            placeholder='Amount Due'
-                            onChange={this.props.handleChange}
-                            />
-                    </div>
-                    <br></br>
-                    <div className='bill-input-group'>
-                        <label htmlFor='date'>Date Due</label><br></br>
-                        <input
-                            type='date'
-                            name='due_date'
-                            className='bill-input-box'
-                            onChange={this.props.handleChange}
+                            variant="outlined"
                         />
-                    </div>
+                    </FormControl>
                     <br></br>
-                    <div className='bill-input-group'>
-                        <label htmlFor='frequency'>Frequency</label><br></br>
-                        <select 
-                            name='frequency'
-                            className='bill-input-box'
-                            defaultValue={'once'}
+                    <FormControl className='input-group' sx={{ width: 300 }}>
+                        <InputLabel id="input-label">Category</InputLabel>
+                        <Select
+                            labelId="input-label"
+                            defaultValue={this.getBillCategory()}
+                            label="Category"
                             onChange={this.props.handleChange}
+                            variant="outlined" 
                         >
-                            <option value='once'>Once</option>
-                            <option value='weekly'>Weekly</option>
-                            <option value='bi-weekly'>Every Two Weeks</option>
-                            <option value='monthly'>Monthly</option>
-                            <option value='bi_monthly'>Every Two Months</option>
-                            <option value='quarterly'>Quarterly</option>
-                            <option value='half_yearly'>Every Six Months</option>
-                            <option value='yearly'>Yearly</option>
-                        </select>
-                    </div>
+                            {CATEGORY_MAP.map(category => (
+                                <MenuItem key={category.id} value={category.id}> {category.value} </MenuItem>
+                            ))} 
+                        </Select>
+                    </FormControl>
                     <br></br>
-                    <div className='bill-input-group'>
-                        <label htmlFor='Note'>Note</label><br></br>
-                        <textarea
-                            name='note'
-                            className='bill-input-box'
-                            placeholder='Add notes here'
+                    <FormControl className='input-group' sx={{ width: 300 }}>
+                        <TextField 
+                            defaultValue={this.props.currentBill.amount_due}
+                            name='amount_due'
+                            type='number'
+                            label='Amount Due'
+                            InputProps={{
+                                startAdornment: 
+                                <InputAdornment disableTypography position="start">
+                                    $</InputAdornment>,
+                                inputMode: 'numeric', pattern: '[0-9]*' 
+                            }}
+                            onChange={this.props.handleChange}
+                            variant="outlined" 
+                        />
+                    </FormControl>
+                    <br></br>
+                    <div className='input-group'>
+                        <DatePicker label="Due Date"
+                            defaultValue={dayjs(transformDateFormatToYyyyMmDd(this.props.currentBill.due_date))}
+                            className='input-date'
+                            name='due_date'
                             onChange={this.props.handleChange}
                             />
                     </div>
+                    <br></br>
+                    <FormControl className='input-group' sx={{ width: 300 }}>
+                        <InputLabel id="input-label">Frequency</InputLabel>
+                        <Select
+                            labelId="input-label"
+                            defaultValue={this.getBillFrequency()}
+                            label="Frequency"
+                            onChange={this.props.handleChange}
+                            variant="outlined" 
+                        >
+                            {FREQUENCY_MAP.map(frequency => (
+                                <MenuItem key={frequency.id} value={frequency.id}> {frequency.value} </MenuItem>
+                            ))} 
+                        </Select>
+                    </FormControl>
+                    <br></br>
+                    <FormControl className='input-group ' sx={{ width: 300 }}>
+                        <TextField 
+                            defaultValue={this.props.currentBill.note}
+                            name='note'
+                            label='Note'
+                            multiline
+                            maxRows={2}
+                            // className='transaction-input-box'
+                            onChange={this.props.handleChange}
+                            variant="outlined" 
+                        />
+                    </FormControl>
+                    <br></br>
+                </FormGroup>
                 </DialogContent>
                 <DialogActions>
                     <button

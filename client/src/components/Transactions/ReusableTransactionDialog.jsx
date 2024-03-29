@@ -13,12 +13,11 @@ class ReusableTransactionDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            transactionType: props.currentTransaction !== undefined && props.currentTransaction.type !== undefined ? props.currentTransaction.type : false,
-            transactionCategory: Object.keys(props.currentTransaction).length > 0 ? props.currentTransaction.category : '',
+            transactionType: this.props.currentTransaction !== undefined && this.props.currentTransaction.type !== undefined ? this.props.currentTransaction.type : false,
         };
 
-        console.log("heereee: ", props.currentTransaction !== undefined && props.currentTransaction.type !== undefined ? props.currentTransaction.type : false)
-        console.log("heereee1: ", props.currentTransaction)
+        console.log("heereee: ", this.props.currentTransaction !== undefined && this.props.currentTransaction.type !== undefined ? this.props.currentTransaction.type : false)
+        console.log("heereee1: ", this.props.currentTransaction)
     };
 
     handleChangeTransactionType = (event) => {
@@ -27,6 +26,13 @@ class ReusableTransactionDialog extends React.Component {
         let val = event.target.value === 'credit' ? true : false 
         this.setState({transactionType: val});
         this.props.handleChange(event)
+    }
+
+    getTransactionCategory = () => {
+        let category = Object.keys(this.props.currentTransaction).length > 0 ? this.props.currentTransaction.category : '';
+        console.log("For Edit transaction: ", category);
+        
+        return category;
     }
 
     render() {
@@ -42,7 +48,7 @@ class ReusableTransactionDialog extends React.Component {
                 <DialogContent className='dialog-body'>
                     <FormGroup>
                         <br></br>
-                        <FormControl className='transaction-input-group' sx={{ width: 300 }}>
+                        <FormControl className='input-group' sx={{ width: 300 }}>
                             <TextField 
                                 defaultValue={this.props.currentTransaction.title}
                                 name='title'
@@ -53,13 +59,11 @@ class ReusableTransactionDialog extends React.Component {
                             />
                         </FormControl>
                         <br></br>
-                        <FormControl className='transaction-input-group' sx={{ width: 300 }}>
-                            <InputLabel id="transaction-input-label">Category</InputLabel>
+                        <FormControl className='input-group' sx={{ width: 300 }}>
+                            <InputLabel id="input-label">Category</InputLabel>
                             <Select
-                                labelId="transaction-input-label"
-                                id="demo-simple-select"
-                                defaultValue={this.state.transactionCategory}
-                                // value={this.props.currentTransaction.category}
+                                labelId="input-label"
+                                defaultValue={this.getTransactionCategory}
                                 label="Category"
                                 onChange={this.props.handleChange}
                                 variant="outlined" 
@@ -70,7 +74,7 @@ class ReusableTransactionDialog extends React.Component {
                             </Select>
                         </FormControl>
                         <br></br>
-                        <FormControl className='transaction-input-group' sx={{ width: 300 }}>
+                        <FormControl className='input-group' sx={{ width: 300 }}>
                             <TextField 
                                 defaultValue={this.props.currentTransaction.amount}
                                 name='amount'
@@ -87,35 +91,34 @@ class ReusableTransactionDialog extends React.Component {
                             />
                         </FormControl>
                         <br></br>
-                        <FormControl className='transaction-input-group' sx={{ width: 300 }}>
-                            <FormLabel id="transaction-input-label">Transaction Type</FormLabel>
+                        <FormControl className='input-group' sx={{ width: 300 }}>
+                            <FormLabel id="input-label">Transaction Type</FormLabel>
                             <RadioGroup
                                 row
                                 defaultValue={this.props.currentTransaction.type}
                                 name="type"
                                 variant="outlined" 
                                 />
-                                <FormControlLabel id="transaction-input-label" value="debit" label="Debit" control={<Radio  
+                                <FormControlLabel id="input-label" value="debit" label="Debit" control={<Radio  
                                     checked={this.state.transactionType === false} 
                                     onChange={this.handleChangeTransactionType}
                                     />} />
-                                <FormControlLabel id="transaction-input-label" value="credit" label="Credit" control={<Radio  
+                                <FormControlLabel id="input-label" value="credit" label="Credit" control={<Radio  
                                     checked={this.state.transactionType === true}
                                     onChange={this.handleChangeTransactionType}
                                 />} />
                         </FormControl>
                         <br></br>
-                        <div className='transaction-input-group'>
+                        <div className='input-group'>
                             <DatePicker label="Date"
                                 defaultValue={dayjs(transformDateFormatToYyyyMmDd(this.props.currentTransaction.date))}
-                                orientation='landscape'
-                                className='transaction-input-date'
+                                className='input-date'
                                 name='date'
                                 onChange={this.props.handleChange}
                                 />
                         </div>
                         <br></br>
-                        <FormControl className='transaction-input-group' sx={{ width: 300 }}>
+                        <FormControl className='input-group ' sx={{ width: 300 }}>
                             <TextField 
                                 defaultValue={this.props.currentTransaction.note}
                                 name='note'

@@ -215,8 +215,8 @@ class Transactions extends React.Component {
     // edit transaction
 
     handleEditTransactionOpen = (id) => {
-        console.log('Edit transaction id: ', id)
         let transaction = this.state.allTransactions.find(item => item.transaction_id === id);
+        console.log('Edit transaction id: ', id, transaction)
         this.setState({
             transaction_id: id,
             title: transaction.title,

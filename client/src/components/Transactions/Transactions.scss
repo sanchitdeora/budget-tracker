@@ -79,8 +79,16 @@
 .DateRangePickerInput {
   background: $primary-bg-color2;
   border-color: $primary-color2;
-  border-radius: 5px;
+  border-radius: 1rem;
   padding: 0rem 1rem 0rem 1rem;
+}
+
+.DayPickerNavigation_button__default:focus, .DayPickerNavigation_button__default:hover {
+  border: 1px solid $primary-color2;
+}
+
+.DayPickerNavigation_button__default:active {
+  background: $primary-color2;
 }
 
 .DateRangePickerInput_arrow_svg, .DateInput_fangShape, .DateInput_fangStroke   {
@@ -103,12 +111,12 @@
 
 .DateRangePicker_picker {
   border: 1px solid $primary-color2;
-  border-radius: 10px;
+  border-radius: 1rem;
   background: $primary-bg-color;
 }
 
 .DayPicker , .CalendarMonthGrid, .DayPicker_transitionContainer, .CalendarMonth {
-  border-radius: 10px;
+  border-radius: 1rem;
   background: $primary-bg-color;
 }
 
@@ -119,7 +127,10 @@
 
 .DayPickerNavigation_svg__horizontal  {
   fill: $primary-color;
-  
+}
+
+.DayPickerNavigation_svg__horizontal:active {
+  fill: $primary-bg-color2;
 }
 
 .CalendarMonth_caption {

@@ -109,6 +109,14 @@ class Bills extends React.Component {
         this.calculateFilteredBills(null, value);
     };
 
+    getSelectedBill = () => {
+        let bill = this.state.allBills.find(item => item.bill_id === this.state.bill_id);
+        if (bill === undefined) {
+            bill = {}
+        }
+        return bill;
+    }
+
 
     // get bill
 
@@ -313,6 +321,7 @@ class Bills extends React.Component {
                     Pie Chart by Categories
                     {this.renderBasicPie()}
                 </div>
+                {this.renderEditBillDialogBox()}
             </div>
         );
     }
@@ -333,7 +342,6 @@ class Bills extends React.Component {
                             onClick={this.handleEditBillOpen.bind(this, bill.bill_id)}>
                             <ModeEditIcon />
                         </IconButton>
-                        {this.renderEditBillDialogBox()}
                     </Grid>
                     <Grid className='secondary-bill-detail' item xs={7}>
                         <i>{bill.note}</i>
@@ -381,7 +389,7 @@ class Bills extends React.Component {
             <ReusableBillDialog
                 title={'Edit Bill'}
                 isDialogOpen={this.state.isEditDialogOpen}
-                currentBill={this.state.allBills.find(item => item.bill_id === this.state.bill_id)}
+                currentBill={this.getSelectedBill()}
                 handleChange={this.handleChange}
                 handleClose={this.handleEditClose}
                 submitMethod={this.submitEditBill}

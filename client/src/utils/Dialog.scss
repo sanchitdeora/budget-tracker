@@ -35,7 +35,7 @@
     color: $primary-color2 !important;
     background: $primary-bg-color2;
     border: 1px solid $primary-color2;
-
+    width: auto;
 
     font-family: 'Quicksand', sans-serif !important;
     letter-spacing: 0.05rem !important;
@@ -43,6 +43,11 @@
     button {
         color: $primary-color2;
     }
+}
+
+.input-date {
+    display: block;
+    width: 300px !important;
 }
 
 .MuiFormLabel-root {
@@ -54,7 +59,7 @@
 
 
 
-.MuiInputBase-root, .MuiInputBase-input, .MuiInputAdornment-root, .MuiTypography-root, #transaction-input-label {
+.MuiInputBase-root, .MuiInputBase-input, .MuiInputAdornment-root, .MuiTypography-root, #input-label {
     color: $primary-color2 !important;
     font-family: 'Quicksand', sans-serif !important;
     letter-spacing: 0.05rem !important;
@@ -114,13 +119,14 @@
     border-radius: 3px;
     background-color: rgba(15, 15, 15, 0.03);
     margin-top: 20px;
-    border: 2px solid $primary-color;
-    color: #00897b;
+    border: 2px solid $primary-color2;
+    color: $primary-color2;
     transition: background-color 0.3s ease-out;
     cursor: pointer;
 }
 .dialog-submit-btn:hover, .dialog-submit-btn:focus {
-    background-color: #00897b;
+    background-color: $primary-color2;
+    // color: $primary-bg-color2;
     color: white;
 }
 
