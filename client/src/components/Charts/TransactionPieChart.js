@@ -4,6 +4,10 @@ export function getTxChartData(txData) {
     return aggregateData(txData.map(item => ({name: findCategoryById(item.category), value: Math.abs(item.amount)})))
 }
 
+export function getBillsChartData(txData) {        
+    return aggregateData(txData.map(item => ({name: findCategoryById(item.category), value: Math.abs(item.amount_due)})))
+}
+
 function aggregateData(data) {
     let a = data.reduce((acc, x) => {
         if(acc.find(y => y.name === x.name)) return acc.concat([]);

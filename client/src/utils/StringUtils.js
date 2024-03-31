@@ -1,4 +1,4 @@
-import { CATEGORY_MAP, FREQUENCY_MAP } from "./GlobalConstants";
+import { CATEGORY_MAP, FREQUENCY_MAP, TIME_CONVERSION_MAP, TIME_SEQUENCE_MAP } from "./GlobalConstants";
 
 export function capitalizeFirstLowercaseRest(str) {
     var splitStr = str.toLowerCase().split(' ');
@@ -17,7 +17,7 @@ export function transformSnakeCaseToText(str) {
     return resultStr
 }
 
-// frequency/category map utils
+// map utils
 export function findCategoryById(id) {
     return CATEGORY_MAP.find(x => x.id === id).value
 }
@@ -26,6 +26,13 @@ export function findFrequencyById(id) {
     return FREQUENCY_MAP.find(x => x.id === id).value
 }
 
+export function findTimeSequenceById(id) {
+    return TIME_SEQUENCE_MAP.find(x => x.id === id).value
+}
+
+export function getTimeConversionById(id) {
+    return TIME_CONVERSION_MAP.find(x => x.id === id).value
+}
 
 // date/time utils
 

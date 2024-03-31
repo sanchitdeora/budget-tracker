@@ -37,3 +37,23 @@ export const CATEGORY_MAP = [
     {'id': 'travel','value': 'Travel'},
     {'id': 'uncategorized', 'value': 'Others'}
 ]
+
+export const TIME_SEQUENCE_MAP = [
+    {'id': '10d', 'value': 'Last 10 days'},
+    {'id': '01m', 'value': 'Last 1 month'},
+    {'id': '03m', 'value': 'Last 3 months'},
+    {'id': '01q', 'value': 'Last 1 quarter'},
+    {'id': '03q', 'value': 'Last 3 quarters'},
+    {'id': '01y','value': 'Last 1 year'},
+    {'id': '03y','value': 'Last 3 years'},
+    {'id': '05y','value': 'Last 5 years'},
+    {'id': '10y','value': 'Last 10 years'},
+]
+
+export const TIME_CONVERSION_MAP = [
+    {'id': 'd', 'value':'days'},
+    {'id': 'w', 'value':'weeks'},
+    {'id': 'm', 'value':'months'},
+    {'id': 'q', 'value':'quarters'},
+    {'id': 'y', 'value':'years'},
+]

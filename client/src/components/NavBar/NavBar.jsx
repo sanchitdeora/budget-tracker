@@ -28,7 +28,6 @@ class NavBar extends React.Component {
                     <img src={avatar} alt="" />
                     <div className="text">
                         <h2>Sanchit</h2>
-                        <p>$0</p>
                     </div>
                 </div>
                 <ul className="menu-items">

@@ -8,26 +8,40 @@ import CheckIcon from '@mui/icons-material/Check';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 import IconButton from '@mui/material/IconButton';
-import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import Chip from '@mui/material/Chip';
 
 import { DateRangePicker } from 'react-dates';
 
 import ReusableBillDialog from './ReusableBillDialog';
 import { capitalizeFirstLowercaseRest, findCategoryById, findFrequencyById, transformDateFormatToMmDdYyyy } from '../../utils/StringUtils';
-import { CATEGORY_MAP, BILLS } from '../../utils/GlobalConstants';
+import { BILLS } from '../../utils/GlobalConstants';
 import { getMenuItemsByTitle } from '../../utils/menuItems';
 
 import axios from 'axios';
 import moment from 'moment';
 import './Bills.scss';
 
+import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer, Legend } from 'recharts';
+import { getBillsChartData } from '../Charts/TransactionPieChart';
+
+
+const RADIAN = Math.PI / 180;
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+    // console.log("all chart params: ", cx, cy, midAngle, innerRadius, outerRadius, percent, index, radius, x, y)
+
+    return (
+        <text x={x} y={y} fill="#2dfb86" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+            {`${(percent * 100).toFixed(0)}%`}
+        </text>
+    );
+};
 
 class Bills extends React.Component {
     constructor(props) {
@@ -44,6 +58,8 @@ class Bills extends React.Component {
             note: '',
             isCreateDialogOpen: false,
             isEditDialogOpen: false,
+
+            chartData: [],
 
             filterByCategories: [],
             activeFilterStatus: null,
@@ -117,6 +133,10 @@ class Bills extends React.Component {
         return bill;
     }
 
+    setChartData = (data) => {
+        this.setState({chartData: getBillsChartData(data)});
+    }
+
 
     // get bill
 
@@ -138,6 +158,8 @@ class Bills extends React.Component {
                 allBills: [],
             });
         }
+        
+        console.log("data here: ", getBillsChartData(res.data.body))
     }
 
 
@@ -284,7 +306,7 @@ class Bills extends React.Component {
             filteredBills: filteredBills,
         })
 
-        // this.setChartData(filteredBills);
+        this.setChartData(filteredBills);
     }
 
     // render functions
@@ -445,11 +467,41 @@ class Bills extends React.Component {
                 )
             }
 
-    renderBasicPie() {
-        return (
-            <div></div>
-        )
-    }
+            renderBasicPie() {
+                return (
+                    <ResponsiveContainer className='transaction-chart-container'>
+                    {/* <ResponsiveContainer> */}
+                    <PieChart width={800} height={800}>
+                    <Legend
+                        height={'15%'}
+                        iconType="circle"
+                        layout="vertical"
+                        verticalAlign="middle"
+                        iconSize={10}
+                        padding={5}
+                        // formatter={renderColorfulLegendText}
+                    />
+                      <Pie
+                        data={this.state.chartData}
+                        cx="50%"
+                        cy="20%"
+                        labelLine={false}
+                        label={renderCustomizedLabel}
+                        outerRadius={'50%'}
+                        innerRadius={'35%'}
+                        fill="#ffffff"
+                        dataKey="value"
+                        stroke='none'
+                      >
+                        {this.state.chartData.map(item => (
+                          <Cell style={{outline: 'none'}} key={`cell-${item.category}`} />
+                        ))}
+                      </Pie>
+                    <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                );
+            }
 }
 
 export default Bills;

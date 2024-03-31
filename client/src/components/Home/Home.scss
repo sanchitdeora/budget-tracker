@@ -1,10 +1,160 @@
 @import "../../styles/variables";
 
-.MuiPaper-root {
-    // background-color: $primary-bg-color !important;
-    // color: $primary-color2 !important;
-    margin: 0 !important;
+.home-container {
+    display: grid;
+    grid-template-rows: 5% 11% 11% 11% 11% 42%;
+    // grid-template-columns: 0.75fr 1.25fr;
+    grid-template-columns: 1.1fr 2fr 2fr;
+    grid-row-gap: 0.5rem;
+    grid-column-gap: 1.5rem;
+  
+    width: 100%;
+    transition: visibility 0.2s ease-out;
+    height: 100%;
+    padding: 1rem;
 }
-.MuiMenuItem-root {
-    font-family: 'Quicksand', sans-serif !important;
+
+.home-header {
+    grid-area: 1/1/1/4;
+    padding: 0;
+}
+
+.filter-button-container {
+    grid-column: span 4;
+    
+    background-color: $primary-bg-color2;
+    
+    margin: 0.5rem;
+}
+
+.home-filter-by-date {
+    // display: grid;
+    // grid-template-columns: 1fr 2fr 1fr;
+    display: flex;
+    justify-content: space-between;
+    color: $primary-color2;
+    font-weight: bolder;
+    
+    width: 100%;
+    
+}
+
+.display-timerange-value {
+    
+    background-color: $primary-color2;
+    color: $primary-bg-color2;
+    border-radius: 1rem;
+    display: flex;
+    padding: 1rem;
+    // width: inherit;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.select-filter {
+    // .MuiInputBase-root .MuiInputBase-input {
+        color: #000 !important;
+    // }
+}
+
+
+
+.display-cards {
+    margin: 0.5rem;
+}
+
+#center-display {
+    grid-column: span 2;
+}
+
+.display-amount-lg {
+    font-size: x-large;
+    font-weight: 900;
+    // text-align: center;
+    // justify-content: center;
+    padding: 0.5rem;
+    padding-left: 1rem;
+}
+
+.display-label {
+    padding-left: 1rem;
+    font-size: smaller;
+    // font-weight:900;
+}
+
+.display-graph {
+    grid-row: span 3;
+
+    // background-color: $primary-color2;
+    border: 1px solid $primary-color2;
+    border-radius: 1rem;
+    margin: 0.5rem;
+    // color: $primary-bg-color;
+}
+
+.latest-transactions {
+    grid-column: span 4;
+
+    margin: 0.5rem;
+    background-color: $primary-color2;
+    color: $primary-bg-color2;
+
+    border-radius: 1rem;
+    overflow: auto;
+    &::-webkit-scrollbar{
+        width: 0;
+    }
+}
+
+.latest-tx-header {
+    color: $primary-bg-color2;
+    font-weight: bolder;
+}
+
+.latest-transaction {
+    display: grid;
+    // grid-template-columns: 0.75fr 1.25fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-row-gap: 0.5rem;
+    grid-column-gap: 1.5rem;
+    text-align: center;
+    #left {
+        text-align: left;
+    }
+    #right {
+        text-align: right;
+    }
+
+    padding: 1rem;
+    color: $primary-color2;
+    font-weight: bolder;
+
+    background-color: $primary-bg-color2;
+    // border: 1px solid $primary-color3;
+    margin: 1rem;
+    border-radius: 25px;
+
+    // display: flex;
+    // justify-content: space-between;
+}
+
+.latest-transaction-info {
+    #secondary {
+        font-size: smaller;
+        color: $primary-color2;
+    }
+}
+
+
+// charts
+
+.areaChartIE {
+    width: 400;
+    height: 500;
+}
+
+.areaChart-container {
+    width: 100%;
+    height: 95%;
+    padding: 1rem;
 }

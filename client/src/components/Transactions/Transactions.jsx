@@ -17,7 +17,7 @@ import Chip from '@mui/material/Chip';
 
 import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { DateRangePicker } from 'react-dates';
-import { getTxChartData } from './TransactionPieChart';
+import { getTxChartData } from '../Charts/TransactionPieChart';
 
 import ReusableTransactionDialog from './ReusableTransactionDialog';
 import { capitalizeFirstLowercaseRest, findCategoryById, transformDateFormatToMmDdYyyy } from '../../utils/StringUtils';
@@ -93,13 +93,13 @@ class Transactions extends React.Component {
     
     handleChange = (event) => {
         if (event.target === undefined) {
-            // console.log('event: ' + event)
             this.handleDateChange(event.toISOString())
             return;
         }
-
+        
         let value = event.target.value;
         let name = event.target.name;
+        console.log('event: ' + value, name)
         if (name === 'type') {
             value = value === 'credit' ? true : false  
             console.log('Name: ' + name + ' value: ' + value)
@@ -308,10 +308,10 @@ class Transactions extends React.Component {
 
     // render functions
 
-render() {
+    render() {
         return (
             <div className='transactions-container'>
-                <h2 className='header'>
+                <h2 className='header transaction-header'>
                     {TRANSACTIONS}
                 </h2>
                 <div className='transactions-filter-by-date'>
@@ -461,7 +461,8 @@ render() {
 
     renderBasicPie() {
         return (
-            <ResponsiveContainer>
+            <ResponsiveContainer className='transaction-chart-container'>
+            {/* <ResponsiveContainer> */}
             <PieChart width={800} height={800}>
             <Legend
                 height={'15%'}
@@ -494,13 +495,5 @@ render() {
         );
     }
 }
-
-// const renderColorfulLegendText = (value: string, entry: any) => {
-//     return (
-//       <span style={{ color: "#596579", fontWeight: 500, padding: "10px" }}>
-//         {value}
-//       </span>
-//     );
-//   };
 
 export default Transactions;

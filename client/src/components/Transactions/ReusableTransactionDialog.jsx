@@ -62,6 +62,7 @@ class ReusableTransactionDialog extends React.Component {
                         <FormControl className='input-group' sx={{ width: 300 }}>
                             <InputLabel id="input-label">Category</InputLabel>
                             <Select
+                                name='category'
                                 labelId="input-label"
                                 defaultValue={this.getTransactionCategory}
                                 label="Category"

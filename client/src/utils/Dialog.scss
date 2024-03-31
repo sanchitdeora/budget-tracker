@@ -96,6 +96,12 @@
 
 }
 
+.MuiButtonBase-root {
+    font-family: 'Quicksand', sans-serif !important;
+    letter-spacing: 0.05rem !important;
+    font-size: clamp(1rem, 1.5vw, 1rem) !important;
+}
+
 // budget specific css
 
 .budget-input-map-box{
